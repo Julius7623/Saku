@@ -87,8 +87,7 @@ function renderHome(){
 function stagger(box){if(fx)[...box.children].forEach((e,i)=>{e.style.setProperty('--i',i);e.style.setProperty('--dx',dx*20+'px');e.classList.add('rise')})}
 function renderSum(){
   const m=inMonth(),box=$('#cats'),bars=[];box.replaceChildren();
-  $('#sl').value=Math.max(0,11-((new Date().getFullYear()-+ym.slice(0,4))*12+new Date().getMonth()+1-+ym.slice(5,7)));
-  $('#sl-v').textContent=parse(ym+'-01').toLocaleDateString('id-ID',{month:'short',year:'numeric'});slPaint();
+  slSync();
   for(const[type,title]of[['out','Pengeluaran'],['in','Pemasukan']]){
     const tot=sum(m,type),by={};
     m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
@@ -130,6 +129,7 @@ function openSheet(t){
   $('#st').textContent=t?'Ubah catatan':'Catatan baru';$('#sh-del').hidden=!t;
   chips();paint();hideToast();
   sheet.showModal();$('#amt').focus({preventScroll:true});
+  $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
   requestAnimationFrame(()=>requestAnimationFrame(()=>sheet.classList.add('show')));
 }
 function closeSheet(){sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:230)}
@@ -184,10 +184,11 @@ async function importJSON(file){
 
 /* Event */
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
-$$('.tab').forEach(b=>b.onclick=()=>{if(tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
+$$('.tab').forEach(b=>b.onclick=()=>{if(noClick||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
 $$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint()});
-['1','2','3','4','5','6','7','8','9','0','000'].forEach(k=>$('#keys').append(h('button',{type:'button',class:'key'+(k==='0'?' z0':k==='000'?' k3':''),onclick:()=>key(k)},k)));
+['1','2','3','4','5','6','7','8','9','000','0'].forEach(k=>$('#keys').append(h('button',{type:'button',class:'key',onclick:()=>key(k)},k)));
+$('#keys').append($('#bs'));
 $('#bs').onclick=()=>key('⌫');
 $('#amt').addEventListener('keydown',e=>{
   if(/^\d$/.test(e.key))key(e.key);else if(e.key==='Backspace')key('⌫');else if(e.key==='Enter')save();else return;
@@ -201,16 +202,50 @@ $('#im').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const fl=e.target.files[0];e.target.value='';if(fl)importJSON(fl)};
 $('#nx').onclick=()=>{ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true};
 
-/* Slider kaca: bulan 0..11 (11 = bulan ini). Thumb melar mengikuti kecepatan geser. */
-const sld=$('#sld'),sl=$('#sl');let sp=-1,sv=0,sr=0;
-function slPaint(){
-  const p=sl.value/11;sld.style.setProperty('--p',p);
-  if(sp>=0)sv=Math.max(-.5,Math.min(.5,sv+(p-sp)*6));sp=p;
+/* Slider bulan: thumb = lensa yang mengembang saat disentuh dan melar mengikuti kecepatan. Pointer events sendiri (input range native tak andal di iOS). */
+const sld=$('#sld'),SW=44;let sp=1,sv=0,sr=0,sdrag=false,sidx=11;
+const monthAt=i=>{const n=new Date();return ymd(new Date(n.getFullYear(),n.getMonth()-(11-i),1)).slice(0,7)};
+function slShow(p,quiet){
+  sld.style.setProperty('--p',p);
+  if(!quiet)sv=Math.max(-.5,Math.min(.5,sv+(p-sp)*6));
+  sp=p;
   if(!sr&&!rm())sr=requestAnimationFrame(function k(){sv*=.8;const a=Math.abs(sv);sld.style.setProperty('--st',a<.01?0:a.toFixed(3));sr=a<.01?0:requestAnimationFrame(k)});
 }
-sl.addEventListener('input',()=>{const n=new Date();dx=0;ym=ymd(new Date(n.getFullYear(),n.getMonth()-(11-sl.value),1)).slice(0,7);render()});
-sl.addEventListener('pointerdown',()=>sld.classList.add('drag'));
-['pointerup','pointercancel','blur'].forEach(t=>sl.addEventListener(t,()=>sld.classList.remove('drag')));
+function slSync(){
+  const n=new Date(),d=(n.getFullYear()-+ym.slice(0,4))*12+n.getMonth()+1-+ym.slice(5,7),lb=parse(ym+'-01').toLocaleDateString('id-ID',{month:'short',year:'numeric'});
+  sidx=Math.max(0,Math.min(11,11-d));
+  $('#sl-v').textContent=lb;sld.setAttribute('aria-valuenow',sidx);sld.setAttribute('aria-valuetext',lb);
+  if(!sdrag)slShow(sidx/11,true);
+}
+function slGo(i){if(i===sidx)return;sidx=i;dx=0;ym=monthAt(i);render()}
+const slX=e=>{const r=sld.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left-SW/2)/(r.width-SW)))};
+const slMove=e=>{const p=slX(e);slShow(p);slGo(Math.round(p*11))};
+sld.addEventListener('pointerdown',e=>{sdrag=true;sld.setPointerCapture(e.pointerId);sld.classList.add('drag');slMove(e)});
+sld.addEventListener('pointermove',e=>{if(sdrag)slMove(e)});
+const slEnd=()=>{if(!sdrag)return;sdrag=false;sld.classList.remove('drag');slShow(sidx/11,true)};
+['pointerup','pointercancel','lostpointercapture'].forEach(t=>sld.addEventListener(t,slEnd));
+sld.addEventListener('keydown',e=>{
+  const k={ArrowLeft:-1,ArrowDown:-1,ArrowRight:1,ArrowUp:1}[e.key];
+  if(e.key==='Home')slGo(0);else if(e.key==='End')slGo(11);else if(k)slGo(Math.max(0,Math.min(11,sidx+k)));else return;
+  e.preventDefault();
+});
+/* Tab bar: tekan = lensa mengembang, geser = lensa ikut jari lalu mengunci ke tab terdekat */
+const tabs=$('#tabs');let tx=0,tk=0,tdown=false,tdrag=false,noClick=false;
+function lens(k){tk=k;tabs.style.setProperty('--k',k.toFixed(3));$$('.tab').forEach((b,i)=>b.style.setProperty('--s',(1+.16*Math.max(0,1-Math.abs(k-i)*1.1)).toFixed(3)))}
+tabs.addEventListener('pointerdown',e=>{tdown=true;tdrag=false;tx=e.clientX;tabs.classList.add('lens');lens(tab==='sum'?1:0)});
+tabs.addEventListener('pointermove',e=>{
+  if(!tdown)return;
+  if(!tdrag){if(Math.abs(e.clientX-tx)<6)return;tdrag=true;tabs.setPointerCapture(e.pointerId);tabs.classList.add('drag')}
+  const r=tabs.getBoundingClientRect(),w=(r.width-10)/2;
+  lens(Math.max(0,Math.min(1,(e.clientX-r.left-5-w/2)/w)));
+});
+const tEnd=()=>{
+  if(!tdown)return;tdown=false;
+  const was=tdrag,to=tk>.5?'sum':'home';tdrag=false;
+  tabs.classList.remove('lens','drag');tabs.style.removeProperty('--k');$$('.tab').forEach(b=>b.style.removeProperty('--s'));
+  if(was){noClick=true;setTimeout(()=>noClick=false,60);if(to!==tab){dx=to==='sum'?1:-1;fx=true;tab=to;render()}}
+};
+['pointerup','pointercancel'].forEach(t=>tabs.addEventListener(t,tEnd));
 /* Kilau kaca mengikuti jari/kursor */
 const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)/r.width*100+'%');g.style.setProperty('--my',(e.clientY-r.top)/r.height*100+'%')};
 document.addEventListener('pointerdown',lit);document.addEventListener('pointermove',lit);

@@ -42,7 +42,7 @@
   <section id="sum" hidden>
     <div class="card p16 scrub">
       <div class="sl-h"><small class="mut">Telusuri bulan</small><b id="sl-v"></b></div>
-      <div id="sld" class="sld"><input id="sl" type="range" min="0" max="11" step="1" value="11" aria-label="Pilih bulan"><span class="sl-tr"><span class="sl-fl"></span></span><span class="sl-th glass"></span></div>
+      <div id="sld" class="sld" role="slider" tabindex="0" aria-label="Pilih bulan" aria-valuemin="0" aria-valuemax="11" aria-valuenow="11"><span class="sl-tr"><span class="sl-fl"></span></span><span class="sl-th"></span></div>
       <div class="sl-e mut"><span>11 bulan lalu</span><span>Bulan ini</span></div>
     </div>
     <div id="cats"></div>
@@ -67,9 +67,11 @@
 <dialog id="sheet" aria-labelledby="st">
   <div class="grab"></div>
   <div class="sh">
-    <div class="shh"><button id="cl" type="button" class="txt">Batal</button><h2 id="st">Catatan baru</h2><button id="sh-del" type="button" class="txt" hidden>Hapus</button></div>
-    <div class="seg" data-v="out" role="group" aria-label="Jenis catatan">
-      <button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button>
+    <div class="shh">
+      <button id="cl" type="button" class="txt">Batal</button>
+      <div class="seg" data-v="out" role="group" aria-label="Jenis catatan"><button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button></div>
+      <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
+      <h2 id="st" class="sr">Catatan baru</h2>
     </div>
     <output id="amt" tabindex="0" autofocus aria-label="Nominal">Rp&nbsp;0</output>
     <div id="chips" class="chips"></div>
@@ -80,8 +82,8 @@
     <p id="err" class="err" role="alert"></p>
     <div id="keys" class="keys">
       <button id="bs" type="button" class="key bs" aria-label="Hapus satu angka"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zM13 9.5l5 5M18 9.5l-5 5"/></svg></button>
-      <button id="ok" type="button" class="key sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
     </div>
+    <button id="ok" type="button" class="key sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
   </div>
 </dialog>
 
