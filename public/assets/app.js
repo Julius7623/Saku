@@ -56,12 +56,13 @@ function tween(el,to){
 /* Render */
 function render(){
   $('#mon').textContent=parse(ym+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-  $('#next').disabled=ym>=today().slice(0,7);
+  $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():renderSum();
 }
 const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:()=>openSheet(t)},
+  h('span',{class:'mono','aria-hidden':'true'},t.cat[0]),
   h('span',{},h('b',{},t.cat),t.note?h('small',{},t.note):null),
   h('span',{class:t.type==='in'?'plus':'minus'},(t.type==='in'?'+':'−')+rp(t.amount)));
 function renderHome(){
@@ -71,7 +72,7 @@ function renderHome(){
   $('#nudge').hidden=!(new Date().getDate()>=25&&all.length&&ls('catat.bk')!==today().slice(0,7));
   const list=$('#list');list.replaceChildren();
   if(!m.length){
-    list.append(h('div',{class:'empty'},h('p',{},all.length?'Belum ada catatan bulan ini':'Belum ada catatan'),
+    list.append(h('div',{class:'empty'},h('div',{class:'eico','aria-hidden':'true'},'Rp'),h('p',{},all.length?'Belum ada catatan bulan ini':'Belum ada catatan'),h('p',{class:'mut'},'Semua catatan tersimpan di perangkatmu.'),
       h('button',{class:'pri',onclick:()=>openSheet()},all.length?'Catat pengeluaran':'Catat pengeluaran pertamamu')));
     return;
   }
@@ -83,10 +84,10 @@ function renderSum(){
   for(const[type,title]of[['out','Pengeluaran'],['in','Pemasukan']]){
     const tot=sum(m,type),by={};
     m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
-    box.append(h('h2',{class:'day'},`${title} · ${rp(tot)}`));
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
-    if(!rows.length){box.append(h('p',{class:'mut'},'Belum ada data bulan ini.'));continue}
-    box.append(h('div',{class:'card p16'},...rows.map(([c,v])=>{
+    const head=[h('small',{class:'mut'},title),h('p',{class:'sumtot'},rp(tot))];
+    if(!rows.length){box.append(h('div',{class:'card p16 mt'},...head,h('p',{class:'mut'},'Belum ada data bulan ini.')));continue}
+    box.append(h('div',{class:'card p16 mt'},...head,...rows.map(([c,v])=>{
       const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});fill.style.width=p+'%';
       return h('div',{class:'br'},h('div',{},h('span',{},`${c} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
@@ -109,6 +110,7 @@ function paint(){
   const a=$('#amt');a.textContent=f.amt?rp(+f.amt):'Rp\u00A00';a.classList.toggle('mut',!f.amt);
   $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===f.type)));
   $$('.chip').forEach(b=>b.setAttribute('aria-pressed',String(b.textContent===f.cat)));
+  $('.seg').dataset.v=f.type;a.style.fontSize=Math.min(52,Math.floor(540/a.textContent.length))+'px';
   $('#ok').disabled=!f.amt;$('#err').textContent='';
 }
 function openSheet(t){
@@ -175,7 +177,8 @@ $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $$('.tab').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
 $$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint()});
-['1','2','3','4','5','6','7','8','9','000','0','⌫'].forEach(k=>$('#keys').append(h('button',{type:'button',class:'key','aria-label':k==='⌫'?'Hapus satu angka':k,onclick:()=>key(k)},k)));
+['1','2','3','4','5','6','7','8','9','0','000'].forEach(k=>$('#keys').append(h('button',{type:'button',class:'key'+(k==='0'?' z0':k==='000'?' k3':''),onclick:()=>key(k)},k)));
+$('#bs').onclick=()=>key('⌫');
 $('#amt').addEventListener('keydown',e=>{
   if(/^\d$/.test(e.key))key(e.key);else if(e.key==='Backspace')key('⌫');else if(e.key==='Enter')save();else return;
   e.preventDefault();

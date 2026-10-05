@@ -18,10 +18,9 @@ public/                folder yang dipublikasikan
 5. Menambah file baru? Masukkan ke daftar `A` di `sw.js` dan naikkan `V`.
 
 ## Keputusan desain
-- Kartu saldo dibalik (hitam di tema terang, putih di gelap) + bayangan lembut: ada titik fokus, tetap hanya warna token.
-- Masuk = "+" tebal, keluar = "−" biasa; tanpa warna.
-- Kategori awal sudah terpilih: catat cukup + → nominal → Simpan.
-- Edit/hapus lewat tap baris (tanpa geser, agar tidak salah hapus); hapus bisa Urungkan 6 detik.
-- Impor menggabungkan data (tidak menimpa) dan menolak file dengan skema salah.
-- Tanpa innerHTML, tanpa inline script/style, CSP `default-src 'self'`.
-- Animasi hanya transform/opacity, mati saat `prefers-reduced-motion`.
+- Gaya iOS: judul bulan besar, daftar terkelompok dengan monogram kategori, font sistem (SF di perangkat Apple).
+- Kartu saldo bergradasi abu (hitam di tema terang, putih di gelap) dengan kilau halus; hanya warna token.
+- Dock berupa kapsul kaca (blur) dengan penanda tab yang bergeser, plus tombol + terpisah di sisi jempol.
+- Keypad ala kalkulator: Hapus dan Simpan ada di kolom kanan, jadi jempol tidak perlu berpindah.
+- Masuk = "+" tebal, keluar = "−" biasa. Edit/hapus lewat tap baris; hapus bisa Urungkan.
+- Impor menggabungkan data dan menolak skema salah. Tanpa innerHTML/inline script; animasi hanya transform/opacity dan mati saat reduced-motion.

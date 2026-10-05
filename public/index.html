@@ -14,9 +14,11 @@
 </head>
 <body>
 <header class="top">
-  <button id="prev" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
   <h1 id="mon">&nbsp;</h1>
-  <button id="next" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="nav2">
+    <button id="prev" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button id="next" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
 </header>
 
 <main>
@@ -25,8 +27,8 @@
       <small>Sisa saldo</small>
       <p id="bal" class="big">Rp&nbsp;0</p>
       <div class="row">
-        <div><small>Masuk</small><span id="inc" class="plus"></span></div>
-        <div><small>Keluar</small><span id="out" class="minus"></span></div>
+        <div><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7L7 17M7 17V9M7 17h8"/></svg></span><div><small>Masuk</small><span id="inc" class="plus"></span></div></div>
+        <div><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span><div><small>Keluar</small><span id="out" class="minus"></span></div></div>
       </div>
     </div>
     <div id="nudge" class="nudge" hidden>
@@ -40,35 +42,43 @@
   <section id="sum" hidden>
     <div id="cats"></div>
     <h2 class="day">Cadangan data</h2>
-    <div class="card p16">
-      <p class="mut">Datamu hanya ada di perangkat ini. Simpan cadangan secara berkala agar aman.</p>
-      <div class="two"><button id="ex" class="ghost">Ekspor</button><button id="im" class="ghost">Impor</button></div>
-      <input id="file" type="file" accept="application/json,.json" hidden>
+    <div class="card">
+      <button id="ex" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></span>Ekspor cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button id="im" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4l4 4M5 20h14"/></svg></span>Impor cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
+    <p class="mut foot">Datamu hanya ada di perangkat ini. Simpan cadangan berkala agar aman.</p>
+    <input id="file" type="file" accept="application/json,.json" hidden>
   </section>
 </main>
 
-<nav class="bar" aria-label="Menu utama">
-  <button class="tab" data-t="home"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Beranda</button>
+<div class="dock">
+  <nav id="tabs" class="tabs" data-t="home" aria-label="Menu utama">
+    <button class="tab" data-t="home"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Beranda</button>
+    <button class="tab" data-t="sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-8"/></svg>Ringkasan</button>
+  </nav>
   <button id="add" class="fab" aria-label="Catat baru"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-  <button class="tab" data-t="sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-8"/></svg>Ringkasan</button>
-</nav>
+</div>
 
-<dialog id="sheet" aria-labelledby="st"><div class="sh">
-  <div class="shh"><h2 id="st">Catatan baru</h2><button id="cl" aria-label="Tutup">×</button></div>
-  <div class="seg" role="group" aria-label="Jenis catatan">
-    <button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button>
+<dialog id="sheet" aria-labelledby="st">
+  <div class="grab"></div>
+  <div class="sh">
+    <div class="shh"><button id="cl" type="button" class="txt">Batal</button><h2 id="st">Catatan baru</h2><button id="sh-del" type="button" class="txt" hidden>Hapus</button></div>
+    <div class="seg" data-v="out" role="group" aria-label="Jenis catatan">
+      <button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button>
+    </div>
+    <output id="amt" tabindex="0" autofocus aria-label="Nominal">Rp&nbsp;0</output>
+    <div id="chips" class="chips"></div>
+    <div class="fields">
+      <input id="note" maxlength="60" placeholder="Catatan (opsional)" aria-label="Catatan">
+      <input id="date" type="date" aria-label="Tanggal">
+    </div>
+    <p id="err" class="err" role="alert"></p>
+    <div id="keys" class="keys">
+      <button id="bs" type="button" class="key bs" aria-label="Hapus satu angka">⌫</button>
+      <button id="ok" type="button" class="key sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
+    </div>
   </div>
-  <output id="amt" tabindex="0" autofocus aria-label="Nominal">Rp&nbsp;0</output>
-  <div id="chips" class="chips"></div>
-  <div class="fields">
-    <input id="note" maxlength="60" placeholder="Catatan (opsional)" aria-label="Catatan">
-    <input id="date" type="date" aria-label="Tanggal">
-  </div>
-  <div id="keys" class="keys"></div>
-  <p id="err" class="err" role="alert"></p>
-  <div class="acts"><button id="sh-del" type="button" class="ghost" hidden>Hapus</button><button id="ok" type="button" class="pri">Simpan</button></div>
-</div></dialog>
+</dialog>
 
 <div id="toast" role="status" aria-live="polite"></div>
 </body>
