@@ -5,22 +5,22 @@
 --sh:0 14px 32px -18px rgba(0,0,0,.55);
 --g-bg:rgba(255,255,255,.44);--g-sp:rgba(255,255,255,.28);--g-hi:rgba(255,255,255,.95);--g-hi2:rgba(255,255,255,.5);--g-edge:rgba(255,255,255,.7);--g-glow:rgba(255,255,255,.35);--g-rim:rgba(0,0,0,.08);--g-sh:rgba(0,0,0,.3);
 --tint:rgba(17,17,17,.84);--pill:rgba(0,0,0,.06);--lens-c:rgba(255,255,255,.3);--card-g:rgba(255,255,255,.74);
---rim-base:rgba(255,255,255,.55);--rim-spec:rgba(255,255,255,1);--pill-hi:rgba(255,255,255,.55);--pill-rim:rgba(0,0,0,.06);--lens-ring:rgba(0,0,0,.16);--g-blur:blur(12px) saturate(1.8);
+--rim-base:rgba(255,255,255,.55);--rim-spec:rgba(255,255,255,1);--pill-hi:rgba(255,255,255,.55);--pill-rim:rgba(0,0,0,.06);--lens-ring:rgba(0,0,0,.07);--g-blur:blur(12px) saturate(1.8);
 /* gerak: 3 durasi saja (tekan, pudar, pindah) dan 2 kurva (halus, melenting). --d3 harus sama dengan D di app.js */
 --d1:.15s;--d2:.25s;--d3:.5s;--ease:cubic-bezier(.32,.72,0,1);--spring:cubic-bezier(.34,1.45,.5,1);
---dock-b:max(calc(env(safe-area-inset-bottom,0px) - 12px),10px);--r-lg:28px;--r-md:20px;color-scheme:light}
+--dock-b:max(calc(env(safe-area-inset-bottom,0px) - 12px),10px);--r-lg:28px;--r-md:20px;--r-sm:16px;--red:#D70015;color-scheme:light}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0E0E0E;--sf:#161616;--bd:#262626;--tx:#F2F2F2;--t2:#9A9A9A;--ac:#F2F2F2;--on:#0E0E0E;
 --fill:rgba(120,120,128,.24);--fill2:rgba(120,120,128,.36);
---hero:linear-gradient(150deg,#FFF 0%,#D2D2D2 100%);--hero-tx:#0E0E0E;--sheen:rgba(255,255,255,.5);--sh:0 14px 32px -18px #000;
+--hero:linear-gradient(150deg,#FFF 0%,#D2D2D2 100%);--red:#FF6961;--hero-tx:#0E0E0E;--sheen:rgba(255,255,255,.5);--sh:0 14px 32px -18px #000;
 --g-bg:rgba(58,58,60,.58);--g-sp:rgba(255,255,255,.07);--g-hi:rgba(255,255,255,.3);--g-hi2:rgba(255,255,255,.14);--g-edge:rgba(255,255,255,.1);--g-glow:rgba(255,255,255,.035);--g-rim:rgba(0,0,0,.55);--g-sh:rgba(0,0,0,.75);
 --tint:rgba(242,242,242,.88);--pill:rgba(0,0,0,.34);--lens-c:rgba(255,255,255,.07);--card-g:rgba(34,34,37,.72);
---rim-base:rgba(255,255,255,.12);--rim-spec:rgba(255,255,255,.62);--pill-hi:rgba(255,255,255,.1);--pill-rim:rgba(255,255,255,.07);--lens-ring:rgba(0,0,0,.55);--g-blur:blur(12px) saturate(1.8) brightness(1.06);color-scheme:dark}}
+--rim-base:rgba(255,255,255,.12);--rim-spec:rgba(255,255,255,.62);--pill-hi:rgba(255,255,255,.1);--pill-rim:rgba(255,255,255,.07);--lens-ring:rgba(255,255,255,.14);--g-blur:blur(12px) saturate(1.8) brightness(1.06);color-scheme:dark}}
 :root[data-theme=dark]{--bg:#0E0E0E;--sf:#161616;--bd:#262626;--tx:#F2F2F2;--t2:#9A9A9A;--ac:#F2F2F2;--on:#0E0E0E;
 --fill:rgba(120,120,128,.24);--fill2:rgba(120,120,128,.36);
---hero:linear-gradient(150deg,#FFF 0%,#D2D2D2 100%);--hero-tx:#0E0E0E;--sheen:rgba(255,255,255,.5);--sh:0 14px 32px -18px #000;
+--hero:linear-gradient(150deg,#FFF 0%,#D2D2D2 100%);--red:#FF6961;--hero-tx:#0E0E0E;--sheen:rgba(255,255,255,.5);--sh:0 14px 32px -18px #000;
 --g-bg:rgba(58,58,60,.58);--g-sp:rgba(255,255,255,.07);--g-hi:rgba(255,255,255,.3);--g-hi2:rgba(255,255,255,.14);--g-edge:rgba(255,255,255,.1);--g-glow:rgba(255,255,255,.035);--g-rim:rgba(0,0,0,.55);--g-sh:rgba(0,0,0,.75);
 --tint:rgba(242,242,242,.88);--pill:rgba(0,0,0,.34);--lens-c:rgba(255,255,255,.07);--card-g:rgba(34,34,37,.72);
---rim-base:rgba(255,255,255,.12);--rim-spec:rgba(255,255,255,.62);--pill-hi:rgba(255,255,255,.1);--pill-rim:rgba(255,255,255,.07);--lens-ring:rgba(0,0,0,.55);--g-blur:blur(12px) saturate(1.8) brightness(1.06);color-scheme:dark}
+--rim-base:rgba(255,255,255,.12);--rim-spec:rgba(255,255,255,.62);--pill-hi:rgba(255,255,255,.1);--pill-rim:rgba(255,255,255,.07);--lens-ring:rgba(255,255,255,.14);--g-blur:blur(12px) saturate(1.8) brightness(1.06);color-scheme:dark}
 :root[data-theme=light]{color-scheme:light}
 
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
@@ -56,31 +56,32 @@ h1>span.sr{grid-area:auto}
 @keyframes monout{to{opacity:0;filter:blur(6px);transform:translateX(calc(var(--d,1)*-28px))}}
 #monT>.go{animation:monin var(--d3) var(--ease) .14s both}
 #monT>.old{animation:monout .2s cubic-bezier(.4,0,.6,1) both;pointer-events:none}
-.nav2{display:flex;gap:8px}
-.nav2 button{position:relative;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%}
-.nav2 button::before{content:'';position:absolute;inset:-2px}
-.nav2 .i{width:20px;height:20px}
+/* Tombol dua arah ala Files: satu kapsul kaca berisi dua panah, panah yang tak bisa dipakai meredup */
+.nav2{flex:none;display:grid;grid-template-columns:1fr 1fr;width:104px;height:44px;border-radius:999px}
+.nav2 button{position:relative;display:grid;place-items:center;min-width:0;min-height:44px;height:44px;padding:0;border-radius:999px}
+.nav2 button:disabled{opacity:.38}
+.nav2 .i{width:22px;height:22px;stroke-width:2.6}
 
 /* Kartu saldo: gradasi abu + kilau halus (diam, tidak ikut bergeser) */
 .hero{position:relative;overflow:hidden;padding:22px 20px 18px;border-radius:var(--r-lg);background:var(--hero);color:var(--hero-tx);box-shadow:var(--sh)}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(120% 90% at 0% 0%,var(--sheen),transparent 60%);pointer-events:none}
 .hero>*{position:relative}
-.hero small{display:block;font-size:13px;opacity:.7}
+.hero small{display:block;font-size:14px;opacity:.75}
 .big{font-size:40px;font-weight:700;letter-spacing:-.03em;margin:2px 0 18px;overflow-wrap:anywhere}
 .row{display:flex;gap:10px}
-.row>div{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:10px;border-radius:var(--r-md);background:rgba(128,128,128,.18)}
+.row>div{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:10px 12px;border-radius:var(--r-sm);background:rgba(128,128,128,.18)}
 .row>div>div{min-width:0}
-#inc,#out{display:block;font-size:clamp(13px,3.9vw,15px);overflow-wrap:anywhere}
+#inc,#out{display:block;font-size:clamp(14px,4.1vw,16px);font-weight:600;overflow-wrap:anywhere}
 .row .ic{width:28px;height:28px}.row .ic .i{width:16px;height:16px}
 
-.nudge{display:flex;align-items:center;gap:2px;margin-top:14px;padding:4px 4px 4px 16px;border-radius:var(--r-md);background:var(--sf);border:1px solid var(--bd);font-size:14px}
+.nudge{display:flex;align-items:center;gap:2px;margin-top:14px;padding:4px 4px 4px 16px;border-radius:var(--r-md);background:var(--sf);border:1px solid var(--bd);font-size:15px}
 .nudge span{flex:1}
 .lnk{padding:0 10px;font-weight:600}
 
 /* Daftar terkelompok */
 main,#home,#sum{position:relative}
 #list,#cats{display:flow-root}
-.day{font-size:13px;font-weight:600;color:var(--t2);margin:24px 8px 8px}
+.day{font-size:15px;font-weight:600;color:var(--t2);margin:24px 16px 8px}
 .card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r-md);overflow:hidden}
 .p16{padding:16px}
 .tx,.set{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:10px 16px;border-radius:0;text-align:left}
@@ -93,14 +94,14 @@ main,#home,#sum{position:relative}
 .tx>span:nth-child(2){flex:1;min-width:0;display:grid}
 .tx>span:last-child{white-space:nowrap}
 .tx b{font-weight:600}
-.tx small{color:var(--t2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx small{color:var(--t2);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chev{margin-left:auto;width:18px;height:18px;color:var(--t2)}
-.foot{margin:8px 8px 0}
+.foot{margin:8px 16px 0;line-height:1.4}
 .empty{text-align:center;padding:44px 16px 16px}
 .eico{display:grid;place-items:center;width:72px;height:72px;margin:0 auto 16px;border-radius:50%;background:var(--fill);color:var(--t2);font-size:22px;font-weight:700}
 .empty p:not(.mut){font-size:20px;font-weight:700;letter-spacing:-.02em}
 .empty .mut{margin:4px 0 20px}
-.pri{min-height:52px;padding:0 26px;background:var(--ac);color:var(--on);font-weight:600}
+.pri{min-height:50px;padding:0 26px;background:var(--ac);color:var(--on);font-weight:600}
 
 /* Ringkasan */
 .sumtot{font-size:30px;font-weight:700;letter-spacing:-.02em;margin:2px 0 6px}
@@ -130,7 +131,7 @@ background:var(--rim,linear-gradient(transparent,transparent)),linear-gradient(t
 .dock>*{pointer-events:auto}
 .tabs{flex:1;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:999px;touch-action:pan-y;--k:0;transition:transform var(--d3) var(--spring)}
 .tabs.glass{border:1px solid transparent}
-.tab{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:54px;border-radius:999px;font-size:10px;font-weight:600;color:var(--t2);transition:transform var(--d3) var(--spring),color var(--d2)}
+.tab{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:54px;border-radius:999px;font-size:11px;font-weight:600;color:var(--t2);transition:transform var(--d3) var(--spring),color var(--d2)}
 .tab[aria-current=true]{color:var(--tx)}
 .tab .i{transition:transform var(--d3) var(--spring)}
 .tab[aria-current=true] .i{transform:translateY(-1px) scale(1.1)}
@@ -145,9 +146,9 @@ background:var(--rim,linear-gradient(transparent,transparent)),linear-gradient(t
 .tabs::before,.seg::before,.seg3::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 0 0 .5px var(--pill-rim),inset 0 1px 0 var(--pill-hi),inset 0 1px 3px rgba(0,0,0,.18);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.drive::before,.seg.drive::before,.seg3.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.lens,.seg.lens,.seg3.lens{transform:scale(1.02,1.04)}
-.tabs.lens::before,.seg.lens::before,.seg3.lens::before{--sx:1.06;--sy:1.26;background:var(--lens-c);box-shadow:0 0 0 1px var(--lens-ring),inset 0 0 0 1px var(--g-hi),
+.tabs.lens::before,.seg.lens::before,.seg3.lens::before{--sx:1.06;--sy:1.26;background:var(--lens-c);box-shadow:0 0 0 .5px var(--lens-ring),inset 0 0 0 .5px var(--g-hi),
 inset 0 2px 2px -1px rgba(255,150,110,.7),inset 0 4px 5px -3px rgba(150,255,170,.35),inset 0 -2px 2px -1px rgba(90,180,255,.7),inset 0 -4px 5px -3px rgba(255,100,220,.35),
-inset 2px 0 3px -1px rgba(255,90,120,.45),inset -2px 0 3px -1px rgba(80,140,255,.45),inset 0 0 16px var(--g-glow),0 16px 28px -10px var(--g-sh)}
+inset 2px 0 3px -1px rgba(255,90,120,.45),inset -2px 0 3px -1px rgba(80,140,255,.45),inset 0 0 16px var(--g-glow),0 10px 22px -12px var(--g-sh)}
 .tabs .tab,.tabs .tab:active,.seg button,.seg button:active,.seg3 button,.seg3 button:active{transform:scale(var(--s,1))}
 
 /* Sheet input: jendela kaca melayang di atas keyboard (posisi dihitung di app.js) */
@@ -161,7 +162,8 @@ dialog.show::backdrop{opacity:1}
 .sh{display:grid;gap:20px;padding:20px}
 .shh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:-4px 0 0;container-type:inline-size}
 #cl{grid-column:1;justify-self:start}#sh-del{grid-column:3;justify-self:end}
-.txt{min-width:0;padding:0 4px;font-weight:600;color:var(--t2)}
+.txt{min-width:0;padding:0 4px;font-weight:500;color:var(--tx)}
+#sh-del,#bd-del{font-weight:600;color:var(--red)}
 .shh .seg{position:relative;grid-column:2;display:grid;grid-template-columns:1fr 1fr;width:min(232px,calc(100cqw - 112px));padding:4px;border-radius:999px;--k:0;touch-action:pan-y;transition:transform var(--d3) var(--spring);
 box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),inset -1.5px -1.5px 1px -1px var(--g-hi2),inset 0 0 20px var(--g-glow),0 0 0 .5px var(--g-rim)}
 .seg button{position:relative;min-height:36px;min-width:0;font-size:14px;font-weight:600}
@@ -174,8 +176,9 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 .ybtn{grid-column:2;display:flex;align-items:center;gap:2px;padding:0 10px;font-size:20px;font-weight:700;letter-spacing:-.02em;font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
 .ybtn .i{width:16px;height:16px;color:var(--t2);stroke-width:2.6;transition:transform var(--d3) var(--spring)}
 .ybtn[aria-expanded=true] .i{transform:rotate(180deg)}
-.yr{grid-column:3;justify-self:end;display:flex;align-items:center;gap:4px}
-.yr button{display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;background:var(--fill)}
+.yr{grid-column:3;justify-self:end;display:flex;align-items:center;height:44px;border-radius:999px;background:var(--fill)}
+.yr button{display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0}
+.yr button:disabled{opacity:.38}
 .yr .i{width:20px;height:20px}
 .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .mo{position:relative;min-height:52px;min-width:0;padding:0;font-weight:500;background:var(--fill);box-shadow:inset 0 .5px 0 var(--g-hi),0 1px 2px rgba(0,0,0,.15);transition:transform var(--d3) var(--spring),background-color var(--d2),color var(--d2)}
@@ -199,7 +202,7 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 .chip[aria-pressed=true]{background:var(--ac);color:var(--on);font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 14px -6px rgba(0,0,0,.55)}
 
 /* Catatan & Tanggal: baris berlabel dalam satu kelompok cekung */
-.group{border-radius:var(--r-md);background:var(--fill);box-shadow:inset 0 1px 2px rgba(0,0,0,.2);overflow:hidden}
+.group{border-radius:var(--r-sm);background:var(--fill);box-shadow:inset 0 1px 2px rgba(0,0,0,.2);overflow:hidden}
 .fr{position:relative;display:flex;align-items:center;gap:14px;min-height:52px;padding:0 16px;cursor:text}
 .fr+.fr::before{content:'';position:absolute;left:16px;right:0;top:0;height:1px;background:rgba(128,128,128,.28)}
 .fr>.i{width:20px;height:20px;color:var(--t2)}
@@ -209,14 +212,14 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 #dl{flex:1;min-width:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fr.dt .chev{width:16px;height:16px;margin-left:auto}
 .fr.dt #date{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-.err{font-size:14px}.err:empty{display:none}
+.err{font-size:14px;color:var(--red);text-align:center}.err:empty{display:none}
 .sv{width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;gap:8px;background-color:var(--ac);background-image:linear-gradient(rgba(255,255,255,.2),transparent 55%);color:var(--on);font-size:17px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 10px 20px -10px rgba(0,0,0,.7)}
 .kb{position:fixed;left:0;bottom:0;width:1px;height:1px;min-height:0;padding:0;opacity:0;pointer-events:none;font-size:16px}
 
 /* Snackbar */
 #toast{position:fixed;left:0;right:0;bottom:calc(var(--dock-b) + 76px);width:calc(100% - 32px);max-width:448px;min-height:52px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 4px 4px 18px;border-radius:999px;background-color:var(--tint);color:var(--on);box-shadow:var(--sh);opacity:0;visibility:hidden;transform:translateY(18px) scale(.94);transition:opacity var(--d2),transform var(--d3) var(--spring),visibility var(--d2)}
 #toast.show{opacity:1;visibility:visible;transform:none}
-#toast button{padding:0 14px;font-weight:700;text-decoration:underline}
+#toast button{min-height:44px;padding:0 16px;font-weight:600;background:rgba(128,128,128,.28)}
 
 /* Gerak yang menjawab aksi: masuk bertahap (buka aplikasi, pindah tab), catatan baru masuk, catatan dihapus menyusut */
 @keyframes rise{from{opacity:0;transform:translate3d(var(--dx,0),14px,0) scale(.985)}}
@@ -237,14 +240,14 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 @media(max-width:360px){.seg3 button .i{display:none}}
 
 /* Pencarian & Anggaran */
-#sq{margin-top:14px;border-radius:var(--r-md)}
+#sq{margin-top:14px;border-radius:999px}
 #sq input{-webkit-appearance:none;appearance:none}
 .bt{grid-column:2;font-size:20px;font-weight:700;letter-spacing:-.02em;text-align:center}
 #bd-del{grid-column:3;justify-self:end}
 .fr>.mut{font-weight:600}
 .set.bd{align-items:center;min-height:68px}
 .bw{flex:1;min-width:0;display:grid;gap:2px}
-.bw small{color:var(--t2);font-size:13px}
+.bw small{color:var(--t2);font-size:14px}
 .bw .track{height:6px;margin-top:4px}
-.bw .over{color:var(--tx);font-weight:600}
+.bw .over{color:var(--red);font-weight:600}
 .bd .chev{margin-left:0}

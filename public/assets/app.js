@@ -107,7 +107,7 @@ function render(){
   const mv=ym!==lastYm&&!!lastYm&&!rm();
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'}),mv);lastYm=ym;
-  $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
+  $('#next').disabled=ym>=today().slice(0,7);$('#balL').textContent=ym===today().slice(0,7)?'Sisa uang bulan ini':'Sisa uang bulan '+parse(ym+'-01').toLocaleDateString('id-ID',{month:'long'});$('#tabs').dataset.t=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():renderSum();
@@ -167,7 +167,7 @@ function renderSum(){
     if(b)fill.style.width=Math.min(100,Math.round(v/b*100))+'%';
     return h('button',{type:'button',class:'set bd',onclick:()=>openBud(c)},
       h('span',{class:'bw'},h('b',{},c),
-        h('small',{class:left<0?'over':''},b?(left<0?`Lewat ${rp(-left)} dari ${rp(b)}`:`Sisa ${rp(left)} dari ${rp(b)}`):'Belum diatur'),
+        h('small',{class:left<0?'over':''},b?(left<0?`Lebih ${rp(-left)} dari anggaran ${rp(b)}`:`Sisa ${rp(left)} dari anggaran ${rp(b)}`):'Belum diatur'),
         b?h('div',{class:'track'},fill):null),
       chevR());
   })),h('p',{class:'mut foot'},'Ketuk kategori untuk mengatur anggaran bulanan.'));

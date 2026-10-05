@@ -19,16 +19,16 @@
 <noscript><p class="mut foot">Catat membutuhkan JavaScript. Aktifkan JavaScript di browser, lalu muat ulang halaman.</p></noscript>
 <header class="top">
   <h1><button id="mon" type="button" aria-haspopup="dialog" aria-label="Pilih bulan dan tahun"><span id="monT"></span></button><span id="monlive" class="sr" aria-live="polite"></span></h1>
-  <div class="nav2">
-    <button id="prev" class="glass" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
-    <button id="next" class="glass" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="nav2 glass" role="group" aria-label="Pindah bulan">
+    <button id="prev" type="button" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button id="next" type="button" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
 </header>
 
 <main>
   <section id="home">
     <div class="hero">
-      <small>Sisa uang bulan ini</small>
+      <small id="balL">Sisa uang bulan ini</small>
       <p id="bal" class="big">Rp&nbsp;0</p>
       <div class="row">
         <div><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7L7 17M7 17V9M7 17h8"/></svg></span><div><small>Pemasukan</small><span id="inc" class="plus"></span></div></div>
@@ -85,7 +85,7 @@
     <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal dalam rupiah"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
     <div id="chips" class="chips"></div>
     <div class="group">
-      <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="note" maxlength="60" enterkeyhint="done" placeholder="Catatan (opsional)" aria-label="Catatan"></label>
+      <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="note" maxlength="60" enterkeyhint="done" placeholder="Keterangan (opsional)" aria-label="Keterangan"></label>
       <label class="fr dt"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span id="dl"></span><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input id="date" type="date" aria-label="Tanggal"></label>
     </div>
     <p id="err" class="err" role="alert"></p>
