@@ -6,6 +6,7 @@ const MAX=9999999999,NOTE=60,fmt=new Intl.NumberFormat('id-ID');
 const rp=n=>(n<0?'−':'')+'Rp\u00A0'+fmt.format(Math.abs(n));
 const rm=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
 const sleep=ms=>new Promise(r=>setTimeout(r,rm()?0:ms));
+const replay=(e,c)=>{e.classList.remove(c);void e.offsetWidth;e.classList.add(c)};
 const pad=n=>String(n).padStart(2,'0');
 const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const today=()=>ymd(new Date());
@@ -42,7 +43,7 @@ const dbDel=id=>write(s=>s.delete(id));
 const dbBulk=l=>write(s=>l.forEach(t=>s.put(t)));
 
 /* State */
-let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},shown=null,tw=0,enterId=null,undo=null,tt;
+let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},shown=null,tw=0,enterId=null,undo=null,tt,fx=true,dx=0,lastYm='';
 const inMonth=()=>all.filter(t=>t.date.startsWith(ym));
 
 /* Saldo berhitung halus ke nilai baru */
@@ -56,10 +57,12 @@ function tween(el,to){
 /* Render */
 function render(){
   $('#mon').textContent=parse(ym+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+  if(ym!==lastYm){if(lastYm){$('#mon').style.setProperty('--dx',dx*22+'px');replay($('#mon'),'sw')}lastYm=ym}
   $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():renderSum();
+  fx=false;
 }
 const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:()=>openSheet(t)},
   h('span',{class:'mono','aria-hidden':'true'},t.cat[0]),
@@ -78,9 +81,14 @@ function renderHome(){
   }
   const g={};m.sort(cmp).forEach(t=>(g[t.date]??=[]).push(t));
   for(const d in g)list.append(h('h2',{class:'day'},dayLabel(d)),h('div',{class:'card'},...g[d].map(row)));
+  stagger(list);
 }
+/* Masuk bertahap hanya saat pindah bulan/tab, bukan tiap simpan */
+function stagger(box){if(fx)[...box.children].forEach((e,i)=>{e.style.setProperty('--i',i);e.style.setProperty('--dx',dx*20+'px');e.classList.add('rise')})}
 function renderSum(){
-  const m=inMonth(),box=$('#cats');box.replaceChildren();
+  const m=inMonth(),box=$('#cats'),bars=[];box.replaceChildren();
+  $('#sl').value=Math.max(0,11-((new Date().getFullYear()-+ym.slice(0,4))*12+new Date().getMonth()+1-+ym.slice(5,7)));
+  $('#sl-v').textContent=parse(ym+'-01').toLocaleDateString('id-ID',{month:'short',year:'numeric'});slPaint();
   for(const[type,title]of[['out','Pengeluaran'],['in','Pemasukan']]){
     const tot=sum(m,type),by={};
     m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
@@ -88,12 +96,14 @@ function renderSum(){
     const head=[h('small',{class:'mut'},title),h('p',{class:'sumtot'},rp(tot))];
     if(!rows.length){box.append(h('div',{class:'card p16 mt'},...head,h('p',{class:'mut'},'Belum ada data bulan ini.')));continue}
     box.append(h('div',{class:'card p16 mt'},...head,...rows.map(([c,v])=>{
-      const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});fill.style.width=p+'%';
+      const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,p]);
       return h('div',{class:'br'},h('div',{},h('span',{},`${c} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
   }
+  stagger(box);
+  bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
-const shift=n=>{ym=ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7);render()};
+const shift=n=>{dx=n;fx=true;ym=ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7);render()};
 
 /* Snackbar */
 function toast(msg,act,fn){
@@ -126,7 +136,7 @@ function closeSheet(){sheet.classList.remove('show');setTimeout(()=>sheet.open&&
 function key(k){
   if(k==='⌫')f.amt=f.amt.slice(0,-1);
   else{const n=(f.amt+k).replace(/^0+/,'');if(n.length<=10)f.amt=n}
-  paint();
+  paint();replay($('#amt'),'bump');
 }
 async function save(){
   if(!f.amt)return;
@@ -174,7 +184,7 @@ async function importJSON(file){
 
 /* Event */
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
-$$('.tab').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
+$$('.tab').forEach(b=>b.onclick=()=>{if(tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
 $$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint()});
 ['1','2','3','4','5','6','7','8','9','0','000'].forEach(k=>$('#keys').append(h('button',{type:'button',class:'key'+(k==='0'?' z0':k==='000'?' k3':''),onclick:()=>key(k)},k)));
@@ -190,6 +200,20 @@ $('#ex').onclick=exportJSON;$('#nb').onclick=exportJSON;
 $('#im').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const fl=e.target.files[0];e.target.value='';if(fl)importJSON(fl)};
 $('#nx').onclick=()=>{ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true};
+
+/* Slider kaca: bulan 0..11 (11 = bulan ini). Thumb melar mengikuti kecepatan geser. */
+const sld=$('#sld'),sl=$('#sl');let sp=-1,sv=0,sr=0;
+function slPaint(){
+  const p=sl.value/11;sld.style.setProperty('--p',p);
+  if(sp>=0)sv=Math.max(-.5,Math.min(.5,sv+(p-sp)*6));sp=p;
+  if(!sr&&!rm())sr=requestAnimationFrame(function k(){sv*=.8;const a=Math.abs(sv);sld.style.setProperty('--st',a<.01?0:a.toFixed(3));sr=a<.01?0:requestAnimationFrame(k)});
+}
+sl.addEventListener('input',()=>{const n=new Date();dx=0;ym=ymd(new Date(n.getFullYear(),n.getMonth()-(11-sl.value),1)).slice(0,7);render()});
+sl.addEventListener('pointerdown',()=>sld.classList.add('drag'));
+['pointerup','pointercancel','blur'].forEach(t=>sl.addEventListener(t,()=>sld.classList.remove('drag')));
+/* Kilau kaca mengikuti jari/kursor */
+const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)/r.width*100+'%');g.style.setProperty('--my',(e.clientY-r.top)/r.height*100+'%')};
+document.addEventListener('pointerdown',lit);document.addEventListener('pointermove',lit);
 
 /* Mulai */
 (async()=>{

@@ -76,7 +76,7 @@ h1{min-width:0;font-size:30px;font-weight:700;letter-spacing:-.03em;white-space:
 
 /* Dock: kapsul kaca + tombol + terpisah di sisi jempol */
 .dock{position:fixed;left:0;right:0;bottom:0;width:min(100%,480px);margin:auto;display:flex;gap:10px;padding:0 16px calc(10px + env(safe-area-inset-bottom));pointer-events:none}
-.dock::before{content:'';position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(transparent,var(--bg) 72%);z-index:-1}
+.dock::before{content:'';position:absolute;left:0;right:0;bottom:0;height:130px;background:linear-gradient(transparent,var(--bg));opacity:.85;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(transparent,#000 65%);mask-image:linear-gradient(transparent,#000 65%);z-index:-1}
 .dock>*{pointer-events:auto}
 .tabs{position:relative;flex:1;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:32px;border:1px solid var(--bd);background:var(--glass);-webkit-backdrop-filter:saturate(1.8) blur(22px);backdrop-filter:saturate(1.8) blur(22px);box-shadow:var(--sh)}
 .tabs::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:28px;background:var(--fill2);transition:transform .25s var(--ease)}
@@ -130,3 +130,65 @@ input::placeholder{color:var(--t2)}
 .enter{animation:in .22s var(--ease)}
 .leave{opacity:0;transform:scale(.92);transition:opacity .18s,transform .18s}
 @media(prefers-reduced-motion:reduce){*,::before,::after,::backdrop{animation:none!important;transition:none!important}}
+
+/* ===== v3: liquid glass (kontrol melayang saja) + gerak ===== */
+:root{--spring:cubic-bezier(.34,1.45,.5,1);--g-bg:rgba(255,255,255,.4);--g-sp:rgba(255,255,255,.6);--g-hi:rgba(255,255,255,.95);--g-lo:rgba(0,0,0,.06);--g-edge:rgba(255,255,255,.7);--g-rim:rgba(0,0,0,.08);--g-sh:rgba(0,0,0,.3);--tint:rgba(17,17,17,.84);--lens:rgba(255,255,255,.62)}
+@media(prefers-color-scheme:dark){:root{--g-bg:rgba(70,70,74,.36);--g-sp:rgba(255,255,255,.16);--g-hi:rgba(255,255,255,.38);--g-lo:rgba(255,255,255,.05);--g-edge:rgba(255,255,255,.2);--g-rim:rgba(0,0,0,.55);--g-sh:rgba(0,0,0,.75);--tint:rgba(242,242,242,.88);--lens:rgba(255,255,255,.2)}}
+.glass.glass{position:relative;isolation:isolate;border:0;background-color:var(--g-bg);background-image:radial-gradient(80% 140% at var(--mx,30%) var(--my,0%),var(--g-sp),transparent 60%);-webkit-backdrop-filter:blur(18px) saturate(2);backdrop-filter:blur(18px) saturate(2);box-shadow:inset 0 1px 1px var(--g-hi),inset 0 -1px 1px var(--g-lo),inset 0 0 0 .5px var(--g-edge),0 0 0 .5px var(--g-rim),0 12px 28px -12px var(--g-sh)}
+.tabs.glass{border:1px solid transparent}
+.fab.glass,#toast.glass{background-color:var(--tint)}
+.fab.glass{box-shadow:inset 0 1px 1px rgba(255,255,255,.5),inset 0 0 0 .5px rgba(255,255,255,.25),0 0 0 .5px var(--g-rim),0 14px 28px -10px var(--g-sh)}
+
+/* Ikon: satu aturan ukuran & posisi, tidak turun baseline di dalam tombol */
+.i{display:block;flex:none}
+.nav2 button,.fab,.bs{display:grid;place-items:center;padding:0}
+.nav2 .i{width:20px;height:20px}
+.fab .i{transition:transform .5s var(--spring)}.fab:active .i{transform:rotate(90deg)}
+.tab .i{transition:transform .5s var(--spring)}.tab[aria-current=true] .i{transform:translateY(-1px) scale(1.1)}
+.tab,.nav2 button{transition:transform .4s var(--spring),color .25s}
+
+/* Indikator tab & segmen = lensa yang melenting */
+.tabs::before{background:var(--lens);box-shadow:inset 0 1px 1px var(--g-hi),inset 0 0 0 .5px var(--g-edge),0 4px 14px -4px var(--g-sh);transition:transform .55s var(--spring)}
+.seg::before{transition:transform .5s var(--spring);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 8px rgba(0,0,0,.2)}
+button{transition:transform .4s var(--spring),opacity .2s,background-color .2s}
+button:active:not(:disabled){transform:scale(.94);transition-duration:.1s}
+.tx:active,.set:active{transform:none}
+.chip{transition:transform .4s var(--spring),background-color .25s,color .25s}
+
+/* Slider kaca */
+.sl-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.sl-e{display:flex;justify-content:space-between;font-size:12px;margin-top:2px}
+.sld{--p:1;--st:0;--k:1;--ky:1;--w:44px;position:relative;height:48px;touch-action:pan-y}
+.sld.drag{--k:1.22;--ky:1.14}
+#sl{position:absolute;inset:0;z-index:2;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:grab;background:none;-webkit-appearance:none;appearance:none}
+#sl::-webkit-slider-thumb{-webkit-appearance:none;width:var(--w);height:48px}
+#sl::-moz-range-thumb{width:var(--w);height:48px;border:0}
+.sl-tr{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:99px;background:var(--fill);overflow:hidden}
+.sl-fl{position:absolute;left:0;top:0;bottom:0;width:calc(var(--p)*(100% - var(--w)) + var(--w)/2);border-radius:inherit;background:var(--ac)}
+.sl-th{position:absolute;top:50%;left:calc(var(--p)*(100% - var(--w)));width:var(--w);height:28px;margin-top:-14px;border-radius:99px;pointer-events:none;transform:scale(calc(var(--k) + var(--st)*.9),calc(var(--ky) - var(--st)*.3));transition:transform .3s var(--spring),background-color .3s}
+.sl-th.glass.glass{-webkit-backdrop-filter:blur(2px) saturate(1.8);backdrop-filter:blur(2px) saturate(1.8);background-color:rgba(255,255,255,.55)}
+.sld.drag .sl-th.glass.glass{background-color:rgba(255,255,255,.22)}
+@media(prefers-color-scheme:dark){.sl-th.glass.glass{background-color:rgba(255,255,255,.3)}.sld.drag .sl-th.glass.glass{background-color:rgba(255,255,255,.12)}}
+#sl:focus-visible~.sl-th{outline:2px solid var(--ac);outline-offset:3px}
+
+/* Gerak: respons terhadap aksi, bukan hiasan acak */
+@keyframes rise{from{opacity:0;transform:translate3d(var(--dx,0),14px,0) scale(.985)}}
+@keyframes in{from{opacity:0;transform:translateY(-14px) scale(.96)}}
+@keyframes bump{40%{transform:scale(1.07)}}
+@keyframes drift{50%{transform:translate3d(14%,8%,0)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes swap{from{opacity:0;transform:translateX(var(--dx,0))}}
+main>section>*{animation:rise .6s var(--ease) both}
+main>section>:nth-child(2){animation-delay:.05s}main>section>:nth-child(3){animation-delay:.1s}main>section>:nth-child(n+4){animation-delay:.15s}
+.rise{animation:rise .6s var(--ease) both;animation-delay:calc(var(--i,0)*50ms + .1s)}
+.enter{animation:in .55s var(--spring)}
+.sw{animation:swap .4s var(--ease)}
+.bump{animation:bump .3s var(--spring)}
+.hero::before{inset:-30%;animation:drift 12s ease-in-out infinite}
+.eico{animation:bob 4s ease-in-out infinite}
+.fill{width:0;transition:width .9s var(--ease) calc(var(--i,0)*70ms + .15s)}
+dialog{transition:transform .45s var(--ease)}
+dialog.show .sh>*{animation:rise .5s var(--ease) both;animation-delay:calc(var(--i,0)*35ms + .1s)}
+.sh>:nth-child(2){--i:1}.sh>:nth-child(3){--i:2}.sh>:nth-child(4){--i:3}.sh>:nth-child(5){--i:4}.sh>:nth-child(6){--i:5}.sh>:nth-child(7){--i:6}
+#toast{transform:translateY(18px) scale(.94);transition:opacity .25s,transform .5s var(--spring),visibility .25s}
+#toast.show{transform:none}

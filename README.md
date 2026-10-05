@@ -23,4 +23,6 @@ public/                folder yang dipublikasikan
 - Dock berupa kapsul kaca (blur) dengan penanda tab yang bergeser, plus tombol + terpisah di sisi jempol.
 - Keypad ala kalkulator: Hapus dan Simpan ada di kolom kanan, jadi jempol tidak perlu berpindah.
 - Masuk = "+" tebal, keluar = "−" biasa. Edit/hapus lewat tap baris; hapus bisa Urungkan.
+- Liquid glass hanya untuk kontrol yang melayang di atas konten (dock, tombol +, navigasi bulan, snackbar, thumb slider); kartu, daftar, dan sheet tetap flat. Thumb slider melar saat digeser, kilau mengikuti jari.
+- Slider "Telusuri bulan" di Ringkasan untuk lompat antar 12 bulan terakhir.
 - Impor menggabungkan data dan menolak skema salah. Tanpa innerHTML/inline script; animasi hanya transform/opacity dan mati saat reduced-motion.
