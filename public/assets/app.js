@@ -232,22 +232,42 @@ async function restore(){
   all.push(t);enterId=t.id;reveal(t.date.slice(0,7));enterId=null;hideToast();
 }
 
-/* Picker bulan/tahun: dialog kecil seperti sheet. Titik = bulan yang punya catatan (dari data di memori). */
+/* Picker bulan/tahun: dialog kecil seperti sheet. Titik = bulan atau tahun yang punya catatan (dari data di memori).
+   Ketuk tahun di bagian atas untuk membuka daftar tahun; titik di sana menunjukkan tahun mana saja yang ada catatannya. */
 const pkd=$('#pick'),MS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-let py=0,pHas=new Set(),pBusy=false;
+let py=0,pHas=new Set(),pYrs=new Set(),pBusy=false,pv='m';
 const nowYm=()=>today().slice(0,7);
 function paintPick(){
-  const cur=nowYm(),cy=+cur.slice(0,4),cm=+cur.slice(5,7);
-  $('#py').textContent=py;$('#py-next').disabled=py>=cy;
+  const cur=nowYm(),cy=+cur.slice(0,4),cm=+cur.slice(5,7),yh=pYrs.has(String(py));
+  $('#pyt').textContent=py;$('#py-next').disabled=py>=cy;
+  const yb=$('#py');yh?yb.setAttribute('data-d','1'):yb.removeAttribute('data-d');
+  yb.setAttribute('aria-label',`Tahun ${py}${yh?', ada catatan':''}. Ketuk untuk memilih tahun`);
   $('#mg').replaceChildren(...MS.map((s,i)=>{
     const v=`${py}-${pad(i+1)}`,has=pHas.has(v),off=py>cy||(py===cy&&i+1>cm);
     const name=parse(v+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'});
     return h('button',{type:'button',class:'mo','aria-pressed':String(v===ym),'aria-label':name+(has?', ada catatan':''),...(has?{'data-d':'1'}:{}),...(off?{disabled:''}:{}),onclick:()=>choose(v)},s);
   }));
 }
+/* daftar tahun: dari tahun tertua yang punya catatan sampai tahun ini (maksimal 12 tahun terakhir) */
+function paintYears(){
+  const cy=+nowYm().slice(0,4),first=Math.max(Math.min(cy,...[...pYrs].map(Number)),cy-11),ys=[];
+  for(let y=first;y<=cy;y++)ys.push(y);
+  $('#yg').replaceChildren(...ys.map(y=>{const has=pYrs.has(String(y));
+    return h('button',{type:'button',class:'mo','aria-pressed':String(String(y)===ym.slice(0,4)),'aria-label':`${y}${has?', ada catatan':''}`,...(has?{'data-d':'1'}:{}),onclick:()=>{py=y;viewPick('m')}},String(y))}));
+}
+function viewPick(v,focus=true){
+  pv=v;const yv=v==='y';
+  pkd.classList.toggle('yv',yv);$('#py').setAttribute('aria-expanded',String(yv));
+  $('#mg').hidden=yv;$('#yg').hidden=!yv;
+  paintPick();if(yv)paintYears();
+  const box=yv?$('#yg'):$('#mg');
+  if(!rm())box.animate([{opacity:0,transform:'scale(.97)'},{opacity:1,transform:'none'}],{duration:D2,easing:EZ});
+  if(focus)(box.querySelector('[aria-pressed=true]:not(:disabled)')||$('#py')).focus({preventScroll:true});
+}
 function openPick(){
   if(pkd.open||sheet.open)return;
-  py=+ym.slice(0,4);pHas=new Set(all.map(t=>t.date.slice(0,7)));paintPick();
+  py=+ym.slice(0,4);pHas=new Set(all.map(t=>t.date.slice(0,7)));pYrs=new Set(all.map(t=>t.date.slice(0,4)));
+  pv='m';pkd.classList.remove('yv');$('#py').setAttribute('aria-expanded','false');$('#mg').hidden=false;$('#yg').hidden=true;paintPick();
   pkd.showModal();
   $('.mo[aria-pressed=true]')?.focus({preventScroll:true});
   requestAnimationFrame(()=>requestAnimationFrame(()=>pkd.classList.add('show')));
@@ -317,6 +337,7 @@ $('#mon').onclick=openPick;
 $('#pk-cl').onclick=()=>closePick();
 $('#pk-now').onclick=()=>choose(nowYm());
 $('#py-prev').onclick=()=>stepYear(-1);
+$('#py').onclick=()=>viewPick(pv==='y'?'m':'y');
 $('#py-next').onclick=e=>{stepYear(1);if(e.currentTarget.disabled)$('#py-prev').focus({preventScroll:true})};
 pkd.addEventListener('click',e=>{if(e.target===pkd)closePick()});
 pkd.addEventListener('cancel',e=>{e.preventDefault();closePick()});
@@ -400,6 +421,24 @@ let lq=null;
 const litFlush=()=>{const q=lq;lq=null;if(!q)return;const r=q.g.getBoundingClientRect();q.g.style.setProperty('--mx',(q.x-r.left)/r.width*100+'%');q.g.style.setProperty('--my',(q.y-r.top)/r.height*100+'%')};
 const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;if(!lq)requestAnimationFrame(litFlush);lq={g,x:e.clientX,y:e.clientY}};
 document.addEventListener('pointerdown',lit,{passive:true});document.addEventListener('pointermove',lit,{passive:true});
+
+/* Tema: Otomatis / Terang / Gelap. Disimpan di perangkat; pindah dengan pudar halus. */
+const TH=window.catatTheme;
+function paintTheme(){
+  const m=TH?TH.get():'auto';
+  $('#theme').dataset.n=String(['auto','light','dark'].indexOf(m));
+  $$('#theme button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.th===m)));
+}
+function setTheme(m){
+  if(!TH||TH.get()===m)return;
+  const go=()=>{TH.set(m);paintTheme()};
+  if(rm()){go();return}
+  if(document.startViewTransition){document.startViewTransition(go);return}
+  const r=document.documentElement;r.classList.add('thx');go();setTimeout(()=>r.classList.remove('thx'),400);
+}
+$$('#theme button').forEach(b=>b.onclick=()=>setTheme(b.dataset.th));
+addEventListener('storage',e=>{if(e.key==='catat.theme'&&TH){TH.apply(TH.get());paintTheme()}});
+paintTheme();
 
 /* Mulai */
 (async()=>{
