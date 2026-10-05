@@ -66,6 +66,7 @@ function count(el,to,f,snap){
 const NS='http://www.w3.org/2000/svg';
 /* panah ▾ kecil ikut bergeser bersama teks bulan */
 function chev(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M6 9l6 6 6-6');s.append(p);return s}
+function chevR(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i chev');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M9 6l6 6-6 6');s.append(p);return s}
 function setMon(txt,anim){
   const m=$('#monT'),cur=m.querySelector('.cur');
   $('#monlive').textContent=txt;
@@ -116,20 +117,24 @@ const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,
   h('span',{class:'mono','aria-hidden':'true'},t.cat[0]),
   h('span',{},h('b',{},t.cat),t.note?h('small',{},t.note):null),
   h('span',{class:t.type==='in'?'plus':'minus'},(t.type==='in'?'+':'−')+rp(t.amount)));
+const qv=()=>$('#q').value.trim().toLowerCase();
+const hit=(t,q)=>t.cat.toLowerCase().includes(q)||t.note.toLowerCase().includes(q)||String(t.amount).includes(q.replace(/\D/g,'')||'\0');
 function renderHome(){
-  const m=inMonth(),inc=sum(m,'in'),out=sum(m,'out');
+  const m0=inMonth(),inc=sum(m0,'in'),out=sum(m0,'out'),q=qv(),m=q?all.filter(t=>hit(t,q)):m0;
+  $('#sq').hidden=!all.length;
   count($('#bal'),inc-out,rp,fx);
   count($('#inc'),inc,v=>(v?'+':'')+rp(v),fx);
   count($('#out'),out,v=>(v?'−':'')+rp(v),fx);
   $('#nudge').hidden=!(new Date().getDate()>=25&&all.length&&ls('catat.bk')!==today().slice(0,7));
   const list=$('#list');list.replaceChildren();
+  if(q&&!m.length){list.append(h('div',{class:'empty'},h('p',{},'Tidak ada hasil'),h('p',{class:'mut'},'Pencarian mencakup semua bulan.')));return}
   if(!m.length){
     list.append(h('div',{class:'empty'},h('div',{class:'eico','aria-hidden':'true'},'Rp'),h('p',{},all.length?'Belum ada catatan bulan ini':'Belum ada catatan'),h('p',{class:'mut'},'Semua catatan tersimpan di perangkatmu.'),
       h('button',{class:'pri',onclick:()=>openSheet()},all.length?'Tambah catatan':'Tambah catatan pertama')));
     return;
   }
   const g={};m.sort(cmp).forEach(t=>(g[t.date]??=[]).push(t));
-  for(const d in g)list.append(h('h2',{class:'day'},dayLabel(d)),h('div',{class:'card'},...g[d].map(row)));
+  for(const d in g)list.append(h('h2',{class:'day'},q?parse(d).toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):dayLabel(d)),h('div',{class:'card'},...g[d].map(row)));
 }
 /* Masuk bertahap hanya saat membuka aplikasi atau pindah tab, bukan tiap simpan atau pindah bulan */
 function enter(){
@@ -156,6 +161,16 @@ function renderSum(){
       return h('div',{class:'br'},h('div',{},h('span',{},`${c} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
   }
+  const bg=bdGet(),by={};m.forEach(t=>{if(t.type==='out')by[t.cat]=(by[t.cat]||0)+t.amount});
+  box.append(h('h2',{class:'day'},'Anggaran'),h('div',{class:'card'},...CATS.out.map(c=>{
+    const b=bg[c],v=by[c]||0,left=b?b-v:0,fill=h('div',{class:'fill'});
+    if(b)fill.style.width=Math.min(100,Math.round(v/b*100))+'%';
+    return h('button',{type:'button',class:'set bd',onclick:()=>openBud(c)},
+      h('span',{class:'bw'},h('b',{},c),
+        h('small',{class:left<0?'over':''},b?(left<0?`Lewat ${rp(-left)} dari ${rp(b)}`:`Sisa ${rp(left)} dari ${rp(b)}`):'Belum diatur'),
+        b?h('div',{class:'track'},fill):null),
+      chevR());
+  })),h('p',{class:'mut foot'},'Ketuk kategori untuk mengatur anggaran bulanan.'));
   bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
 function jump(month){const n=month>ym?1:-1,was=blank();dx=n;const x=slidePrep();fx=false;ym=month;render();
@@ -232,6 +247,26 @@ async function restore(){
   all.push(t);enterId=t.id;reveal(t.date.slice(0,7));enterId=null;hideToast();
 }
 
+/* Anggaran per kategori: disimpan di perangkat (localStorage) dan ikut cadangan */
+const bud=$('#bud');let bc='',bBusy=false;
+const bdGet=()=>{let o={};try{o=JSON.parse(ls('catat.bud')||'{}')}catch{}const r={};for(const c of CATS.out){const v=o?.[c];if(Number.isInteger(v)&&v>0&&v<=MAX)r[c]=v}return r};
+const bdSave=o=>ls('catat.bud',JSON.stringify(o));
+function openBud(c){
+  if(bud.open||sheet.open||pkd.open)return;
+  bc=c;const v=bdGet()[c];$('#bt').textContent=c;$('#bam').value=v?fmt.format(v):'';$('#bd-del').hidden=!v;$('#bd-ok').disabled=!v;
+  bud.showModal();place();$('#bam').focus({preventScroll:true});settle();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>bud.classList.add('show')));
+}
+async function closeBud(then){
+  if(!bud.open||bBusy)return;bBusy=true;
+  bud.classList.remove('show');await sleep(CLOSE);if(bud.open)bud.close();bBusy=false;then?.();
+}
+function saveBud(del){
+  const v=del?0:+$('#bam').value.replace(/\D/g,'').slice(0,10),o=bdGet();
+  if(v>0)o[bc]=v;else delete o[bc];
+  bdSave(o);closeBud(()=>{render();toast(v>0?`Anggaran ${bc} disimpan.`:`Anggaran ${bc} dihapus.`)});
+}
+
 /* Picker bulan/tahun. Dua tampilan: bulan (per tahun) dan tahun (halaman 12 tahun, mundur sampai MINY).
    Ketuk tahun di judul untuk membuka daftar tahun; panah di kanan = tahun sebelumnya/berikutnya (atau halaman).
    Titik = bulan/tahun yang punya catatan (dari data di memori). */
@@ -300,7 +335,7 @@ function hold(el){/* di bulan terakhir: daftar bergeser sedikit lalu melenting k
 function swipe(el){
   let id=null,x0=0,y0=0;
   el.addEventListener('pointerdown',e=>{
-    if(e.pointerType==='mouse'||!e.isPrimary||sheet.open||pkd.open){id=null;return}
+    if(e.pointerType==='mouse'||!e.isPrimary||sheet.open||pkd.open||bud.open||qv()){id=null;return}
     id=e.pointerId;x0=e.clientX;y0=e.clientY;
   });
   el.addEventListener('pointercancel',()=>{id=null});
@@ -318,7 +353,7 @@ function swipe(el){
 
 /* Cadangan JSON */
 function exportJSON(){
-  const data=JSON.stringify({app:'catat',v:1,exported:new Date().toISOString(),tx:all},null,1);
+  const data=JSON.stringify({app:'catat',v:1,exported:new Date().toISOString(),tx:all,bud:bdGet()},null,1);
   const a=h('a',{href:URL.createObjectURL(new Blob([data],{type:'application/json'})),download:`catat-${today()}.json`});
   document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
   ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true;toast('Cadangan disimpan sebagai file .json.');
@@ -330,6 +365,7 @@ async function importJSON(file){
     if(!j||j.app!=='catat'||j.v!==1||!Array.isArray(j.tx)||j.tx.length>1e5)throw 0;
     const list=j.tx.map(clean);if(list.includes(null))throw 0;
     await dbBulk(list);
+    if(j.bud&&typeof j.bud==='object'){const b=bdGet();for(const c of CATS.out){const v=j.bud[c];if(Number.isInteger(v)&&v>0&&v<=MAX)b[c]=v}bdSave(b)}
     const m=new Map(all.map(t=>[t.id,t]));list.forEach(t=>m.set(t.id,t));all=[...m.values()];
     render();toast(`${list.length} catatan dipulihkan.`);
   }catch{toast('File ini bukan cadangan Catat. Pilih file .json dari "Simpan cadangan".')}
@@ -339,6 +375,13 @@ async function importJSON(file){
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
+$('#q').addEventListener('input',()=>render());
+$('#bam').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);e.target.value=d?fmt.format(+d):'';$('#bd-ok').disabled=!d});
+$('#bam').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(!$('#bd-ok').disabled)saveBud()}});
+$('#bd-ok').onclick=()=>saveBud();$('#bd-del').onclick=()=>saveBud(true);$('#bd-cl').onclick=()=>closeBud();
+bud.addEventListener('click',e=>{if(e.target===bud)closeBud()});
+bud.addEventListener('cancel',e=>{e.preventDefault();closeBud()});
+bud.addEventListener('close',()=>bud.classList.remove('show'));
 $('#mon').onclick=openPick;
 $('#pk-cl').onclick=cancelPick;$('#py').onclick=toggleYears;
 $('#pk-now').onclick=()=>choose(nowYm());
@@ -357,7 +400,7 @@ const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='Mac
 const sab=h('div',{class:'sab','aria-hidden':'true'});document.body.append(sab);
 let pr=0;
 function place(){
-  if(!sheet.open)return;
+  const sheet=bud.open?bud:$('#sheet');if(!sheet.open)return;
   const v=window.visualViewport||{height:innerHeight,offsetTop:0},kb=Math.max(0,innerHeight-v.height-v.offsetTop),open=kb>80,acc=open&&IOS?56:0;
   const gap=open?10:(parseFloat(getComputedStyle(sab).paddingBottom)||0)+12;
   sheet.style.bottom='auto';
@@ -368,7 +411,8 @@ const settle=()=>{cancelAnimationFrame(pr);const t0=performance.now();(function 
 if(window.visualViewport){visualViewport.addEventListener('resize',place);visualViewport.addEventListener('scroll',place)}
 addEventListener('resize',place);
 sheet.addEventListener('focusin',settle);sheet.addEventListener('focusout',settle);
-new ResizeObserver(place).observe(sheet);
+new ResizeObserver(place).observe(sheet);new ResizeObserver(place).observe(bud);
+bud.addEventListener('focusin',settle);bud.addEventListener('focusout',settle);
 $('#date').addEventListener('change',()=>{paint();if(!f.amt)setTimeout(()=>$('#amt').focus({preventScroll:true}),80)});
 $('#date').addEventListener('click',e=>{if(matchMedia('(pointer:fine)').matches)try{e.target.showPicker()}catch{}});
 $('#amtbox').addEventListener('click',()=>$('#amt').focus({preventScroll:true}));

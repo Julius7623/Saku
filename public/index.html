@@ -40,6 +40,7 @@
       <button id="nb" class="lnk">Cadangkan</button>
       <button id="nx" class="lnk">Nanti</button>
     </div>
+    <label id="sq" class="group fr" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Cari catatan atau nominal" aria-label="Cari catatan"></label>
     <div id="list"></div>
   </section>
 
@@ -105,6 +106,18 @@
     </div>
     <div id="mg" class="mg" role="group" aria-label="Bulan"></div>
     <button id="pk-now" type="button" class="alt">Bulan ini</button>
+  </div>
+</dialog>
+
+<dialog id="bud" aria-labelledby="bt" tabindex="-1">
+  <div class="sh">
+    <div class="pkh">
+      <button id="bd-cl" type="button" class="txt">Batal</button>
+      <h2 id="bt" class="bt"></h2>
+      <button id="bd-del" type="button" class="txt" hidden>Hapus</button>
+    </div>
+    <label class="group fr"><span class="mut">Rp</span><input id="bam" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Anggaran per bulan" aria-label="Anggaran per bulan dalam rupiah"></label>
+    <button id="bd-ok" type="button" class="sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
   </div>
 </dialog>
 

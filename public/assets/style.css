@@ -224,3 +224,16 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 .seg3 button .i{width:18px;height:18px}
 .seg3 [aria-checked=false]{color:var(--t2)}
 @media(max-width:360px){.seg3 button .i{display:none}}
+
+/* Pencarian & Anggaran */
+#sq{margin-top:14px;border-radius:var(--r-md)}
+#sq input{-webkit-appearance:none;appearance:none}
+.bt{grid-column:2;font-size:20px;font-weight:700;letter-spacing:-.02em;text-align:center}
+#bd-del{grid-column:3;justify-self:end}
+.fr>.mut{font-weight:600}
+.set.bd{align-items:center;min-height:68px}
+.bw{flex:1;min-width:0;display:grid;gap:2px}
+.bw small{color:var(--t2);font-size:13px}
+.bw .track{height:6px;margin-top:4px}
+.bw .over{color:var(--tx);font-weight:600}
+.bd .chev{margin-left:0}
