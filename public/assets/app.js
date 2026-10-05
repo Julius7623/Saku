@@ -113,7 +113,11 @@ function hideToast(){$('#toast').classList.remove('show');undo=null}
 
 /* Bottom sheet input */
 const sheet=$('#sheet');
-function chips(){$('#chips').replaceChildren(...CATS[f.type].map(c=>h('button',{type:'button',class:'chip',onclick:()=>{f.cat=c;paint()}},c)))}
+/* Keyboard tetap terbuka saat mengetuk Keluar/Masuk, kategori, atau memilih tanggal: fokus dikembalikan ke kolom terakhir */
+let lf=null;const keep=()=>(lf||$('#amt')).focus({preventScroll:true});
+sheet.addEventListener('focusin',e=>{if(e.target.matches('#amt,#note'))lf=e.target});
+sheet.addEventListener('mousedown',e=>{if(e.target.closest('.seg button,.chip'))e.preventDefault()});
+function chips(){$('#chips').replaceChildren(...CATS[f.type].map(c=>h('button',{type:'button',class:'chip',onclick:()=>{f.cat=c;paint();keep()}},c)))}
 function paint(){
   const a=$('#amt');a.value=f.amt?rp(+f.amt):'';
   $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===f.type)));
@@ -126,10 +130,11 @@ function openSheet(t){
   f=t?{type:t.type,amt:String(t.amount),cat:t.cat}:{type:'out',amt:'',cat:CATS.out[0]};
   $('#note').value=t?t.note:'';$('#date').value=t?t.date:today();
   $('#st').textContent=t?'Ubah catatan':'Catatan baru';$('#sh-del').hidden=!t;
-  chips();paint();hideToast();
+  lf=null;chips();paint();hideToast();
+  $('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
   sheet.showModal();$('#amt').focus({preventScroll:true});
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
-  requestAnimationFrame(()=>requestAnimationFrame(()=>sheet.classList.add('show')));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');$('#amt').focus({preventScroll:true})}));
 }
 function closeSheet(){sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:230)}
 async function save(){
@@ -180,9 +185,11 @@ async function importJSON(file){
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $$('.tab').forEach(b=>b.onclick=()=>{if(noClick||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
-$$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint()});
+$$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint();keep()});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
 $('#amt').addEventListener('input',e=>{f.amt=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);paint()});
+$('#date').addEventListener('change',()=>setTimeout(keep,60));
+$('#note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();f.amt?save():$('#amt').focus()}});
 $('#amt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}});
 /* Sheet naik di atas keyboard (iOS tidak mengecilkan layout viewport) */
 if(visualViewport){const fit=()=>sheet.style.setProperty('--kb',Math.max(0,innerHeight-visualViewport.height-visualViewport.offsetTop)+'px');visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}
@@ -197,11 +204,11 @@ $('#nx').onclick=()=>{ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true}
 /* Tab bar: tekan = lensa mengembang; geser = lensa mengikuti jari dengan pegas, lalu mengunci ke tab terdekat */
 const tabs=$('#tabs'),tabEls=$$('.tab');
 let tx0=0,tx=0,tt0=0,tvx=0,tb=0,tdown=false,tdrag=false,noClick=false,ck=0,tk=0,tv=0,traf=0;
-const rub=k=>k<0?k*.25:k>1?1+(k-1)*.25:k,tw2=()=>(tabs.getBoundingClientRect().width-10)/2;
-function tPaint(){tabs.style.setProperty('--k',ck.toFixed(4));if(tdown)tabEls.forEach((b,i)=>b.style.setProperty('--s',(1+.16*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))}
+const rub=k=>k<0?k*.08:k>1?1+(k-1)*.08:k,tw2=()=>(tabs.getBoundingClientRect().width-10)/2;
+function tPaint(){tabs.style.setProperty('--k',Math.max(-.03,Math.min(1.03,ck)).toFixed(4));if(tdown)tabEls.forEach((b,i)=>b.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))}
 function tDone(){tabs.classList.remove('drive');tabs.style.removeProperty('--k')}
 function tStep(){
-  if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.2)*.74;ck+=tv}
+  if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.1)*.68;ck+=tv}
   tPaint();
   if(Math.abs(tk-ck)>.002||Math.abs(tv)>.002)traf=requestAnimationFrame(tStep);
   else{traf=0;ck=tk;tPaint();if(!tdown)tDone()}

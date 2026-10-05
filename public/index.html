@@ -59,6 +59,7 @@
   <button id="add" class="fab glass" aria-label="Catat baru"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 </div>
 
+<input id="kb" class="kb" inputmode="numeric" tabindex="-1" aria-hidden="true">
 <dialog id="sheet" aria-labelledby="st">
   <div class="grab"></div>
   <div class="sh">
@@ -71,7 +72,7 @@
     <input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Rp 0" aria-label="Nominal">
     <div id="chips" class="chips"></div>
     <div class="fields">
-      <input id="note" maxlength="60" placeholder="Catatan (opsional)" aria-label="Catatan">
+      <input id="note" maxlength="60" enterkeyhint="done" placeholder="Catatan (opsional)" aria-label="Catatan">
       <input id="date" type="date" aria-label="Tanggal">
     </div>
     <p id="err" class="err" role="alert"></p>

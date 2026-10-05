@@ -189,8 +189,8 @@ dialog.show .sh>*{animation:rise .5s var(--ease) both;animation-delay:calc(var(-
 .tabs{touch-action:pan-y;--k:0;transition:transform .5s var(--spring)}
 .tabs[data-t=sum]{--k:1}
 .tabs[data-t]::before{transform:none;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:translate .55s var(--spring),scale .5s var(--spring),background-color .3s,box-shadow .3s}
-.tabs.lens{transform:scale(1.03,1.05)}
-.tabs.lens[data-t]::before{--sx:1.14;--sy:1.32;background:var(--lens-c);box-shadow:inset 0 0 0 1px var(--g-hi),inset 3px 0 5px -2px rgba(255,70,70,.45),inset -3px 0 5px -2px rgba(70,120,255,.45),inset 0 0 14px var(--g-glow),0 14px 26px -10px var(--g-sh)}
+.tabs.lens{transform:scale(1.02,1.04)}
+.tabs.lens[data-t]::before{--sx:1.05;--sy:1.24;background:var(--lens-c);box-shadow:inset 0 0 0 1px var(--g-hi),inset 3px 0 5px -2px rgba(255,70,70,.45),inset -3px 0 5px -2px rgba(70,120,255,.45),inset 0 0 14px var(--g-glow),0 14px 26px -10px var(--g-sh)}
 .tabs.drive[data-t]::before{transition:scale .5s var(--spring),background-color .3s,box-shadow .3s}
 .tabs .tab,.tabs .tab:active{transform:scale(var(--s,1))}
 
@@ -199,3 +199,27 @@ dialog.show .sh>*{animation:rise .5s var(--ease) both;animation-delay:calc(var(-
 html{touch-action:manipulation;-webkit-text-size-adjust:100%}
 #amt{display:block;width:100%;min-width:0;height:auto;padding:4px 0;border-radius:0;background:none;outline:none;caret-color:var(--tx);-webkit-appearance:none;appearance:none}
 dialog{margin-bottom:var(--kb,0px);max-height:min(96dvh,calc(100dvh - var(--kb,0px) - 12px));transition:transform .45s var(--ease),margin-bottom .25s var(--ease)}
+
+/* ===== v6: skala ala iOS =====
+   Radius: kapsul (kontrol), 20 (kartu), 28 (hero & sheet). Spasi kelipatan 4/8. Tinggi sentuh >=44.
+   Teks: body 17, subhead 15, footnote 13, tab 10; judul besar 34. Dock sejajar jarak tab bar iOS ke home indicator. */
+:root{--dock-b:max(calc(env(safe-area-inset-bottom,0px) - 12px),10px);--r-lg:28px;--r-md:20px}
+body{font-size:17px;line-height:1.35;padding-bottom:calc(96px + var(--dock-b))}
+h1{font-size:34px;line-height:1.2}
+.dock{padding-bottom:var(--dock-b)}
+#toast{bottom:calc(var(--dock-b) + 76px)}
+button{border-radius:999px}
+.card,.nudge,.row>div{border-radius:var(--r-md)}
+.hero{border-radius:var(--r-lg)}
+dialog{border-radius:var(--r-lg) var(--r-lg) 0 0}
+.pri,#toast,.chip,.seg,.seg::before,.tabs,.tabs::before,.tab,.sv{border-radius:999px}
+.tab{font-size:10px}
+.chip,.seg button{font-size:15px}
+.day{margin:24px 8px 8px}
+input{height:48px;padding:0 18px;border-radius:999px}
+input:focus-visible{outline:none;background:var(--fill2)}
+#amt{height:auto;padding:4px 0;border-radius:0;background:none}
+#amt:focus-visible{background:none}
+#date{width:140px}
+.sv{min-height:50px}
+.kb{position:fixed;left:0;bottom:0;width:1px;height:1px;min-height:0;padding:0;border:0;opacity:0;pointer-events:none;font-size:16px;background:none}
