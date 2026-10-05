@@ -1,0 +1,93 @@
+/* Catat — token & gaya. Monokrom; terang/gelap mengikuti sistem. */
+:root{--bg:#FAFAFA;--sf:#FFFFFF;--bd:#E5E5E5;--tx:#111111;--t2:#6B6B6B;--ac:#111111;--on:#FAFAFA;--sh:0 12px 28px -16px rgba(0,0,0,.5);--ease:cubic-bezier(.2,.8,.2,1);color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#0E0E0E;--sf:#161616;--bd:#262626;--tx:#F2F2F2;--t2:#9A9A9A;--ac:#F2F2F2;--on:#0E0E0E;--sh:0 12px 28px -16px #000;color-scheme:dark}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;color:var(--tx);background:var(--bg);max-width:480px;min-height:100dvh;margin:auto;padding:env(safe-area-inset-top) 16px calc(124px + env(safe-area-inset-bottom))}
+button,input{font:inherit;color:inherit}
+button{min-height:48px;min-width:48px;border:0;border-radius:12px;background:none;cursor:pointer;transition:transform .15s var(--ease),opacity .15s}
+button:active:not(:disabled){transform:scale(.97)}
+button:disabled{opacity:.35;cursor:default}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.plus{font-weight:700}.minus{font-weight:500}.mut{color:var(--t2);font-size:14px}
+
+/* Header bulan */
+.top{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+h1{font-size:17px;font-weight:600}
+
+/* Kartu saldo: dibalik (hitam di terang, putih di gelap) agar ada titik fokus */
+.hero{background:var(--ac);color:var(--on);border-radius:24px;padding:22px 20px 20px;box-shadow:var(--sh)}
+.hero small{display:block;font-size:13px;opacity:.7}
+.big{font-size:38px;font-weight:700;letter-spacing:-.02em;margin:2px 0 18px;overflow-wrap:anywhere}
+.row{display:flex;gap:10px}
+.row>div{flex:1;min-width:0;padding:10px 12px;border-radius:14px;background:rgba(128,128,128,.2)}
+.row span{font-size:15px;overflow-wrap:anywhere}
+
+.nudge{display:flex;align-items:center;gap:2px;margin-top:14px;padding:4px 4px 4px 16px;border:1px solid var(--bd);border-radius:14px;background:var(--sf);font-size:14px}
+.nudge span{flex:1}
+.lnk{padding:0 10px;font-weight:600}
+
+/* Daftar */
+.day{font-size:13px;font-weight:600;color:var(--t2);margin:24px 4px 8px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.p16{padding:14px 16px 16px}
+.tx{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:60px;padding:10px 16px;border-radius:0;text-align:left;border-bottom:1px solid var(--bd)}
+.tx:last-child{border-bottom:0}
+.tx>span:first-child{min-width:0;display:grid}
+.tx b{font-weight:600}
+.tx small{color:var(--t2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{text-align:center;padding:56px 16px}
+.empty p{font-size:17px;font-weight:600;margin-bottom:16px}
+.empty .pri{flex:none;padding:0 24px}
+
+/* Ringkasan */
+.br{padding:10px 0;font-size:14px}
+.br>div:first-child{display:flex;justify-content:space-between;gap:8px}
+.track{height:8px;margin-top:8px;border-radius:99px;background:var(--bd);overflow:hidden}
+.fill{height:100%;border-radius:99px;background:var(--ac)}
+.two{display:flex;gap:8px;margin-top:14px}.two .ghost{flex:1}
+
+/* Navigasi bawah: tombol + dalam jangkauan jempol */
+.bar{position:fixed;bottom:0;left:0;right:0;width:min(100%,480px);margin:auto;display:grid;grid-template-columns:1fr 72px 1fr;align-items:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:var(--sf);border-top:1px solid var(--bd);border-radius:24px 24px 0 0}
+.tab{display:grid;justify-items:center;gap:2px;padding:6px 0;font-size:12px;color:var(--t2)}
+.tab[aria-current=true]{color:var(--tx);font-weight:700}
+.fab{width:64px;height:64px;margin:-30px auto 0;border-radius:50%;background:var(--ac);color:var(--on);box-shadow:var(--sh)}
+
+/* Bottom sheet */
+dialog{width:100%;max-width:480px;max-height:96dvh;margin:auto auto 0;padding:0;border:0;border-radius:24px 24px 0 0;background:var(--sf);color:var(--tx);overflow:auto;transform:translateY(100%);transition:transform .22s var(--ease)}
+dialog.show{transform:none}
+dialog::backdrop{background:rgba(0,0,0,.5);opacity:0;transition:opacity .22s}
+dialog.show::backdrop{opacity:1}
+.sh{display:grid;gap:12px;padding:6px 16px calc(16px + env(safe-area-inset-bottom))}
+.shh{display:flex;align-items:center;justify-content:space-between}
+.shh h2{font-size:17px}.shh button{font-size:30px;line-height:1}
+.seg{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid var(--bd);border-radius:14px;background:var(--bg)}
+.seg button{font-weight:600;color:var(--t2)}
+.seg [aria-pressed=true]{background:var(--ac);color:var(--on)}
+#amt{display:block;text-align:center;font-size:44px;font-weight:700;letter-spacing:-.02em;padding:2px 0;overflow-wrap:anywhere}
+#amt.mut{color:var(--t2);font-size:44px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:0 16px;border:1px solid var(--bd);border-radius:99px;background:var(--bg)}
+.chip[aria-pressed=true]{background:var(--ac);color:var(--on);border-color:var(--ac);font-weight:600}
+.fields{display:flex;gap:8px}
+input{height:48px;min-width:0;padding:0 12px;border:1px solid var(--bd);border-radius:12px;background:var(--bg)}
+#note{flex:1}#date{width:150px}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.key{font-size:22px;font-weight:500;border:1px solid var(--bd);background:var(--bg)}
+.err{font-size:14px}.err:empty{display:none}
+.acts{display:flex;gap:8px}
+.pri{flex:1;min-height:52px;border-radius:14px;background:var(--ac);color:var(--on);font-weight:700}
+.ghost{padding:0 18px;border:1px solid var(--bd);background:var(--bg);font-weight:600}
+
+/* Snackbar */
+#toast{position:fixed;left:0;right:0;bottom:calc(104px + env(safe-area-inset-bottom));width:calc(100% - 32px);max-width:448px;min-height:52px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 4px 4px 16px;border-radius:14px;background:var(--ac);color:var(--on);box-shadow:var(--sh);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s}
+#toast.show{opacity:1;visibility:visible;transform:none}
+#toast button{padding:0 14px;font-weight:700;text-decoration:underline}
+
+/* Animasi bermakna: tersimpan (masuk) & terhapus (menyusut) */
+@keyframes in{from{opacity:0;transform:translateY(-10px)}}
+.enter{animation:in .22s var(--ease)}
+.leave{opacity:0;transform:scale(.92);transition:opacity .18s,transform .18s}
+@media(prefers-reduced-motion:reduce){*,::before,::after,::backdrop{animation:none!important;transition:none!important}}

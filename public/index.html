@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Catat — pencatat keuangan pribadi</title>
+<meta name="description" content="Catat pemasukan dan pengeluaran harian dengan cepat. Data tersimpan di perangkatmu.">
+<meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0E0E" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/app.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <button id="prev" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <h1 id="mon">&nbsp;</h1>
+  <button id="next" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+</header>
+
+<main>
+  <section id="home">
+    <div class="hero">
+      <small>Sisa saldo</small>
+      <p id="bal" class="big">Rp&nbsp;0</p>
+      <div class="row">
+        <div><small>Masuk</small><span id="inc" class="plus"></span></div>
+        <div><small>Keluar</small><span id="out" class="minus"></span></div>
+      </div>
+    </div>
+    <div id="nudge" class="nudge" hidden>
+      <span>Akhir bulan. Simpan cadangan datamu?</span>
+      <button id="nb" class="lnk">Cadangkan</button>
+      <button id="nx" class="lnk">Nanti</button>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <section id="sum" hidden>
+    <div id="cats"></div>
+    <h2 class="day">Cadangan data</h2>
+    <div class="card p16">
+      <p class="mut">Datamu hanya ada di perangkat ini. Simpan cadangan secara berkala agar aman.</p>
+      <div class="two"><button id="ex" class="ghost">Ekspor</button><button id="im" class="ghost">Impor</button></div>
+      <input id="file" type="file" accept="application/json,.json" hidden>
+    </div>
+  </section>
+</main>
+
+<nav class="bar" aria-label="Menu utama">
+  <button class="tab" data-t="home"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Beranda</button>
+  <button id="add" class="fab" aria-label="Catat baru"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="tab" data-t="sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-8"/></svg>Ringkasan</button>
+</nav>
+
+<dialog id="sheet" aria-labelledby="st"><div class="sh">
+  <div class="shh"><h2 id="st">Catatan baru</h2><button id="cl" aria-label="Tutup">×</button></div>
+  <div class="seg" role="group" aria-label="Jenis catatan">
+    <button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button>
+  </div>
+  <output id="amt" tabindex="0" autofocus aria-label="Nominal">Rp&nbsp;0</output>
+  <div id="chips" class="chips"></div>
+  <div class="fields">
+    <input id="note" maxlength="60" placeholder="Catatan (opsional)" aria-label="Catatan">
+    <input id="date" type="date" aria-label="Tanggal">
+  </div>
+  <div id="keys" class="keys"></div>
+  <p id="err" class="err" role="alert"></p>
+  <div class="acts"><button id="sh-del" type="button" class="ghost" hidden>Hapus</button><button id="ok" type="button" class="pri">Simpan</button></div>
+</div></dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
