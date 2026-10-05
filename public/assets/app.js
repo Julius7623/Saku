@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const CATS={out:['Makan','Transport','Belanja','Tagihan','Hiburan','Kesehatan','Lainnya'],in:['Gaji','Bonus','Hadiah','Lainnya']};
 const MAX=9999999999,NOTE=60,fmt=new Intl.NumberFormat('id-ID');
 /* Durasi gerak (ms). D = --d3 di CSS; CLOSE = waktu sheet menutup; NUM = hitung angka */
-const D=500,CLOSE=260,NUM=650;
+const D=500,D2=250,CLOSE=260,NUM=650;/* D2 = --d2 */
 const rp=n=>(n<0?'−':'')+'Rp\u00A0'+fmt.format(Math.abs(n));
 const RM=matchMedia('(prefers-reduced-motion:reduce)'),rm=()=>RM.matches;
 const sleep=ms=>new Promise(r=>setTimeout(r,rm()?0:ms));
@@ -63,15 +63,19 @@ function count(el,to,f,snap){
 }
 
 /* Judul bulan: teks lama bergeser keluar, teks baru bergeser masuk dari sisi sebaliknya */
+const NS='http://www.w3.org/2000/svg';
+/* panah ▾ kecil ikut bergeser bersama teks bulan */
+function chev(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M6 9l6 6 6-6');s.append(p);return s}
 function setMon(txt,anim){
-  const m=$('#mon'),cur=m.querySelector('.cur');
-  if(!cur){m.replaceChildren(h('span',{class:'cur'},txt));return}
+  const m=$('#monT'),cur=m.querySelector('.cur');
+  $('#monlive').textContent=txt;
+  if(!cur){m.replaceChildren(h('span',{class:'cur'},txt,chev()));return}
   if(cur.textContent===txt)return;
   m.querySelectorAll('.old').forEach(e=>e.remove());
-  if(!anim){cur.textContent=txt;return}
+  if(!anim){cur.firstChild.nodeValue=txt;return}
   m.style.setProperty('--d',dx);
   cur.className='old';cur.setAttribute('aria-hidden','true');
-  m.append(h('span',{class:'cur go'},txt));
+  m.append(h('span',{class:'cur go'},txt,chev()));
   setTimeout(()=>cur.remove(),300);
 }
 /* Geser bulan ala halaman: hanya daftar (Beranda) atau rincian (Ringkasan) yang bergeser. Judul bulan bergeser sendiri; kartu saldo diam dan angkanya berhitung. */
@@ -228,6 +232,64 @@ async function restore(){
   all.push(t);enterId=t.id;reveal(t.date.slice(0,7));enterId=null;hideToast();
 }
 
+/* Picker bulan/tahun: dialog kecil seperti sheet. Titik = bulan yang punya catatan (dari data di memori). */
+const pkd=$('#pick'),MS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+let py=0,pHas=new Set(),pBusy=false;
+const nowYm=()=>today().slice(0,7);
+function paintPick(){
+  const cur=nowYm(),cy=+cur.slice(0,4),cm=+cur.slice(5,7);
+  $('#py').textContent=py;$('#py-next').disabled=py>=cy;
+  $('#mg').replaceChildren(...MS.map((s,i)=>{
+    const v=`${py}-${pad(i+1)}`,has=pHas.has(v),off=py>cy||(py===cy&&i+1>cm);
+    const name=parse(v+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+    return h('button',{type:'button',class:'mo','aria-pressed':String(v===ym),'aria-label':name+(has?', ada catatan':''),...(has?{'data-d':'1'}:{}),...(off?{disabled:''}:{}),onclick:()=>choose(v)},s);
+  }));
+}
+function openPick(){
+  if(pkd.open||sheet.open)return;
+  py=+ym.slice(0,4);pHas=new Set(all.map(t=>t.date.slice(0,7)));paintPick();
+  pkd.showModal();
+  $('.mo[aria-pressed=true]')?.focus({preventScroll:true});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>pkd.classList.add('show')));
+}
+/* tutup dengan animasi, kembalikan fokus ke judul bulan, lalu jalankan `then` */
+async function closePick(then){
+  if(!pkd.open||pBusy)return;pBusy=true;
+  pkd.classList.remove('show');await sleep(CLOSE);
+  if(pkd.open)pkd.close();
+  pBusy=false;$('#mon').focus({preventScroll:true});then?.();
+}
+const choose=v=>v===ym?closePick():closePick(()=>jump(v));
+function stepYear(n){
+  py+=n;paintPick();
+  if(!rm())$('#mg').animate([{opacity:0,transform:`translate3d(${n*16}px,0,0)`},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:D2,easing:EZ});
+}
+
+/* Geser horizontal di daftar: kiri = bulan berikutnya, kanan = sebelumnya. Hanya sentuh/pena; gulir vertikal tidak terganggu. */
+const SW_MIN=48,SW_RATIO=1.5,SPR='cubic-bezier(.34,1.45,.5,1)';let noClick=0;
+function hold(el){/* di bulan terakhir: daftar bergeser sedikit lalu melenting kembali */
+  if(rm())return;
+  el.animate([{transform:'translate3d(0,0,0)',easing:EZ},{transform:'translate3d(-14px,0,0)',offset:.3,easing:SPR},{transform:'translate3d(0,0,0)'}],{duration:D});
+}
+function swipe(el){
+  let id=null,x0=0,y0=0;
+  el.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'||!e.isPrimary||sheet.open||pkd.open){id=null;return}
+    id=e.pointerId;x0=e.clientX;y0=e.clientY;
+  });
+  el.addEventListener('pointercancel',()=>{id=null});
+  el.addEventListener('pointerup',e=>{
+    if(e.pointerId!==id)return;id=null;
+    if(sheet.open||pkd.open)return;
+    const dx=e.clientX-x0,dy=e.clientY-y0;
+    if(Math.abs(dx)<SW_MIN||Math.abs(dx)<=SW_RATIO*Math.abs(dy))return;
+    noClick=performance.now()+350;/* geseran bukan ketukan baris */
+    if(dx<0&&ym>=nowYm()){hold(el);return}
+    shift(dx<0?1:-1);
+  });
+  el.addEventListener('click',e=>{if(performance.now()<noClick){e.preventDefault();e.stopPropagation()}},true);
+}
+
 /* Cadangan JSON */
 function exportJSON(){
   const data=JSON.stringify({app:'catat',v:1,exported:new Date().toISOString(),tx:all},null,1);
@@ -251,6 +313,15 @@ async function importJSON(file){
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
+$('#mon').onclick=openPick;
+$('#pk-cl').onclick=()=>closePick();
+$('#pk-now').onclick=()=>choose(nowYm());
+$('#py-prev').onclick=()=>stepYear(-1);
+$('#py-next').onclick=e=>{stepYear(1);if(e.currentTarget.disabled)$('#py-prev').focus({preventScroll:true})};
+pkd.addEventListener('click',e=>{if(e.target===pkd)closePick()});
+pkd.addEventListener('cancel',e=>{e.preventDefault();closePick()});
+pkd.addEventListener('close',()=>pkd.classList.remove('show'));
+swipe($('#list'));swipe($('#cats'));
 function setType(t){f.type=t;if(!CATS[t].includes(f.cat))f.cat=CATS[t][0];chips();paint();keep()}
 $$('.seg button').forEach(b=>b.onclick=()=>{if(segNC()||f.type===b.dataset.type)return;setType(b.dataset.type)});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
