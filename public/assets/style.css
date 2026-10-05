@@ -188,20 +188,14 @@ dialog.show .sh>*{animation:rise .5s var(--ease) both;animation-delay:calc(var(-
 /* Tab bar: pil gelap saat diam; saat disentuh jadi lensa bening yang lebih besar dari bar */
 .tabs{touch-action:pan-y;--k:0;transition:transform .5s var(--spring)}
 .tabs[data-t=sum]{--k:1}
-.tabs[data-t]::before{transform:translateX(calc(var(--k)*100%)) scale(var(--sx,1),var(--sy,1));background:var(--pill);box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:transform .55s var(--spring),background-color .3s,box-shadow .3s}
+.tabs[data-t]::before{transform:none;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:translate .55s var(--spring),scale .5s var(--spring),background-color .3s,box-shadow .3s}
 .tabs.lens{transform:scale(1.03,1.05)}
 .tabs.lens[data-t]::before{--sx:1.14;--sy:1.32;background:var(--lens-c);box-shadow:inset 0 0 0 1px var(--g-hi),inset 3px 0 5px -2px rgba(255,70,70,.45),inset -3px 0 5px -2px rgba(70,120,255,.45),inset 0 0 14px var(--g-glow),0 14px 26px -10px var(--g-sh)}
-.tabs.drag[data-t]::before{transition:transform .08s linear,background-color .3s,box-shadow .3s}
+.tabs.drive[data-t]::before{transition:scale .5s var(--spring),background-color .3s,box-shadow .3s}
 .tabs .tab,.tabs .tab:active{transform:scale(var(--s,1))}
 
-/* Slider bulan: thumb putih → lensa kaca yang mengembang */
-.sld{--p:1;--st:0;--k:1;--ky:1;--w:44px;position:relative;height:56px;touch-action:pan-y;cursor:grab;outline:none;-webkit-user-select:none;user-select:none}
-.sld.drag{--k:1.55;--ky:1.4;cursor:grabbing}
-.sl-tr{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:99px;background:var(--fill);overflow:hidden;transition:transform .4s var(--spring)}
-.sld.drag .sl-tr{transform:scaleY(1.25)}
-.sl-fl{position:absolute;left:0;top:0;bottom:0;width:calc(var(--p)*(100% - var(--w)) + var(--w)/2);border-radius:inherit;background:var(--ac)}
-.sl-th{position:absolute;top:50%;left:calc(var(--p)*(100% - var(--w)));width:var(--w);height:28px;margin-top:-14px;border-radius:99px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.28),inset 0 0 0 .5px rgba(0,0,0,.1);pointer-events:none;transform:scale(calc(var(--k) + var(--st)*.9),calc(var(--ky) - var(--st)*.3));transition:transform .45s var(--spring),background-color .25s,box-shadow .25s}
-.sld.drag .sl-th{background:var(--lens-c);-webkit-backdrop-filter:blur(2px) saturate(1.8);backdrop-filter:blur(2px) saturate(1.8);box-shadow:inset 0 0 0 1px var(--g-hi),inset 3px 0 5px -2px rgba(255,70,70,.4),inset -3px 0 5px -2px rgba(70,120,255,.4),inset 0 0 12px var(--g-glow),0 14px 24px -8px var(--g-sh)}
-.sld:focus-visible .sl-th{outline:2px solid var(--ac);outline-offset:3px}
-.sl-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
-.sl-e{display:flex;justify-content:space-between;font-size:12px;margin-top:2px}
+
+/* ===== v5: nominal = kolom teks; cegah zoom ===== */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+#amt{display:block;width:100%;min-width:0;height:auto;padding:4px 0;border-radius:0;background:none;outline:none;caret-color:var(--tx);-webkit-appearance:none;appearance:none}
+dialog{margin-bottom:var(--kb,0px);max-height:min(96dvh,calc(100dvh - var(--kb,0px) - 12px));transition:transform .45s var(--ease),margin-bottom .25s var(--ease)}
