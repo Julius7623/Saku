@@ -491,6 +491,92 @@ const litFlush=()=>{const q=lq;lq=null;if(!q)return;const r=q.g.getBoundingClien
 const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;if(!lq)requestAnimationFrame(litFlush);lq={g,x:e.clientX,y:e.clientY}};
 document.addEventListener('pointerdown',lit,{passive:true});document.addEventListener('pointermove',lit,{passive:true});
 
+/* Rim kaca dinamis: warna di sekitar tiap elemen kaca (di luar dan tepat di bawah tepinya) disampel di 8 titik keliling,
+   dihaluskan, lalu dipasang sebagai conic-gradient di --rim. Hanya berjalan sebentar setelah scroll, ketukan, atau perubahan isi. */
+const glassEls=[...$$('.glass')],rimSt=new WeakMap(),bgCache=new WeakMap();
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches)};
+const nums=v=>(v.match(/-?[\d.]+(?:e-?\d+)?/g)||[]).map(Number);
+function parseCol(v){
+  if(!v)return null;
+  const n=nums(v);if(n.length<3)return null;
+  if(v.startsWith('color(')){const a=n.length>3?n[3]:1;return[n[0]*255,n[1]*255,n[2]*255,a]}
+  return[n[0],n[1],n[2],n.length>3?n[3]:1];
+}
+function gradAt(img,r,x,y){
+  const am=img.match(/linear-gradient\(\s*(-?[\d.]+)deg/);if(!am)return null;
+  const th=am[1]*Math.PI/180,st=[];let m;const re=/(rgba?\([^)]*\))(?:\s+(-?[\d.]+)%)?/g;
+  while(m=re.exec(img))st.push({c:parseCol(m[1]),p:m[2]==null?null:m[2]/100});
+  if(st.length<2||st.some(q=>!q.c))return null;
+  st.forEach((q,i)=>{if(q.p==null)q.p=i/(st.length-1)});
+  const w=r.width,h=r.height,L=Math.abs(w*Math.sin(th))+Math.abs(h*Math.cos(th))||1;
+  const t=Math.max(0,Math.min(1,((x-r.left-w/2)*Math.sin(th)-(y-r.top-h/2)*Math.cos(th))/L+.5));
+  for(let i=1;i<st.length;i++)if(t<=st[i].p||i===st.length-1){
+    const a=st[i-1],b=st[i],k=b.p>a.p?Math.max(0,Math.min(1,(t-a.p)/(b.p-a.p))):1;
+    return a.c.map((v,j)=>v+(b.c[j]-v)*k);
+  }
+  return null;
+}
+function colorAt(el,x,y){
+  const now=performance.now();let c=bgCache.get(el);
+  if(!c||now-c.t>300){
+    const cs=getComputedStyle(el);
+    c={t:now,col:parseCol(cs.backgroundColor),img:/^linear-gradient/.test(cs.backgroundImage)?cs.backgroundImage:''};
+    bgCache.set(el,c);
+  }
+  if(c.img){const g=gradAt(c.img,el.getBoundingClientRect(),x,y);if(g)return g}
+  return c.col;
+}
+function sampleAt(x,y){
+  x=Math.max(1,Math.min(innerWidth-2,x));y=Math.max(1,Math.min(innerHeight-2,y));
+  let R=0,G=0,B=0,A=0;
+  for(const el of document.elementsFromPoint(x,y)){
+    if(el.closest('.glass,.dock'))continue;
+    const c=colorAt(el,x,y);if(!c||c[3]<.02)continue;
+    const w=(1-A)*c[3];R+=c[0]*w;G+=c[1]*w;B+=c[2]*w;A+=w;
+    if(A>.97)break;
+  }
+  return A>.01?[R/A,G/A,B/A]:null;
+}
+function rimTargets(g){
+  const r=g.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,o=7,i=5;
+  // 8 titik di keliling: [titik di tepi, arah ke luar]
+  const P=[[r.left,r.top,-1,-1],[cx,r.top,0,-1],[r.right,r.top,1,-1],[r.right,cy,1,0],[r.right,r.bottom,1,1],[cx,r.bottom,0,1],[r.left,r.bottom,-1,1],[r.left,cy,-1,0]];
+  const dark=isDark(),al=dark?.95:.85;
+  return P.map(([x,y,dx,dy])=>{
+    const a=sampleAt(x+dx*o,y+dy*o),b=sampleAt(x-dx*i,y-dy*i);
+    const m=a&&b?a.map((v,k)=>v*.7+b[k]*.3):a||b||(dark?[14,14,14]:[250,250,250]);
+    // pantulan dibuat lebih terang dari sumbernya, seperti kaca sungguhan
+    const L=(m[0]+m[1]+m[2])/3,sat=dark?1.5:1.2;
+    return{c:m.map(v=>Math.max(0,Math.min(255,(L+(v-L)*sat)*1.35+(dark?22:10)))),ang:(Math.atan2(x-cx,-(y-cy))*180/Math.PI+360)%360,a:al};
+  });
+}
+let rimRaf=0,rimUntil=0,rimN=0;
+function rimFrame(){
+  let busy=false;rimN++;
+  for(const g of glassEls){
+    const r=g.getBoundingClientRect();
+    if(r.width<2||r.height<2||r.bottom<0||r.top>innerHeight||getComputedStyle(g).visibility==='hidden')continue;
+    let st=rimSt.get(g);if(!st){st={cur:null,tg:null};rimSt.set(g,st)}
+    if(!st.tg||rimN%2===0)st.tg=rimTargets(g);
+    const k=rm()?1:.3;
+    if(!st.cur)st.cur=st.tg.map(t=>({c:[...t.c],ang:t.ang,a:t.a}));
+    else st.tg.forEach((t,j)=>{const c=st.cur[j];t.c.forEach((v,q)=>{c.c[q]+=(v-c.c[q])*k;if(Math.abs(v-c.c[q])>1)busy=true});c.ang=t.ang;c.a=t.a});
+    const s=[...st.cur].sort((a,b)=>a.ang-b.ang),a0=s[0].ang,f=c=>`rgb(${c.c.map(Math.round).join(" ")} / ${c.a})`;
+    g.style.setProperty('--rim',`conic-gradient(from ${a0.toFixed(1)}deg at 50% 50%,${s.map(c=>f(c)+' '+(c.ang-a0).toFixed(1)+'deg').join(',')},${f(s[0])} 360deg)`);
+  }
+  return busy;
+}
+function rimTick(t){rimRaf=0;if((rimFrame()||t<rimUntil)&&!document.hidden)rimRaf=requestAnimationFrame(rimTick)}
+const rimGo=(ms=700)=>{rimUntil=Math.max(rimUntil,performance.now()+ms);rimRaf||(rimRaf=requestAnimationFrame(rimTick))};
+addEventListener('scroll',()=>rimGo(250),{passive:true});
+addEventListener('resize',()=>rimGo(300));
+['pointerup','click','keyup'].forEach(t=>document.addEventListener(t,()=>rimGo(900),{passive:true,capture:true}));
+['transitionend','animationend'].forEach(t=>document.addEventListener(t,()=>rimGo(150),true));
+new MutationObserver(()=>rimGo(900)).observe($('main'),{childList:true,subtree:true});
+matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{rimGo(400)});
+document.fonts?.ready.then(()=>rimGo(300));
+rimGo(900);
+
 /* Mulai */
 (async()=>{
   navigator.storage?.persist?.();
