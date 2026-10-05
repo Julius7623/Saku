@@ -17,7 +17,7 @@
 <body>
 <noscript><p class="mut foot">Catat membutuhkan JavaScript. Aktifkan JavaScript di browser, lalu muat ulang halaman.</p></noscript>
 <header class="top">
-  <h1 id="mon" aria-live="polite">&nbsp;</h1>
+  <h1><button id="mon" type="button" aria-haspopup="dialog" aria-label="Pilih bulan dan tahun"><span id="monT"></span></button><span id="monlive" class="sr" aria-live="polite"></span></h1>
   <div class="nav2">
     <button id="prev" class="glass" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
     <button id="next" class="glass" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
@@ -79,6 +79,22 @@
     </div>
     <p id="err" class="err" role="alert"></p>
     <button id="ok" type="button" class="sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
+  </div>
+</dialog>
+
+<dialog id="pick" aria-labelledby="pt" tabindex="-1">
+  <div class="sh">
+    <div class="pkh">
+      <button id="pk-cl" type="button" class="txt">Batal</button>
+      <h2 id="pt" class="sr">Pilih bulan dan tahun</h2>
+      <div class="yr">
+        <button id="py-prev" type="button" aria-label="Tahun sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <span id="py" aria-live="polite"></span>
+        <button id="py-next" type="button" aria-label="Tahun berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+    <div id="mg" class="mg" role="group" aria-label="Bulan"></div>
+    <button id="pk-now" type="button" class="alt">Bulan ini</button>
   </div>
 </dialog>
 
