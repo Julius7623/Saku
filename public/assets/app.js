@@ -132,7 +132,7 @@ function openSheet(t){
   $('#st').textContent=t?'Ubah catatan':'Catatan baru';$('#sh-del').hidden=!t;
   lf=null;chips();paint();hideToast();
   $('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
-  sheet.showModal();$('#amt').focus({preventScroll:true});
+  sheet.showModal();place();$('#amt').focus({preventScroll:true});settle();
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
   requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');$('#amt').focus({preventScroll:true})}));
 }
@@ -188,11 +188,26 @@ $('#add').onclick=()=>openSheet();
 $$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint();keep()});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
 $('#amt').addEventListener('input',e=>{f.amt=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);paint()});
+/* Jendela melayang: dihitung dari visual viewport supaya selalu duduk di atas keyboard (dan bar bantu iOS) */
+const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const sab=h('div',{class:'sab','aria-hidden':'true'});document.body.append(sab);
+let pr=0;
+function place(){
+  if(!sheet.open)return;
+  const v=window.visualViewport||{height:innerHeight,offsetTop:0},kb=Math.max(0,innerHeight-v.height-v.offsetTop),open=kb>80,acc=open&&IOS?56:0;
+  const gap=open?10:(parseFloat(getComputedStyle(sab).paddingBottom)||0)+12;
+  sheet.style.bottom='auto';
+  sheet.style.maxHeight=Math.max(240,v.height-acc-gap-12)+'px';
+  sheet.style.top=Math.max(8,v.offsetTop+v.height-acc-gap-sheet.offsetHeight)+'px';
+}
+const settle=()=>{cancelAnimationFrame(pr);const t0=performance.now();(function f(){place();if(performance.now()-t0<900)pr=requestAnimationFrame(f)})()};
+if(window.visualViewport){visualViewport.addEventListener('resize',place);visualViewport.addEventListener('scroll',place)}
+addEventListener('resize',place);
+sheet.addEventListener('focusin',settle);sheet.addEventListener('focusout',settle);
+new ResizeObserver(place).observe(sheet);
 $('#date').addEventListener('change',()=>setTimeout(keep,60));
 $('#note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();f.amt?save():$('#amt').focus()}});
 $('#amt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}});
-/* Sheet naik di atas keyboard (iOS tidak mengecilkan layout viewport) */
-if(visualViewport){const fit=()=>sheet.style.setProperty('--kb',Math.max(0,innerHeight-visualViewport.height-visualViewport.offsetTop)+'px');visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}
 $('#ok').onclick=save;$('#sh-del').onclick=del;$('#cl').onclick=closeSheet;
 sheet.addEventListener('click',e=>{if(e.target===sheet)closeSheet()});
 sheet.addEventListener('close',()=>sheet.classList.remove('show'));
