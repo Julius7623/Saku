@@ -18,12 +18,13 @@
 --hero:linear-gradient(150deg,#FFF 0%,#D2D2D2 100%);--hero-tx:#0E0E0E;--sheen:rgba(255,255,255,.5);--sh:0 14px 32px -18px #000;
 --g-bg:rgba(70,70,74,.36);--g-sp:rgba(255,255,255,.07);--g-hi:rgba(255,255,255,.3);--g-hi2:rgba(255,255,255,.14);--g-edge:rgba(255,255,255,.1);--g-glow:rgba(255,255,255,.05);--g-rim:rgba(0,0,0,.55);--g-sh:rgba(0,0,0,.75);
 --tint:rgba(242,242,242,.88);--pill:rgba(0,0,0,.34);--lens-c:rgba(255,255,255,.07);--card-g:rgba(34,34,37,.72);color-scheme:dark}
+:root[data-theme=light]{color-scheme:light}
 
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html{background:var(--bg);touch-action:manipulation;-webkit-text-size-adjust:100%;overflow-x:clip}
 body{font:17px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;letter-spacing:-.011em;font-variant-numeric:tabular-nums;color:var(--tx);background:var(--bg);max-width:480px;min-height:100dvh;margin:auto;overflow-x:clip;padding:env(safe-area-inset-top) 16px calc(96px + var(--dock-b))}
-.big,.sumtot,.eico,.sv,.amtbox,#py{font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
+.big,.sumtot,.eico,.sv,.amtbox{font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
 button,input{font:inherit;letter-spacing:inherit;color:inherit}
 button{min-height:48px;min-width:48px;border:0;border-radius:999px;background:none;cursor:pointer;transition:transform var(--d3) var(--spring),opacity var(--d2),background-color var(--d2)}
 button:active:not(:disabled){transform:scale(.94);transition-duration:.1s}
@@ -131,11 +132,12 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 
 /* Slider kaca (tab bar & Pengeluaran/Pemasukan): pil gelap saat diam; saat disentuh jadi lensa bening yang lebih besar */
 .tabs[data-t=sum],.shh .seg[data-v=in]{--k:1}
-.tabs::before,.seg::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
-.tabs.drive::before,.seg.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
-.tabs.lens,.seg.lens{transform:scale(1.02,1.04)}
-.tabs.lens::before,.seg.lens::before{--sx:1.05;--sy:1.24;background:var(--lens-c);box-shadow:inset 0 0 0 1px var(--g-hi),inset 3px 0 5px -2px rgba(255,70,70,.45),inset -3px 0 5px -2px rgba(70,120,255,.45),inset 0 0 14px var(--g-glow),0 14px 26px -10px var(--g-sh)}
-.tabs .tab,.tabs .tab:active,.seg button,.seg button:active{transform:scale(var(--s,1))}
+.seg3[data-v="1"]{--k:1}.seg3[data-v="2"]{--k:2}
+.tabs::before,.seg::before,.seg3::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
+.tabs.drive::before,.seg.drive::before,.seg3.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
+.tabs.lens,.seg.lens,.seg3.lens{transform:scale(1.02,1.04)}
+.tabs.lens::before,.seg.lens::before,.seg3.lens::before{--sx:1.05;--sy:1.24;background:var(--lens-c);box-shadow:inset 0 0 0 1px var(--g-hi),inset 3px 0 5px -2px rgba(255,70,70,.45),inset -3px 0 5px -2px rgba(70,120,255,.45),inset 0 0 14px var(--g-glow),0 14px 26px -10px var(--g-sh)}
+.tabs .tab,.tabs .tab:active,.seg button,.seg button:active,.seg3 button,.seg3 button:active{transform:scale(var(--s,1))}
 
 /* Sheet input: jendela kaca melayang di atas keyboard (posisi dihitung di app.js) */
 .sab{position:fixed;left:0;bottom:0;height:0;visibility:hidden;pointer-events:none;padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -158,13 +160,16 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 #pick{width:min(calc(100% - 24px),360px)}
 .pkh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:-4px 0 0}
 #pk-cl{grid-column:1;justify-self:start}
-.yr{grid-column:2;display:flex;align-items:center;gap:4px}
+.ybtn{grid-column:2;display:flex;align-items:center;gap:2px;padding:0 10px;font-size:20px;font-weight:700;letter-spacing:-.02em;font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
+.ybtn .i{width:16px;height:16px;color:var(--t2);stroke-width:2.6;transition:transform var(--d3) var(--spring)}
+.ybtn[aria-expanded=true] .i{transform:rotate(180deg)}
+.yr{grid-column:3;justify-self:end;display:flex;align-items:center;gap:4px}
 .yr button{display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;background:var(--fill)}
 .yr .i{width:20px;height:20px}
-#py{min-width:3.6em;text-align:center;font-size:20px;font-weight:700;letter-spacing:-.02em}
 .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .mo{position:relative;min-height:52px;min-width:0;padding:0;font-weight:500;background:var(--fill);box-shadow:inset 0 .5px 0 var(--g-hi),0 1px 2px rgba(0,0,0,.15);transition:transform var(--d3) var(--spring),background-color var(--d2),color var(--d2)}
 .mo[aria-pressed=true]{background:var(--ac);color:var(--on);font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 14px -6px rgba(0,0,0,.55)}
+.mo.yo{min-height:52px}
 .mo[data-d]::after{content:'';position:absolute;left:50%;bottom:7px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor;opacity:.5}
 .alt{width:100%;min-height:50px;font-weight:600;background:var(--fill)}
 /* geser bulan di daftar: gulir vertikal tetap milik browser */
@@ -211,21 +216,11 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 @media(prefers-reduced-motion:reduce){*,::before,::after,::backdrop{animation:none!important;transition:none!important}}
 @media(max-width:400px){.row .ic{display:none}}
 
-/* Tema: pilihan Otomatis / Terang / Gelap (datar, thumb = warna aksen seperti bulan terpilih) */
-.p8{padding:6px}
-.themeseg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:999px;background:var(--fill);--n:0}
-.themeseg[data-n="1"]{--n:1}.themeseg[data-n="2"]{--n:2}
-.themeseg::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:999px;background:var(--ac);translate:calc(var(--n)*100%) 0;transition:translate calc(var(--d3) + .05s) var(--spring),background-color var(--d2)}
-.themeseg button{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;min-width:0;padding:0 6px;font-size:14px;font-weight:600;color:var(--t2);transition:color var(--d2),transform var(--d3) var(--spring)}
-.themeseg button[aria-pressed=true]{color:var(--on)}
-.themeseg .i{width:18px;height:18px}.i .f{fill:currentColor}
-/* pindah tema: seluruh halaman pudar halus (View Transitions); cadangan untuk browser lama */
-::view-transition-old(root),::view-transition-new(root){animation-duration:.32s}
-html.thx *,html.thx *::before,html.thx *::after{transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s,fill .3s,stroke .3s!important}
-.credit{margin:32px 0 0;text-align:center;font-size:12px;color:var(--t2);opacity:.8}
-/* tombol tahun di picker: ketuk untuk membuka daftar tahun; titik = ada catatan */
-button#py{position:relative;width:auto;min-width:4.2em;background:none;padding:0 10px 6px;display:flex;align-items:center;justify-content:center;gap:4px;border-radius:14px}
-#py .i{width:14px;height:14px;margin-top:.1em;color:var(--t2);stroke-width:2.6;transition:transform var(--d3) var(--spring)}
-#py[aria-expanded=true] .i{transform:rotate(180deg)}
-#py[data-d]::after{content:'';position:absolute;left:50%;bottom:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor;opacity:.5}
-#pick.yv .yr button:not(#py){visibility:hidden}
+/* Tampilan: slider kaca 3 segmen di dalam kartu */
+.p8{padding:8px}
+.seg3{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:999px;--k:0;touch-action:pan-y;transition:transform var(--d3) var(--spring);box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),inset -1.5px -1.5px 1px -1px var(--g-hi2),inset 0 0 20px var(--g-glow),0 0 0 .5px var(--g-rim)}
+.seg3::before{width:calc((100% - 8px)/3)!important}
+.seg3 button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;font-size:14px;font-weight:600}
+.seg3 button .i{width:18px;height:18px}
+.seg3 [aria-checked=false]{color:var(--t2)}
+@media(max-width:360px){.seg3 button .i{display:none}}

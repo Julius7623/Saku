@@ -6,7 +6,7 @@ Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data ters
 render.yaml            Blueprint Render + header keamanan
 public/                folder yang dipublikasikan
   index.html  sw.js  manifest.webmanifest  _headers
-  assets/  app.js  theme.js  style.css  icon.svg
+  assets/  app.js  style.css  icon.svg
 ```
 
 ## Deploy ke Render
@@ -30,6 +30,3 @@ public/                folder yang dipublikasikan
 - Judul bulan adalah tombol (▾) yang membuka picker bulan/tahun: dialog kaca kecil dengan animasi sama seperti sheet; bulan setelah bulan ini nonaktif, titik menandai bulan yang punya catatan (dihitung dari data di memori). Memilih bulan memanggil `jump()` setelah dialog menutup, fokus kembali ke judul.
 - Geser horizontal di daftar (Beranda) dan rincian (Ringkasan) pindah bulan lewat `jump()`: butuh |dx| ≥ 48px dan |dx| > 1,5×|dy|, hanya sentuh/pena, mati saat sheet/picker terbuka. Di bulan terakhir, geser kiri hanya memberi efek tahan ringan. Kartu saldo tidak ikut.
 - Form catatan adalah jendela kaca melayang; posisinya dihitung dari visual viewport sehingga selalu di atas keyboard (plus ruang untuk bar bantu iOS).
-- Tema: Otomatis (ikut perangkat) / Terang / Gelap, dipilih di tab Ringkasan. Pilihan disimpan di `localStorage` (`catat.theme`; kosong = otomatis). `theme.js` dimuat tanpa `defer` di `<head>` supaya tema terpasang sebelum halaman digambar (tanpa kedip) dan ikut mengubah `theme-color`. Token gelap ada di dua tempat di `style.css` (media query otomatis dan `[data-theme=dark]`); ubah keduanya bersamaan. Pindah tema memakai View Transitions (pudar halus), dengan cadangan transisi warna untuk browser lama.
-- Picker bulan/tahun: titik di bulan = ada catatan. Ketuk tahun di bagian atas untuk membuka daftar tahun (maks. 12 tahun terakhir); titik di tahun = ada catatan di tahun itu, dan tahun yang sedang dibuka juga bertitik di header.
-- Kredit "Dibuat oleh Joel G. Thompson" ada di bagian paling bawah tab Ringkasan, plus `<meta name="author">`.
