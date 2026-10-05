@@ -36,8 +36,8 @@ input::placeholder{color:var(--t2)}
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 0 12px}
 h1{display:grid;flex:1;min-width:0;overflow:hidden;margin:-2px 0 -2px -32px;padding:2px 0 2px 32px;font-size:clamp(26px,7.6vw,34px);line-height:1.2;font-weight:700;letter-spacing:-.03em}
 h1>span{grid-area:1/1;min-width:0;white-space:nowrap}
-@keyframes monin{from{opacity:0;transform:translateX(calc(var(--d,1)*28px))}}
-@keyframes monout{to{opacity:0;transform:translateX(calc(var(--d,1)*-28px))}}
+@keyframes monin{from{opacity:0;filter:blur(6px);transform:translateX(calc(var(--d,1)*28px))}}
+@keyframes monout{to{opacity:0;filter:blur(6px);transform:translateX(calc(var(--d,1)*-28px))}}
 h1>.go{animation:monin var(--d3) var(--ease) .14s both}
 h1>.old{animation:monout .2s cubic-bezier(.4,0,.6,1) both;pointer-events:none}
 .nav2{display:flex;gap:8px}
@@ -118,7 +118,7 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 .fab:active .i{transform:rotate(90deg)}
 
 /* Slider kaca (tab bar & Pengeluaran/Pemasukan): pil gelap saat diam; saat disentuh jadi lensa bening yang lebih besar */
-.tabs[data-t=sum],.seg[data-v=in]{--k:1}
+.tabs[data-t=sum],.shh .seg[data-v=in]{--k:1}
 .tabs::before,.seg::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.drive::before,.seg.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.lens,.seg.lens{transform:scale(1.02,1.04)}
@@ -149,7 +149,7 @@ box-shadow:inset 0 0 0 1px var(--g-edge),inset 1.5px 1.5px 1px -1px var(--g-hi),
 .amtbox #amt{display:block;flex:none;width:1ch;height:auto;padding:0;border-radius:0;text-align:left;font-size:1em;line-height:1.1;font-weight:inherit;letter-spacing:inherit;caret-color:var(--tx);outline:none;-webkit-appearance:none;appearance:none}
 .ruler{position:absolute;visibility:hidden;pointer-events:none;white-space:pre}
 
-.chips{display:flex;gap:10px;overflow-x:auto;margin:0 -20px;padding:4px 20px;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:20px}.chips::-webkit-scrollbar{display:none}
+.chips{display:flex;gap:10px;overflow-x:auto;margin:0 -20px;padding:4px 20px;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:20px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 20px,#000 calc(100% - 20px),transparent);mask-image:linear-gradient(90deg,transparent,#000 20px,#000 calc(100% - 20px),transparent)}.chips::-webkit-scrollbar{display:none}
 .chip{position:relative;flex:none;min-width:0;min-height:40px;padding:0 18px;border-radius:999px;background:var(--fill);font-size:15px;font-weight:500;scroll-snap-align:start;box-shadow:inset 0 .5px 0 var(--g-hi),0 1px 2px rgba(0,0,0,.15);transition:transform var(--d3) var(--spring),background-color var(--d2),color var(--d2)}
 .chip::after{content:'';position:absolute;inset:-4px}
 .chip[aria-pressed=true]{background:var(--ac);color:var(--on);font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 14px -6px rgba(0,0,0,.55)}

@@ -76,6 +76,7 @@ function setMon(txt,anim){
 }
 /* Geser bulan ala halaman: hanya daftar (Beranda) atau rincian (Ringkasan) yang bergeser. Judul bulan bergeser sendiri; kartu saldo diam dan angkanya berhitung. */
 const pane=()=>tab==='home'?$('#list'):$('#cats');
+const blank=()=>tab==='home'?!!$('#list .empty'):!$('#cats .br');
 const EZ='cubic-bezier(.32,.72,0,1)';
 function clearSlide(){$$('.ghost').forEach(g=>g.remove());pane().getAnimations().forEach(a=>a.cancel())}
 function slidePrep(){
@@ -90,8 +91,8 @@ function slidePrep(){
 }
 function slideRun(x,n){
   if(!x)return;const p=pane(),W=p.offsetWidth+32;
-  x.g.animate([{transform:'translate3d(0,0,0)',opacity:1},{transform:`translate3d(${-n*W}px,0,0)`,opacity:0}],{duration:D*.8,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).onfinish=()=>x.g.remove();
-  p.animate([{transform:`translate3d(${n*W}px,0,0)`,opacity:0},{transform:'translate3d(0,0,0)',opacity:1}],{duration:D,easing:EZ,fill:'backwards'});
+  x.g.animate([{transform:'translate3d(0,0,0)',opacity:1,filter:'blur(0)'},{transform:`translate3d(${-n*W}px,0,0)`,opacity:0,filter:'blur(8px)'}],{duration:D*.8,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).onfinish=()=>x.g.remove();
+  p.animate([{transform:`translate3d(${n*W}px,0,0)`,opacity:0,filter:'blur(8px)'},{transform:'translate3d(0,0,0)',opacity:1,filter:'blur(0)'}],{duration:D,easing:EZ,fill:'backwards'});
   /* tinggi Ringkasan ikut berubah halus supaya blok di bawahnya tidak melompat */
   if(p.id==='cats'){const h=p.offsetHeight;if(Math.abs(h-x.h)>1)p.animate([{height:x.h+'px'},{height:h+'px'}],{duration:D,easing:EZ})}
 }
@@ -153,7 +154,9 @@ function renderSum(){
   }
   bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
-function jump(month){const n=month>ym?1:-1;dx=n;const x=slidePrep();fx=false;ym=month;render();slideRun(x,n)}
+function jump(month){const n=month>ym?1:-1,was=blank();dx=n;const x=slidePrep();fx=false;ym=month;render();
+  /* kosong ke kosong: tidak perlu geser, isinya sama saja */
+  if(x&&was&&blank())x.g.remove();else slideRun(x,n)}
 const shift=n=>jump(ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7));
 /* Tampilkan bulan tempat sebuah catatan berada: dari tab lain masuk bertahap, dari bulan lain bergeser */
 function reveal(month){
