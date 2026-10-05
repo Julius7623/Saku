@@ -65,15 +65,15 @@
   <div class="sh">
     <div class="shh">
       <button id="cl" type="button" class="txt">Batal</button>
-      <div class="seg" data-v="out" role="group" aria-label="Jenis catatan"><button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button></div>
+      <div class="seg glass" data-v="out" role="group" aria-label="Jenis catatan"><button type="button" data-type="out">Keluar</button><button type="button" data-type="in">Masuk</button></div>
       <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
     <input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Rp 0" aria-label="Nominal">
     <div id="chips" class="chips"></div>
-    <div class="fields">
-      <input id="note" maxlength="60" enterkeyhint="done" placeholder="Catatan (opsional)" aria-label="Catatan">
-      <input id="date" type="date" aria-label="Tanggal">
+    <div class="group">
+      <label class="fr"><span>Catatan</span><input id="note" maxlength="60" enterkeyhint="done" placeholder="Opsional"></label>
+      <label class="fr"><span>Tanggal</span><input id="date" type="date"></label>
     </div>
     <p id="err" class="err" role="alert"></p>
     <button id="ok" type="button" class="key sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>

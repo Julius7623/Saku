@@ -43,7 +43,7 @@ const dbDel=id=>write(s=>s.delete(id));
 const dbBulk=l=>write(s=>l.forEach(t=>s.put(t)));
 
 /* State */
-let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},shown=null,tw=0,enterId=null,undo=null,tt,fx=true,dx=0,lastYm='';
+let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},shown=null,tw=0,enterId=null,undo=null,tt,fx=true,dx=0,lastYm='',mv=false;
 const inMonth=()=>all.filter(t=>t.date.startsWith(ym));
 
 /* Saldo berhitung halus ke nilai baru */
@@ -54,15 +54,37 @@ function tween(el,to){
   (function step(t){const p=Math.min(1,(t-t0)/250);el.textContent=rp(Math.round(from+(to-from)*(1-(1-p)**3)));if(p<1&&id===tw)requestAnimationFrame(step)})(t0);
 }
 
+/* Judul bulan: teks lama bergeser keluar, teks baru bergeser masuk dari sisi sebaliknya */
+function setMon(txt,anim){
+  const m=$('#mon'),cur=m.querySelector('.cur');
+  if(!cur){m.replaceChildren(h('span',{class:'cur'},txt));return}
+  if(cur.textContent===txt)return;
+  m.querySelectorAll('.old').forEach(e=>e.remove());
+  if(!anim){cur.textContent=txt;return}
+  m.style.setProperty('--d',dx);
+  cur.className='old';cur.setAttribute('aria-hidden','true');
+  m.append(h('span',{class:'cur go'},txt));
+  setTimeout(()=>cur.remove(),450);
+}
+/* Daftar bulan lama (salinan) ikut bergeser keluar saat daftar baru bergeser masuk */
+function ghost(){
+  const box=tab==='home'?$('#list'):$('#cats');
+  if(rm()||!box.firstChild)return;
+  const g=box.cloneNode(true);g.removeAttribute('id');g.className='ghost';g.setAttribute('aria-hidden','true');
+  g.style.setProperty('--d',dx);g.style.top=box.offsetTop+'px';
+  box.parentNode.append(g);setTimeout(()=>g.remove(),400);
+}
+
 /* Render */
 function render(){
-  $('#mon').textContent=parse(ym+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-  if(ym!==lastYm){if(lastYm){$('#mon').style.setProperty('--dx',dx*22+'px');replay($('#mon'),'sw')}lastYm=ym}
+  mv=ym!==lastYm&&!!lastYm&&!rm();
+  if(mv)dx=ym>lastYm?1:-1;
+  setMon(parse(ym+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'}),mv);lastYm=ym;
   $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():renderSum();
-  fx=false;
+  fx=false;mv=false;
 }
 const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:()=>openSheet(t)},
   h('span',{class:'mono','aria-hidden':'true'},t.cat[0]),
@@ -84,7 +106,7 @@ function renderHome(){
   stagger(list);
 }
 /* Masuk bertahap hanya saat pindah bulan/tab, bukan tiap simpan */
-function stagger(box){if(fx)[...box.children].forEach((e,i)=>{e.style.setProperty('--i',i);e.style.setProperty('--dx',dx*20+'px');e.classList.add('rise')})}
+function stagger(box){if(fx)[...box.children].forEach((e,i)=>{e.style.setProperty('--i',i);e.style.setProperty('--d',dx);e.style.setProperty('--dx',dx*20+'px');e.classList.add(mv?'mv':'rise')})}
 function renderSum(){
   const m=inMonth(),box=$('#cats'),bars=[];box.replaceChildren();
   for(const[type,title]of[['out','Pengeluaran'],['in','Pemasukan']]){
@@ -101,7 +123,7 @@ function renderSum(){
   stagger(box);
   bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
-const shift=n=>{dx=n;fx=true;ym=ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7);render()};
+const shift=n=>{dx=n;ghost();fx=true;ym=ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7);render()};
 
 /* Snackbar */
 function toast(msg,act,fn){
@@ -183,9 +205,10 @@ async function importJSON(file){
 
 /* Event */
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
-$$('.tab').forEach(b=>b.onclick=()=>{if(noClick||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
+$$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=()=>openSheet();
-$$('.seg button').forEach(b=>b.onclick=()=>{f.type=b.dataset.type;if(!CATS[f.type].includes(f.cat))f.cat=CATS[f.type][0];chips();paint();keep()});
+function setType(t){f.type=t;if(!CATS[t].includes(f.cat))f.cat=CATS[t][0];chips();paint();keep()}
+$$('.seg button').forEach(b=>b.onclick=()=>{if(segNC()||f.type===b.dataset.type)return;setType(b.dataset.type)});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
 $('#amt').addEventListener('input',e=>{f.amt=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);paint()});
 /* Jendela melayang: dihitung dari visual viewport supaya selalu duduk di atas keyboard (dan bar bantu iOS) */
@@ -216,41 +239,45 @@ $('#im').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const fl=e.target.files[0];e.target.value='';if(fl)importJSON(fl)};
 $('#nx').onclick=()=>{ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true};
 
-/* Tab bar: tekan = lensa mengembang; geser = lensa mengikuti jari dengan pegas, lalu mengunci ke tab terdekat */
-const tabs=$('#tabs'),tabEls=$$('.tab');
-let tx0=0,tx=0,tt0=0,tvx=0,tb=0,tdown=false,tdrag=false,noClick=false,ck=0,tk=0,tv=0,traf=0;
-const rub=k=>k<0?k*.08:k>1?1+(k-1)*.08:k,tw2=()=>(tabs.getBoundingClientRect().width-10)/2;
-function tPaint(){tabs.style.setProperty('--k',Math.max(-.03,Math.min(1.03,ck)).toFixed(4));if(tdown)tabEls.forEach((b,i)=>b.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))}
-function tDone(){tabs.classList.remove('drive');tabs.style.removeProperty('--k')}
-function tStep(){
-  if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.1)*.68;ck+=tv}
-  tPaint();
-  if(Math.abs(tk-ck)>.002||Math.abs(tv)>.002)traf=requestAnimationFrame(tStep);
-  else{traf=0;ck=tk;tPaint();if(!tdown)tDone()}
+/* Slider kaca (tab bar & Keluar/Masuk): tekan = lensa mengembang; geser = lensa mengikuti jari dengan pegas, lalu mengunci ke segmen terdekat */
+function liquid(root,els,cur,pick){
+  let x0=0,x=0,t0=0,vx=0,b=0,down=false,drag=false,nc=false,ck=0,tk=0,tv=0,raf=0;
+  const rub=k=>k<0?k*.08:k>1?1+(k-1)*.08:k,sw=()=>(root.clientWidth-8)/2;
+  const paint=()=>{root.style.setProperty('--k',Math.max(-.03,Math.min(1.03,ck)).toFixed(4));if(down)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
+  const done=()=>{root.classList.remove('drive');root.style.removeProperty('--k')};
+  function step(){
+    if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.1)*.68;ck+=tv}
+    paint();
+    if(Math.abs(tk-ck)>.002||Math.abs(tv)>.002)raf=requestAnimationFrame(step);
+    else{raf=0;ck=tk;paint();if(!down)done()}
+  }
+  const run=()=>{raf||(raf=requestAnimationFrame(step))};
+  root.addEventListener('pointerdown',e=>{
+    down=true;drag=false;x0=x=e.clientX;t0=performance.now();vx=0;
+    b=ck=tk=cur();tv=0;root.classList.add('lens','drive');paint();
+  });
+  root.addEventListener('pointermove',e=>{
+    if(!down)return;
+    if(!drag){if(Math.abs(e.clientX-x0)<6)return;drag=true;root.setPointerCapture(e.pointerId);x=e.clientX;t0=performance.now()}
+    const now=performance.now();
+    if(now>t0)vx=.6*vx+.4*(e.clientX-x)/(now-t0);
+    x=e.clientX;t0=now;
+    tk=rub(b+(e.clientX-x0)/sw());run();
+  });
+  const end=()=>{
+    if(!down)return;down=false;
+    root.classList.remove('lens');els.forEach(e=>e.style.removeProperty('--s'));
+    if(!drag){done();return}
+    drag=false;nc=true;setTimeout(()=>nc=false,60);
+    const to=tk+vx*120/sw()>.5?1:0;
+    tk=to;run();
+    if(to!==cur())pick(to);
+  };
+  ['pointerup','pointercancel'].forEach(t=>root.addEventListener(t,end));
+  return()=>nc;
 }
-const tRun=()=>{traf||(traf=requestAnimationFrame(tStep))};
-tabs.addEventListener('pointerdown',e=>{
-  tdown=true;tdrag=false;tx0=tx=e.clientX;tt0=performance.now();tvx=0;
-  tb=ck=tk=tab==='sum'?1:0;tv=0;tabs.classList.add('lens','drive');tPaint();
-});
-tabs.addEventListener('pointermove',e=>{
-  if(!tdown)return;
-  if(!tdrag){if(Math.abs(e.clientX-tx0)<6)return;tdrag=true;tabs.setPointerCapture(e.pointerId);tx=e.clientX;tt0=performance.now()}
-  const now=performance.now();
-  if(now>tt0)tvx=.6*tvx+.4*(e.clientX-tx)/(now-tt0);
-  tx=e.clientX;tt0=now;
-  tk=rub(tb+(e.clientX-tx0)/tw2());tRun();
-});
-const tEnd=()=>{
-  if(!tdown)return;tdown=false;
-  tabs.classList.remove('lens');tabEls.forEach(b=>b.style.removeProperty('--s'));
-  if(!tdrag){tDone();return}
-  tdrag=false;noClick=true;setTimeout(()=>noClick=false,60);
-  const to=tk+tvx*120/tw2()>.5?'sum':'home';
-  tk=to==='sum'?1:0;tRun();
-  if(to!==tab){dx=to==='sum'?1:-1;fx=true;tab=to;render()}
-};
-['pointerup','pointercancel'].forEach(t=>tabs.addEventListener(t,tEnd));
+const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>tab==='sum'?1:0,i=>{dx=i?1:-1;fx=true;tab=i?'sum':'home';render()});
+const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>setType(i?'in':'out'));
 /* Kilau kaca mengikuti jari/kursor */
 const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)/r.width*100+'%');g.style.setProperty('--my',(e.clientY-r.top)/r.height*100+'%')};
 document.addEventListener('pointerdown',lit);document.addEventListener('pointermove',lit);
