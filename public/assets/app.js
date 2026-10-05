@@ -64,15 +64,28 @@ function setMon(txt,anim){
   m.style.setProperty('--d',dx);
   cur.className='old';cur.setAttribute('aria-hidden','true');
   m.append(h('span',{class:'cur go'},txt));
-  setTimeout(()=>cur.remove(),450);
+  setTimeout(()=>cur.remove(),500);
 }
-/* Daftar bulan lama (salinan) ikut bergeser keluar saat daftar baru bergeser masuk */
-function ghost(){
-  const box=tab==='home'?$('#list'):$('#cats');
-  if(rm()||!box.firstChild)return;
-  const g=box.cloneNode(true);g.removeAttribute('id');g.className='ghost';g.setAttribute('aria-hidden','true');
-  g.style.setProperty('--d',dx);g.style.top=box.offsetTop+'px';
-  box.parentNode.append(g);setTimeout(()=>g.remove(),400);
+/* Geser bulan ala halaman: panel lama keluar ke satu sisi, panel baru masuk dari sisi lain, berdampingan tanpa tumpang tindih */
+const pane=()=>tab==='home'?$('#home'):$('#cats');
+const EZ='cubic-bezier(.32,.72,0,1)',DUR=460;
+function clearSlide(){document.querySelectorAll('.ghost').forEach(g=>g.remove());pane().getAnimations().forEach(a=>a.cancel())}
+function slidePrep(){
+  clearSlide();
+  const p=pane();if(rm()||!p.firstElementChild)return null;
+  const par=p.parentNode,pr=par.getBoundingClientRect(),r=p.getBoundingClientRect();
+  const g=p.cloneNode(true);g.removeAttribute('id');g.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+  g.classList.add('ghost');g.setAttribute('aria-hidden','true');g.inert=true;
+  Object.assign(g.style,{top:r.top-pr.top+'px',left:r.left-pr.left+'px',width:r.width+'px'});
+  par.append(g);
+  return{g,h:r.height};
+}
+function slideRun(x,n){
+  if(!x)return;const p=pane(),W=p.offsetWidth+32,o={duration:DUR,easing:EZ,fill:'both'};
+  x.g.animate([{transform:'translate3d(0,0,0)',opacity:1},{transform:`translate3d(${-n*W}px,0,0)`,opacity:0}],{...o,easing:'cubic-bezier(.4,0,.6,1)',duration:DUR*.8}).onfinish=()=>x.g.remove();
+  p.animate([{transform:`translate3d(${n*W}px,0,0)`,opacity:0},{transform:'translate3d(0,0,0)',opacity:1}],o);
+  /* tinggi panel ikut berubah halus supaya blok di bawahnya tidak melompat */
+  if(p.id==='cats'){const h=p.offsetHeight;if(Math.abs(h-x.h)>1)p.animate([{height:x.h+'px'},{height:h+'px'}],o)}
 }
 
 /* Render */
@@ -106,7 +119,7 @@ function renderHome(){
   stagger(list);
 }
 /* Masuk bertahap hanya saat pindah bulan/tab, bukan tiap simpan */
-function stagger(box){if(fx)[...box.children].forEach((e,i)=>{e.style.setProperty('--i',i);e.style.setProperty('--d',dx);e.style.setProperty('--dx',dx*20+'px');e.classList.add(mv?'mv':'rise')})}
+function stagger(box){if(fx)[...box.children].forEach((e,i)=>{e.style.setProperty('--i',i);e.style.setProperty('--d',dx);e.style.setProperty('--dx',dx*20+'px');e.classList.add('rise')})}
 function renderSum(){
   const m=inMonth(),box=$('#cats'),bars=[];box.replaceChildren();
   for(const[type,title]of[['out','Pengeluaran'],['in','Pemasukan']]){
@@ -123,7 +136,7 @@ function renderSum(){
   stagger(box);
   bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
-const shift=n=>{dx=n;ghost();fx=true;ym=ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7);render()};
+const shift=n=>{dx=n;const x=slidePrep();fx=false;ym=ymd(new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1)).slice(0,7);render();slideRun(x,n)};
 
 /* Snackbar */
 function toast(msg,act,fn){
@@ -136,15 +149,19 @@ function hideToast(){$('#toast').classList.remove('show');undo=null}
 /* Bottom sheet input */
 const sheet=$('#sheet');
 /* Keyboard tetap terbuka saat mengetuk Keluar/Masuk, kategori, atau memilih tanggal: fokus dikembalikan ke kolom terakhir */
-let lf=null;const keep=()=>(lf||$('#amt')).focus({preventScroll:true});
+/* Aturan keyboard: terbuka otomatis hanya saat mencatat baru (nominal adalah langkah pertama). Mengganti Keluar/Masuk atau kategori mempertahankan keadaan keyboard apa adanya. Setelah memilih tanggal, kursor pindah ke nominal hanya jika nominal masih kosong. */
+let lf=null,kbWas=false;const keep=()=>{if(kbWas)(lf||$('#amt')).focus({preventScroll:true})};
+sheet.addEventListener('pointerdown',()=>{const a=document.activeElement;kbWas=!!a&&a.matches('#amt,#note')},true);
 sheet.addEventListener('focusin',e=>{if(e.target.matches('#amt,#note'))lf=e.target});
 sheet.addEventListener('mousedown',e=>{if(e.target.closest('.seg button,.chip'))e.preventDefault()});
+const dateText=v=>{if(!validDate(v))return 'Pilih tanggal';const d=parse(v),full=d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+  return v===today()?'Hari ini · '+full:v===ymd(new Date(Date.now()-864e5))?'Kemarin · '+full:d.toLocaleDateString('id-ID',{weekday:'short'})+', '+full};
 function chips(){$('#chips').replaceChildren(...CATS[f.type].map(c=>h('button',{type:'button',class:'chip',onclick:()=>{f.cat=c;paint();keep()}},c)))}
 function paint(){
-  const a=$('#amt');a.value=f.amt?rp(+f.amt):'';
+  const a=$('#amt'),bx=$('#amtbox');a.value=f.amt?fmt.format(+f.amt):'';bx.classList.toggle('has',!!f.amt);
   $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===f.type)));
   $$('.chip').forEach(b=>b.setAttribute('aria-pressed',String(b.textContent===f.cat)));
-  $('.seg').dataset.v=f.type;a.style.fontSize=Math.min(52,Math.floor(560/Math.max(a.value.length,5)))+'px';
+  $('.seg').dataset.v=f.type;bx.style.fontSize=Math.min(52,Math.floor(560/Math.max(a.value.length+3,6)))+'px';const rl=$('#ruler');rl.textContent=a.value||'0';a.style.width=rl.offsetWidth+3+'px';$('#dl').textContent=dateText($('#date').value);
   $('#ok').disabled=!f.amt;$('#err').textContent='';
 }
 function openSheet(t){
@@ -153,10 +170,10 @@ function openSheet(t){
   $('#note').value=t?t.note:'';$('#date').value=t?t.date:today();
   $('#st').textContent=t?'Ubah catatan':'Catatan baru';$('#sh-del').hidden=!t;
   lf=null;chips();paint();hideToast();
-  $('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
-  sheet.showModal();place();$('#amt').focus({preventScroll:true});settle();
+  if(!t)$('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
+  sheet.showModal();place();t?sheet.focus({preventScroll:true}):$('#amt').focus({preventScroll:true});settle();
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');$('#amt').focus({preventScroll:true})}));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');if(!t)$('#amt').focus({preventScroll:true});paint()}));
 }
 function closeSheet(){sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:230)}
 async function save(){
@@ -228,7 +245,9 @@ if(window.visualViewport){visualViewport.addEventListener('resize',place);visual
 addEventListener('resize',place);
 sheet.addEventListener('focusin',settle);sheet.addEventListener('focusout',settle);
 new ResizeObserver(place).observe(sheet);
-$('#date').addEventListener('change',()=>setTimeout(keep,60));
+$('#date').addEventListener('change',()=>{paint();if(!f.amt)setTimeout(()=>$('#amt').focus({preventScroll:true}),80)});
+$('#date').addEventListener('click',e=>{if(matchMedia('(pointer:fine)').matches)try{e.target.showPicker()}catch{}});
+$('#amtbox').addEventListener('click',()=>$('#amt').focus({preventScroll:true}));
 $('#note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();f.amt?save():$('#amt').focus()}});
 $('#amt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}});
 $('#ok').onclick=save;$('#sh-del').onclick=del;$('#cl').onclick=closeSheet;

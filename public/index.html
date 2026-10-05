@@ -60,7 +60,7 @@
 </div>
 
 <input id="kb" class="kb" inputmode="numeric" tabindex="-1" aria-hidden="true">
-<dialog id="sheet" aria-labelledby="st">
+<dialog id="sheet" aria-labelledby="st" tabindex="-1">
   <div class="grab"></div>
   <div class="sh">
     <div class="shh">
@@ -69,11 +69,11 @@
       <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
-    <input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Rp 0" aria-label="Nominal">
+    <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal dalam rupiah"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
     <div id="chips" class="chips"></div>
     <div class="group">
-      <label class="fr"><span>Catatan</span><input id="note" maxlength="60" enterkeyhint="done" placeholder="Opsional"></label>
-      <label class="fr"><span>Tanggal</span><input id="date" type="date"></label>
+      <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="note" maxlength="60" enterkeyhint="done" placeholder="Tambah catatan (opsional)" aria-label="Catatan"></label>
+      <label class="fr dt"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span id="dl"></span><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input id="date" type="date" aria-label="Tanggal"></label>
     </div>
     <p id="err" class="err" role="alert"></p>
     <button id="ok" type="button" class="key sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
