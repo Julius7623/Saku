@@ -483,3 +483,28 @@ body[data-tab=cfg] .fab{display:grid;width:0;min-width:0;margin-left:-8px;opacit
 .tx .plus{color:#1E9E4F}
 :root[data-theme=dark] .tx .plus{color:#30D158}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]) .tx .plus{color:#30D158}}
+
+/* ===== v43: transisi slider/+ saat buka-tutup Pengaturan, tombol Edit→centang, kaca cair ===== */
+/* Slider tetap di tab asalnya dan memudar/menyusut (tidak lagi lompat & meluber saat tab bar melebar); muncul lagi setelah bar selesai menyempit */
+.tabs[data-t=cfg][data-p=sum]{--k:1}
+.tabs::before{transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),opacity .34s var(--ease) .2s,background-color .3s,box-shadow .3s}
+.tabs[data-t=cfg]::before{opacity:0;scale:.78 .62;transition:translate .2s var(--ease),scale .32s var(--ease),opacity .16s var(--ease),background-color .3s,box-shadow .3s}
+/* Tombol +: keluar dari tepi tab bar seperti tetesan (melar lalu mengendap); saat Pengaturan dibuka, menyusut masuk ke bar */
+.fab{transform-origin:0 50%;transition:width .66s cubic-bezier(.3,1.65,.45,1),min-width .66s cubic-bezier(.3,1.65,.45,1),margin .5s var(--ease),opacity .22s,transform .66s cubic-bezier(.3,1.5,.45,1),visibility 0s}
+body[data-tab=cfg] .fab{display:grid;width:0;min-width:0;margin-left:-8px;opacity:0;transform:translateX(-12px) scale(.4,.7);visibility:hidden;pointer-events:none;transition:width .42s var(--ease),min-width .42s var(--ease),margin .42s var(--ease),opacity .2s .1s,transform .42s var(--ease),visibility 0s .42s}
+.fab:active{transform:scale(1.14)}
+.fab:active .i{transform:rotate(90deg) scale(1.1)}
+.tabs.lens{transform:scale(1.03,1.07)}
+/* Tombol Edit: pil kaca → lingkaran konfirmasi bercentang */
+#cat-ed.edb{grid-column:1;justify-self:start;display:grid;place-items:center;width:72px;height:44px;min-width:0;min-height:44px;padding:0;font-size:17px;font-weight:600;color:var(--tx);transition:width .55s cubic-bezier(.3,1.55,.45,1),background-color .25s,color .25s,transform var(--d3) var(--spring)}
+#cat-ed .et,#cat-ed .ck{grid-area:1/1;transition:opacity .22s,filter .3s,transform .5s cubic-bezier(.3,1.6,.45,1)}
+#cat-ed .ck{width:22px;height:22px;stroke-width:3;opacity:0;filter:blur(4px);transform:scale(.4) rotate(-20deg)}
+#cat-ed.edb.glass[aria-pressed=true]{width:44px;background-color:var(--ac);background-image:none;color:var(--on)}
+#cat-ed[aria-pressed=true] .et{opacity:0;filter:blur(5px);transform:scale(.5)}
+#cat-ed[aria-pressed=true] .ck{opacity:1;filter:none;transform:none}
+#cat-ed.edb:active{transform:scale(1.12)}
+/* Kaca cair (Chromium): refraksi nyata di tepi lewat lg.js; browser lain (Safari/iOS) memakai bezel tebal buatan */
+html.lg .glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),0 0 0 .5px var(--g-rim),0 14px 30px -14px var(--g-sh)}
+html:not(.lg) .glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 0 4px rgba(255,255,255,.045),inset 0 0 0 4.5px rgba(0,0,0,.08),inset 0 5px 8px -5px var(--g-hi),inset 0 -6px 9px -6px var(--g-hi2),inset 0 0 18px var(--g-glow),0 0 0 .5px var(--g-rim),0 14px 30px -14px var(--g-sh)}
+html.lg .tabs.lens::before{-webkit-backdrop-filter:var(--lgt,saturate(1.6));backdrop-filter:var(--lgt,saturate(1.6))}
+@media(prefers-reduced-motion:reduce){.fab,body[data-tab=cfg] .fab,#cat-ed.edb,#cat-ed .et,#cat-ed .ck,.tabs::before{transition-duration:.01s!important;transition-delay:0s!important}}

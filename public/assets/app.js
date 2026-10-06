@@ -142,7 +142,7 @@ function render(){
   const mv=ym!==lastYm&&!!lastYm&&!rm();
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
-  $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
+  $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;if(tab!=='cfg')$('#tabs').dataset.p=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():tab==='sum'?renderSum():renderCfg();
@@ -425,7 +425,7 @@ function paintCats(){
 }
 function setEd(on){
   on?catd.dataset.ed='1':delete catd.dataset.ed;cArm=null;
-  const b=$('#cat-ed');b.textContent=tr(on?'Selesai':'Edit');b.setAttribute('aria-pressed',String(on));paintCats();
+  const b=$('#cat-ed');b.setAttribute('aria-label',tr(on?'Selesai':'Edit'));b.setAttribute('aria-pressed',String(on));paintCats();
 }
 $('#cat-ed').onclick=()=>setEd(!catd.dataset.ed);
 function updAdd(){for(const t of['out','in'])$('#cb-'+t).disabled=!catName($('#ca-'+t).value)}
