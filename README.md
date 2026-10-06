@@ -64,3 +64,4 @@ Dibuat oleh Joel G. Thompson.
 - Chip mata uang adalah tombol toggle (`aria-pressed`) dalam `role=group`, bukan radio.
 - Tambah Open Graph dasar dan `robots.txt`. Belum ada `og:image` dan `sitemap.xml` karena butuh URL absolut situs.
 - v32: Esc pada form catatan kini lewat handler `cancel` (animasi keluar) dan fokus kembali ke pemicu, bukan `#kb`. Kolom input (`.fr`) punya cincin fokus inset. Gaya hover hanya untuk `(hover:hover) and (pointer:fine)`.
+- v33: Nilai pemasukan/pengeluaran menjaga ukuran teks minimal 11px; kartu saldo menumpuk rinciannya pada layar selebar 360px atau kurang.

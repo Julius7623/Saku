@@ -75,8 +75,14 @@ h1>span.sr{grid-area:auto}
 .row>div{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:10px 12px;border-radius:var(--r-sm);background:rgba(128,128,128,.18)}
 .row>div>div{min-width:0}
 #inc,#out{display:block;font-size:clamp(13px,3.8vw,16px);font-weight:600;overflow-wrap:anywhere}
-#inc.sm,#out.sm{font-size:clamp(10px,2.9vw,13px);white-space:nowrap}
+#inc.sm,#out.sm{font-size:clamp(11px,3.2vw,13px);white-space:nowrap}
 .big.sm{font-size:clamp(24px,7.4vw,32px);white-space:nowrap}
+
+/* Keep the balance breakdown readable on the narrowest phones. */
+@media(max-width:360px){
+.row{flex-direction:column;gap:8px}
+.row>div{min-height:52px}
+}
 
 .nudge{display:flex;align-items:center;gap:2px;margin-top:14px;padding:4px 4px 4px 16px;border-radius:var(--r-md);background:var(--sf);border:1px solid var(--bd);font-size:15px}
 .nudge span{flex:1}
