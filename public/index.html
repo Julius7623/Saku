@@ -74,6 +74,9 @@
         <button type="button" role="radio" data-lang="en"><span class="lc" aria-hidden="true">EN</span>English</button>
     </div>
     <p class="mut foot">Pilih bahasa tampilan aplikasi.</p>
+    <h2 class="day">Mata uang</h2>
+    <div class="card p16"><div id="cur" class="chips wrap" role="radiogroup" aria-label="Mata uang"></div></div>
+    <p class="mut foot">Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.</p>
     <h2 class="day">Reset</h2>
     <div class="card">
       <button id="rs" type="button" class="set rd"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></span>Reset catatan keuangan</button>
@@ -100,7 +103,7 @@
       <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
-    <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal dalam rupiah"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
+    <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
     <div id="chips" class="chips"></div>
     <div class="group">
       <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="note" maxlength="60" enterkeyhint="done" placeholder="Keterangan (opsional)" aria-label="Keterangan"></label>
@@ -136,7 +139,7 @@
     </div>
     <div class="group">
       <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="bnm" maxlength="30" autocomplete="off" enterkeyhint="next" placeholder="Nama anggaran" aria-label="Nama anggaran"></label>
-      <label class="fr"><span class="mut">Rp</span><input id="bam" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Nominal per bulan" aria-label="Anggaran per bulan dalam rupiah"></label>
+      <label class="fr"><span class="mut">Rp</span><input id="bam" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Nominal per bulan" aria-label="Anggaran per bulan"></label>
     </div>
     <div>
       <p class="mut lbl">Dihitung dari kategori</p>

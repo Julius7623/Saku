@@ -53,3 +53,7 @@ public/                folder yang dipublikasikan
 - Pergantian bahasa dan tema memakai crossfade View Transition.
 
 Dibuat oleh Joel G. Thompson.
+
+## Mata uang
+- Ringkasan → Mata uang: IDR (bawaan), USD, EUR, SGD, MYR, JPY. Disimpan di `localStorage` kunci `catat.cur`.
+- Hanya mengubah simbol tampilan, tanpa konversi kurs; nominal tetap bilangan bulat (belum ada sen). Pemisah ribuan mengikuti mata uang, bukan bahasa.
