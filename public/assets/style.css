@@ -145,7 +145,7 @@ background:linear-gradient(to bottom right,var(--rim-spec),transparent 34%,trans
 .seg3[data-v="1"]{--k:1}.seg3[data-v="2"]{--k:2}
 .tabs::before,.seg::before,.seg3::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 0 0 .5px var(--pill-rim),inset 0 1px 0 var(--pill-hi),inset 0 3px 6px -3px var(--pill-in,transparent);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.drive::before,.seg.drive::before,.seg3.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
-.seg::before,.seg3::before{background:var(--thumb);box-shadow:0 0 0 .5px rgba(128,128,128,.14),0 2px 6px -1px rgba(0,0,0,.2),0 1px 1px rgba(0,0,0,.06)}
+.seg::before{background:var(--thumb);box-shadow:0 0 0 .5px rgba(128,128,128,.14),0 2px 6px -1px rgba(0,0,0,.2),0 1px 1px rgba(0,0,0,.06)}
 .tabs.lens::before,.seg.lens::before,.seg3.lens::before{--sx:1.06;--sy:1.26;background:var(--lens-c);-webkit-backdrop-filter:saturate(1.6);backdrop-filter:saturate(1.6);box-shadow:0 0 0 .5px var(--lens-ring),inset 0 0 0 .5px var(--g-hi2),inset 0 1.5px 1px -.5px var(--g-hi),inset 0 -1.5px 1px -.5px var(--g-hi2),inset 0 0 14px var(--g-glow),0 8px 18px -10px var(--g-sh)}
 .tabs .tab,.tabs .tab:active,.seg button,.seg button:active,.seg3 button,.seg3 button:active{transform:scale(var(--s,1))}
 
@@ -229,13 +229,12 @@ dialog.show::backdrop{opacity:1}
 @media(max-width:400px){.row .ic{display:none}}
 
 /* Tampilan: slider kaca 3 segmen di dalam kartu */
-.p8{padding:8px}
-.seg3{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:999px;background:var(--fill);--k:0;touch-action:pan-y}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);height:56px;padding:4px;border-radius:999px;--k:0;touch-action:pan-y;transition:transform var(--d3) var(--spring)}
 .seg3::before{width:calc((100% - 8px)/3)!important}
-.seg3 button{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;font-size:14px;font-weight:600}
-.seg3 button .i{width:18px;height:18px}
-.seg3 [aria-checked=false]{color:var(--t2)}
-@media(max-width:360px){.seg3 button .i{display:none}}
+.seg3 button{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-width:0;min-height:48px;padding:0;border-radius:999px;font-size:11px;font-weight:600;color:var(--t2);transition:transform var(--d3) var(--spring),color var(--d2)}
+.seg3 [aria-checked=true]{color:var(--tx)}
+.seg3 button .i{transition:transform var(--d3) var(--spring)}
+.seg3 [aria-checked=true] .i{transform:translateY(-1px) scale(1.1)}
 
 /* Pencarian & Anggaran */
 #sq{min-height:40px;margin-top:14px;border-radius:999px}
@@ -306,6 +305,12 @@ dialog{background-color:var(--sf);-webkit-backdrop-filter:none;backdrop-filter:n
 .fr .ad{flex:none;min-width:0;min-height:40px;padding:0 4px;font-weight:600}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]) .dl{color:#1C0000}}
 :root[data-theme=dark] .dl{color:#1C0000}
-/* Dialog kategori panjang bisa bergulir: judul + Selesai tetap menempel di atas */
-#catd .pkh{position:sticky;top:0;z-index:4;margin:-20px -20px -4px;padding:20px 20px 8px;background:color-mix(in srgb,var(--sf) 72%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
-@media(prefers-reduced-transparency:reduce){#catd .pkh{background:var(--sf);-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* Dialog kategori: header tetap, hanya isi yang bergulir (sama gaya dengan dialog lain) */
+#catd{overflow:hidden}
+#catd .sh{display:flex;flex-direction:column;gap:12px;max-height:inherit;padding-bottom:0}
+#catd .pkh{flex:none}
+.cbody{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;flex:1 1 auto;min-height:0;margin:0 -20px;padding:10px 20px 20px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 10px,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(transparent,#000 10px,#000 calc(100% - 14px),transparent)}
+.cbody::-webkit-scrollbar{display:none}
+.cbody .tc{margin:0 8px}
+/* dialog di-fokus lewat kode: jangan tampilkan cincin fokus */
+dialog:focus,dialog:focus-visible{outline:none}

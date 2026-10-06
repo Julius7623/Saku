@@ -603,6 +603,7 @@ document.addEventListener('touchmove',e=>{
   if(t.closest?.('.seg'))return;
   const c=t.closest?.('.chips');if(c&&c.scrollWidth>c.clientWidth+1)return;
   if(d&&d.scrollHeight>d.clientHeight+1)return;
+  const cb=t.closest?.('.cbody');if(cb&&cb.scrollHeight>cb.clientHeight+1)return;
   e.preventDefault();
 },{passive:false});
 /* Jendela melayang: dihitung dari visual viewport supaya selalu duduk di atas keyboard (dan bar bantu iOS) */
