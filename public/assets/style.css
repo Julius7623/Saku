@@ -467,3 +467,21 @@ body[data-tab=cfg] .fab{display:grid;width:0;min-width:0;margin-left:-8px;opacit
 #bd-cl{grid-column:1;justify-self:start}
 .fr:focus-within{background:none}
 .fr:focus-within>.i,.fr:focus-within>.mut{color:var(--tx)}
+
+/* v40: shadow chip tidak terpotong; kategori anggaran 1 baris; mode Edit kategori; hijau pemasukan */
+/* overflow-x:auto ikut memotong sumbu y, jadi beri ruang bawah untuk shadow lalu kembalikan jaraknya dengan margin negatif */
+.chips{padding-bottom:18px;margin-bottom:-14px}
+#bcats .chip{display:flex;align-items:center}
+#bcats .chip .i{width:0;margin-right:0;opacity:0;stroke-width:3;transition:width var(--d2) var(--ease),margin var(--d2) var(--ease),opacity var(--d2)}
+#bcats .chip[aria-pressed=true] .i{width:16px;margin-right:6px;opacity:1}
+#cat-ed{grid-column:1;justify-self:start}
+#cat-ed[aria-pressed=true]{background:var(--fill);font-weight:600}
+.er.plain{min-height:52px;padding-left:16px}
+.er.plain+.er::before{left:16px}
+:root{--pos:#2E9E5B;--pos-hero:#4CC380}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--pos:#4CC380}}
+:root[data-theme=dark]{--pos:#4CC380}
+.tx .plus{color:var(--pos)}
+.hero #inc{color:var(--pos-hero)}
+.sumcard.inc .br b{color:var(--pos)}
+.sumcard.inc .fill{background:color-mix(in srgb,var(--pos) 80%,transparent)}

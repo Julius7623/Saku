@@ -195,9 +195,9 @@ function renderSum(){
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
     const head=[h('small',{class:'mut'},title)];
     if(!rows.length)continue;
-    box.append(h('div',{class:'card p16 mt sumcard'},...head,...rows.map(([c,v])=>{
+    box.append(h('div',{class:'card p16 mt sumcard'+(type==='in'?' inc':'')},...head,...rows.map(([c,v])=>{
       const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,p]);
-      return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
+      return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},(type==='in'?'+':'')+rp(v))),h('div',{class:'track'},fill));
     })));
   }
   if(!box.children.length)box.append(h('div',{class:'card p16 mt'},h('p',{class:'mut'},tr('Belum ada data bulan ini.'))));
@@ -322,7 +322,7 @@ function bdValid(){$('#bd-ok').disabled=!($('#bnm').value.trim()&&+$('#bam').val
 const bList=()=>[...CATS.out,...(be?be.cats.filter(c=>!CATS.out.includes(c)):[])];
 function bdChips(){
   $('#bcats').replaceChildren(...bList().map(c=>{
-    const b=h('button',{type:'button',class:'chip','aria-pressed':String(bs.has(c))},cn(c));
+    const b=h('button',{type:'button',class:'chip','aria-pressed':String(bs.has(c))},ico('M5 12.5l4.5 4.5L19 7.5'),cn(c));
     b.onclick=()=>{bs.has(c)?bs.delete(c):bs.add(c);b.setAttribute('aria-pressed',String(bs.has(c)));bdValid()};
     return b;
   }));
@@ -332,7 +332,7 @@ function openBud(b,src){
   bud._src=src;be=b||null;bs=new Set(b?b.cats:[]);
   $('#bt').textContent=b?tr('Ubah anggaran'):tr('Anggaran baru');
   $('#bnm').value=b?b.name:'';$('#bam').value=b?fmt.format(b.amount):'';$('#bd-del').hidden=!b;$('#berr').textContent='';
-  bdChips();bdValid();
+  bdChips();$('#bcats').scrollLeft=0;bdValid();
   modal(bud);place();b?bud.focus({preventScroll:true}):$('#bnm').focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>bud.classList.add('show')));
 }
@@ -352,6 +352,7 @@ function saveBud(del){
 /* Baris yang bisa diatur (kategori & anggaran), gaya Pengaturan iOS: − merah di kiri, nama, ≡ untuk menyeret di kanan.
    Ketuk − → muncul tombol Hapus (− berputar tegak). */
 function erow(o){
+  if(o.plain)return h('div',{class:'er plain','data-l':o.l,'data-k':o.k},h('span',{class:'ew'},h('b',{},o.label)));
   const mn=h('button',{type:'button',class:'mn','aria-label':tr('Hapus')+' '+o.label,'aria-expanded':String(!!o.armed),onclick:o.onMinus},ico('M6 12h12'));
   if(o.only)mn.disabled=true;
   return h('div',{class:'er'+(o.armed?' arm':''),'data-l':o.l,'data-k':o.k},mn,
@@ -411,18 +412,36 @@ function delBud(b,i){
 }
 
 /* Kategori buatan pengguna (Ringkasan → Kelola kategori): tambah, hapus, urutkan. Catatan lama tetap memakai nama kategorinya. */
-const catd=$('#catd'),CK={out:$('#cl-out'),in:$('#cl-in')};let cArm=null,cBusy=false;
+const catd=$('#catd'),CK={out:$('#cl-out'),in:$('#cl-in')};let cArm=null,cBusy=false,cEdit=false,cDirty=false;
 function paintCats(){
   for(const t of['out','in']){
     const l=CATS[t];
     CK[t].replaceChildren(...l.map((c,i)=>{
       const key=t+':'+c;
-      return erow({l:t,k:c,label:cn(c),only:l.length<2,armed:cArm===key,
+      const n=cArm===key&&!catSame(c,'Lainnya')?all.filter(x=>x.type===t&&x.cat===c).length:0;
+      return erow({l:t,k:c,label:cn(c),plain:!cEdit,only:l.length<2,armed:cArm===key,
+        sub:n?(LANG==='en'?`${n} entries will move to ${cn('Lainnya')}`:`${n} catatan dipindah ke ${cn('Lainnya')}`):null,
         onMinus:()=>{cArm=cArm===key?null:key;paintCats()},
-        onDel:()=>{CATS[t].splice(i,1);cArm=null;catSave();paintCats();place()}});
+        onDel:()=>delCat(t,c)});
     }));
   }
 }
+/* hapus kategori: catatan lama (dan anggaran) yang memakainya dipindah ke "Lainnya" */
+async function delCat(t,c){
+  const L='Lainnya',mv=!catSame(c,L);
+  let moved=[],bd=null;
+  if(mv){
+    const dst=CATS[t].find(y=>catSame(y,L))??L;
+    moved=all.filter(x=>x.type===t&&x.cat===c).map(x=>({...x,cat:dst}));
+    if(moved.length){try{await dbBulk(moved)}catch{$('#cerr').textContent=tr('Gagal menyimpan. Coba lagi.');return}
+      const m=new Map(moved.map(x=>[x.id,x]));all=all.map(x=>m.get(x.id)||x)}
+    if(t==='out'){const a=bdGet();if(a.some(b=>b.cats.includes(c))){bd=a.map(b=>b.cats.includes(c)?{...b,cats:[...new Set(b.cats.map(k=>k===c?dst:k))]}:b);bdSave(bd)}}
+    if(!CATS[t].some(y=>catSame(y,L)))CATS[t].push(L);
+  }
+  if(moved.length||bd)cDirty=true;
+  CATS[t]=CATS[t].filter(y=>y!==c);cArm=null;catSave();paintCats();place();
+}
+function setEdit(on){cEdit=on;cArm=null;const b=$('#cat-ed');b.setAttribute('aria-pressed',String(on));paintCats();if(catd.open)place()}
 function updAdd(){for(const t of['out','in'])$('#cb-'+t).disabled=!catName($('#ca-'+t).value)}
 function addCat(t){
   const inp=$('#ca-'+t),c=catName(inp.value),err=$('#cerr');
@@ -435,14 +454,15 @@ function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute
 $$('.ctog button').forEach(b=>b.onclick=()=>setCt(b.dataset.ct));
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
-  catd._src=src;cArm=null;setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
+  catd._src=src;cArm=null;cEdit=false;$('#cat-ed').setAttribute('aria-pressed','false');setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
   updAdd();paintCats();
   modal(catd);place();catd.focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>catd.classList.add('show')));
 }
 async function closeCat(){
   if(!catd.open||cBusy)return;cBusy=true;
-  setOrigin(catd);catd.classList.remove('show');await sleep(CLOSE);if(catd.open)catd.close();cBusy=false;cArm=null;
+  setOrigin(catd);catd.classList.remove('show');await sleep(CLOSE);if(catd.open)catd.close();cBusy=false;cArm=null;cEdit=false;
+  if(cDirty){cDirty=false;render()}
 }
 for(const t of['out','in']){
   sortable(CK[t],(a,z)=>{const[x]=CATS[t].splice(a,1);CATS[t].splice(z,0,x);catSave();paintCats()});
@@ -451,7 +471,7 @@ for(const t of['out','in']){
   $('#cb-'+t).addEventListener('pointerdown',e=>e.preventDefault());/* keyboard tetap terbuka */
   $('#cb-'+t).onclick=()=>addCat(t);
 }
-$('#ct-open').onclick=e=>openCat(e.currentTarget);$('#cat-ok').onclick=()=>closeCat();
+$('#ct-open').onclick=e=>openCat(e.currentTarget);$('#cat-ok').onclick=()=>closeCat();$('#cat-ed').onclick=()=>setEdit(!cEdit);
 catd.addEventListener('click',e=>{if(e.target===catd)closeCat()});
 catd.addEventListener('cancel',e=>{e.preventDefault();closeCat()});
 catd.addEventListener('close',()=>catd.classList.remove('show'));
@@ -705,7 +725,7 @@ function dragScroll(el){
   el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
   el.addEventListener('click',e=>{if(performance.now()<nc){e.preventDefault();e.stopPropagation()}},true);
 }
-dragScroll($('#chips'));
+dragScroll($('#chips'));dragScroll($('#bcats'));
 /* Slider kaca (tab bar & Keluar/Masuk & Tampilan): geseran harus dimulai tepat di thumb dan langsung aktif (tanpa menahan): thumb jadi lensa dan mengikuti jari/kursor.
    Sentuhan di luar thumb hanya ketukan (memilih segmen); geseran yang dimulai di luar thumb diabaikan (tidak menggeser slider, tidak memilih segmen, tidak bocor ke elemen lain).
    Saat lensa digeser, gulir halaman dikunci. */
