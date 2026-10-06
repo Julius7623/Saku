@@ -649,6 +649,30 @@ $('#im').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const fl=e.target.files[0];e.target.value='';if(fl)importJSON(fl)};
 $('#nx').onclick=()=>{ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true};
 
+/* Baris kategori: geser dengan jari atau kursor lewat pointer events (tidak bergantung pada gulir bawaan browser, jadi sama di iOS), dengan momentum ringan */
+function dragScroll(el){
+  let id=null,x0=0,s0=0,lx=0,lt=0,v=0,mv=false,nc=0,raf=0;
+  el.addEventListener('pointerdown',e=>{
+    if(el.scrollWidth<=el.clientWidth||!e.isPrimary||(e.pointerType==='mouse'&&e.button!==0))return;
+    cancelAnimationFrame(raf);id=e.pointerId;x0=lx=e.clientX;s0=el.scrollLeft;lt=e.timeStamp;v=0;mv=false;
+  });
+  el.addEventListener('pointermove',e=>{
+    if(e.pointerId!==id)return;
+    const dx=e.clientX-x0;
+    if(!mv){if(Math.abs(dx)<6)return;mv=true;try{el.setPointerCapture(id)}catch{}}
+    const dt=e.timeStamp-lt;if(dt>0)v=.6*v+.4*(lx-e.clientX)/dt;
+    lx=e.clientX;lt=e.timeStamp;el.scrollLeft=s0-dx;
+  });
+  const end=e=>{
+    if(e.pointerId!==id)return;id=null;
+    if(!mv)return;nc=performance.now()+350;
+    if(rm())return;let p=v*16;
+    (function f(){el.scrollLeft+=p;p*=.94;if(Math.abs(p)>.3)raf=requestAnimationFrame(f)})();
+  };
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('click',e=>{if(performance.now()<nc){e.preventDefault();e.stopPropagation()}},true);
+}
+dragScroll($('#chips'));
 /* Slider kaca (tab bar & Keluar/Masuk & Tampilan): geseran harus dimulai tepat di thumb dan langsung aktif (tanpa menahan): thumb jadi lensa dan mengikuti jari/kursor.
    Sentuhan di luar thumb hanya ketukan (memilih segmen); geseran yang dimulai di luar thumb diabaikan (tidak menggeser slider, tidak memilih segmen, tidak bocor ke elemen lain).
    Saat lensa digeser, gulir halaman dikunci. */
