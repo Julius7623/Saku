@@ -163,6 +163,7 @@ dialog.show::backdrop{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:b
 .txt{min-width:0;padding:0 4px;font-weight:500;color:var(--tx)}
 #sh-del,#bd-del{font-weight:600;color:var(--red)}
 #cat-ok{grid-column:3;justify-self:end;font-weight:600}
+#cat-ed{grid-column:1;justify-self:start}
 .shh .seg{position:relative;grid-column:2;display:grid;grid-template-columns:1fr 1fr;width:min(232px,calc(100cqw - 112px));padding:4px;border-radius:999px;background:var(--fill);--k:0;touch-action:pan-y}
 .seg button{position:relative;min-height:36px;min-width:0;font-size:14px;font-weight:600}
 .seg [aria-pressed=false]{color:var(--t2)}
@@ -471,3 +472,14 @@ body[data-tab=cfg] .fab{display:grid;width:0;min-width:0;margin-left:-8px;opacit
 #bd-cl{grid-column:1;justify-self:start}
 .fr:focus-within{background:none}
 .fr:focus-within>.i,.fr:focus-within>.mut{color:var(--tx)}
+
+/* v41: kategori hanya bisa dihapus/diurutkan saat mode Edit; toast mengikuti tema; hijau pemasukan lebih jelas */
+#catd:not([data-ed]) .mn,#catd:not([data-ed]) .hd{display:none}
+#catd:not([data-ed]) .er{padding-left:16px}
+#catd:not([data-ed]) .er+.er::before{left:16px}
+#catd:not([data-ed]) .er{min-height:52px}
+#toast{background-color:var(--card-g);color:var(--tx);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:inset 0 0 0 1px var(--g-edge),0 0 0 .5px var(--g-rim),var(--sh)}
+#toast button{background:var(--fill);color:var(--tx)}
+.tx .plus{color:#1E9E4F}
+:root[data-theme=dark] .tx .plus{color:#30D158}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .tx .plus{color:#30D158}}
