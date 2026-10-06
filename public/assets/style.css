@@ -457,3 +457,8 @@ body[data-tab=cfg] .fab{display:none}
 .hero::before{display:none}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]) .card{border-color:transparent}}
 :root[data-theme=dark] .card{border-color:transparent}
+
+/* v38: judul bulan di tengah; tombol + menyusut saat Pengaturan dibuka, tab bar melebar ke kanan */
+#mon{justify-self:center;margin-left:0}
+.fab{transition:width var(--d3) var(--ease),min-width var(--d3) var(--ease),margin var(--d3) var(--ease),opacity var(--d2),transform var(--d3) var(--spring),visibility 0s}
+body[data-tab=cfg] .fab{display:grid;width:0;min-width:0;margin-left:-8px;opacity:0;transform:scale(.5);visibility:hidden;pointer-events:none;transition:width var(--d3) var(--ease),min-width var(--d3) var(--ease),margin var(--d3) var(--ease),opacity var(--d2),transform var(--d3) var(--spring),visibility 0s var(--d3)}
