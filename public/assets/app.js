@@ -427,9 +427,11 @@ function addCat(t){
   CATS[t].push(c);catSave();inp.value='';err.textContent='';cArm=null;updAdd();paintCats();place();
   CK[t].lastElementChild?.scrollIntoView({block:'nearest'});
 }
+function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ct===t)));cArm=null;if(catd.open)place()}
+$$('.ctog button').forEach(b=>b.onclick=()=>setCt(b.dataset.ct));
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
-  catd._src=src;cArm=null;$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
+  catd._src=src;cArm=null;setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
   updAdd();paintCats();
   modal(catd);place();catd.focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>catd.classList.add('show')));

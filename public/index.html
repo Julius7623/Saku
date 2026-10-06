@@ -97,10 +97,10 @@
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
     <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
-    <div id="chips" class="chips"></div>
+    <div id="chips" class="chips wrap"></div>
     <div class="group">
-      <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="note" maxlength="60" enterkeyhint="done" placeholder="Keterangan (opsional)" aria-label="Keterangan"></label>
-      <label class="fr dt"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span id="dl"></span><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input id="date" type="date" aria-label="Tanggal"></label>
+      <label class="fr"><input id="note" maxlength="60" enterkeyhint="done" placeholder="Keterangan (opsional)" aria-label="Keterangan"></label>
+      <label class="fr dt"><span id="dl"></span><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input id="date" type="date" aria-label="Tanggal"></label>
     </div>
     <p id="err" class="err" role="alert"></p>
     <button id="ok" type="button" class="sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
@@ -150,14 +150,12 @@
       <button id="cat-ok" type="button" class="txt">Selesai</button>
     </div>
     <div class="cbody">
-    <p class="mut tc">Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.</p>
-    <div>
-      <p class="mut lbl">Pengeluaran</p>
+    <div class="ctog" role="group" aria-label="Jenis kategori"><button type="button" data-ct="out" aria-pressed="true">Pengeluaran</button><button type="button" data-ct="in" aria-pressed="false">Pemasukan</button></div>
+    <div data-ct="out" class="cd">
       <div id="cl-out" class="elist"></div>
       <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-out" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori baru" aria-label="Nama kategori pengeluaran baru"><button id="cb-out" type="button" class="ad" disabled>Tambah</button></label></div>
     </div>
-    <div>
-      <p class="mut lbl">Pemasukan</p>
+    <div data-ct="in" class="cd">
       <div id="cl-in" class="elist"></div>
       <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-in" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori baru" aria-label="Nama kategori pemasukan baru"><button id="cb-in" type="button" class="ad" disabled>Tambah</button></label></div>
     </div>
@@ -169,13 +167,12 @@
 <dialog id="rst" aria-labelledby="rt" aria-describedby="rd" tabindex="-1">
   <div class="sh">
     <div class="rsh">
-      <div class="eico red" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></div>
       <h2 id="rt">Reset catatan keuangan?</h2>
       <p id="rd" class="mut"></p>
     </div>
     <button id="rs-ok" type="button" class="sv dng">Hapus semua</button>
-    <button id="rs-bk" type="button" class="alt">Simpan cadangan dulu</button>
     <button id="rs-cl" type="button" class="alt" autofocus>Batal</button>
+    <button id="rs-bk" type="button" class="lnk bk">Simpan cadangan dulu</button>
   </div>
 </dialog>
 

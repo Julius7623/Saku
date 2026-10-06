@@ -345,6 +345,21 @@ body[data-tab=cfg] #mon,body[data-tab=cfg] .nav2{display:none}
 .set.sel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;-webkit-appearance:none;appearance:none}
 .set.sel .val{margin-left:auto;color:var(--t2);font-weight:400}
 .set.sel .chev{margin-left:8px}
-.set.sel:has(select:focus-visible){outline:2px solid var(--tx);outline-offset:-2px}
 .tx::after{left:16px}
 .hero.solo .big{margin-bottom:0}
+.set.sel select{outline:none}.set.sel{-webkit-tap-highlight-color:transparent}
+
+/* v33: sheet lebih ringan */
+.ctog{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;background:var(--fill)}
+.ctog button{min-height:40px;border-radius:999px;font-weight:600;color:var(--t2)}
+.ctog button[aria-pressed=true]{background:var(--pill);color:var(--tx);box-shadow:inset 0 0 0 .5px var(--pill-rim)}
+#catd[data-ct=out] [data-ct=in].cd,#catd[data-ct=in] [data-ct=out].cd{display:none}
+.mn{background:var(--fill);color:var(--t2)}
+.er.arm .mn{background:var(--red);color:#fff}
+:root[data-theme=dark] .er.arm .mn{color:#1C0000}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .er.arm .mn{color:#1C0000}}
+#chips.wrap{gap:8px}
+.fr input#note{padding-left:0}
+#py{pointer-events:none}#py .i{display:none}
+#pk-cl{visibility:hidden}
+#rs-bk{width:100%;justify-self:center;min-height:36px;color:var(--t2);font-weight:500;font-size:15px;text-decoration:underline;text-underline-offset:3px;background:none}
