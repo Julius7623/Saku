@@ -21,11 +21,14 @@
 <body>
 <noscript><p class="mut foot">KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.</p></noscript>
 <header class="top">
-  <h1><span id="cfgT" class="cfgT">Pengaturan</span><button id="mon" type="button" aria-haspopup="dialog" aria-label="Pilih bulan dan tahun"><span id="monT"></span></button><span id="monlive" class="sr" aria-live="polite"></span></h1>
+  
   <div class="nav2 glass" role="group" aria-label="Pindah bulan">
     <button id="prev" type="button" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
     <button id="next" type="button" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
+  <h1><span id="cfgT" class="cfgT">Pengaturan</span><span id="mon"><span id="monT"></span></span><span id="monlive" class="sr" aria-live="polite"></span></h1>
+  <button id="cfgb" type="button" class="cfgb glass" aria-label="Pengaturan" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  
 </header>
 
 <main>
@@ -81,7 +84,6 @@
   <nav id="tabs" class="tabs glass" data-t="home" aria-label="Menu utama">
     <button class="tab" type="button" data-t="home"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Beranda</button>
     <button class="tab" type="button" data-t="sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-8"/></svg>Ringkasan</button>
-    <button class="tab" type="button" data-t="cfg"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.200"/><circle cx="8" cy="17" r="2.200"/></svg>Pengaturan</button>
   </nav>
   <button id="add" type="button" class="fab glass" aria-label="Tambah catatan"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 </div>
@@ -96,7 +98,7 @@
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
     <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
-    <div id="chips" class="chips wrap"></div>
+    <div id="chips" class="chips"></div>
     <div class="group">
       <label class="fr"><input id="note" maxlength="60" enterkeyhint="done" placeholder="Keterangan (opsional)" aria-label="Keterangan"></label>
       <label class="fr dt"><span id="dl"></span><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input id="date" type="date" aria-label="Tanggal"></label>

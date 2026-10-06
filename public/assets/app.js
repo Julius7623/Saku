@@ -104,13 +104,13 @@ function ico(d){const s=document.createElementNS(NS,'svg'),p=document.createElem
 function setMon(txt,anim){
   const m=$('#monT'),cur=m.querySelector('.cur');
   $('#monlive').textContent=txt;
-  if(!cur){m.replaceChildren(h('span',{class:'cur'},txt,chev()));return}
+  if(!cur){m.replaceChildren(h('span',{class:'cur'},txt));return}
   if(cur.textContent===txt)return;
   m.querySelectorAll('.old').forEach(e=>e.remove());
   if(!anim){cur.firstChild.nodeValue=txt;return}
   m.style.setProperty('--d',dx);
   cur.className='old';cur.setAttribute('aria-hidden','true');
-  m.append(h('span',{class:'cur go'},txt,chev()));
+  m.append(h('span',{class:'cur go'},txt));
   setTimeout(()=>cur.remove(),300);
 }
 /* Geser bulan ala halaman: hanya daftar (Beranda) atau rincian (Ringkasan) yang bergeser. Judul bulan bergeser sendiri; kartu saldo diam dan angkanya berhitung. */
@@ -143,7 +143,7 @@ function render(){
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
   $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
-  $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;
+  $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():tab==='sum'?renderSum():renderCfg();
   enter();fx=false;
@@ -252,7 +252,8 @@ sheet.addEventListener('focusin',e=>{if(e.target.matches('#amt,#note'))lf=e.targ
 sheet.addEventListener('mousedown',e=>{if(e.target.closest('.seg button,.chip'))e.preventDefault()});
 const dateText=v=>{if(!validDate(v))return tr('Pilih tanggal');const d=parse(v),full=d.toLocaleDateString(LOC(),{day:'numeric',month:'short',year:'numeric'});
   return (v===today()?tr('Hari ini'):v===yday()?tr('Kemarin'):d.toLocaleDateString(LOC(),{weekday:'short'}))+', '+full};
-function chips(){$('#chips').replaceChildren(...catsFor(f.type,f.cat).map(c=>h('button',{type:'button',class:'chip','data-c':c,onclick:()=>{f.cat=c;paint();keep()}},cn(c))))}
+function seeChip(){const c=$('#chips'),b=c.querySelector('[aria-pressed=true]');if(!b||c.scrollWidth<=c.clientWidth+1)return;const cr=c.getBoundingClientRect(),br=b.getBoundingClientRect(),m=24;let d=0;if(br.left<cr.left+m)d=br.left-cr.left-m;else if(br.right>cr.right-m)d=br.right-cr.right+m;if(d)c.scrollBy({left:d,behavior:rm()?'auto':'smooth'})}
+function chips(){$('#chips').replaceChildren(...catsFor(f.type,f.cat).map(c=>h('button',{type:'button',class:'chip','data-c':c,onclick:()=>{f.cat=c;paint();seeChip();keep()}},cn(c))))}
 function paint(){
   const a=$('#amt'),bx=$('#amtbox');a.value=f.amt?fmt.format(+f.amt):'';bx.classList.toggle('has',!!f.amt);
   $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===f.type)));
@@ -269,7 +270,7 @@ function openSheet(t,src){
   if(!t)$('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
   modal(sheet);place();t?sheet.focus({preventScroll:true}):$('#amt').focus({preventScroll:true});settle();
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');if(!t)$('#amt').focus({preventScroll:true});paint()}));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');if(!t)$('#amt').focus({preventScroll:true});paint();$('#chips').scrollLeft=0;seeChip()}));
 }
 function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
 async function save(){
@@ -593,6 +594,8 @@ async function importJSON(file){
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 const TABS=['home','sum','cfg'];
 const goTab=t=>{dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=true;tab=t;render()};
+let backTab='home';
+$('#cfgb').onclick=()=>{if(tabNC())return;if(tab==='cfg')goTab(backTab);else{backTab=tab;goTab('cfg')}};
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;goTab(b.dataset.t)});
 $('#add').onclick=e=>openSheet(null,e.currentTarget);
 $('#q').addEventListener('input',()=>render());
@@ -609,7 +612,7 @@ $('#rs-bk').onclick=e=>{exportJSON();e.currentTarget.textContent=tr('Cadangan te
 rst.addEventListener('click',e=>{if(e.target===rst)closeRst()});
 rst.addEventListener('cancel',e=>{e.preventDefault();closeRst()});
 rst.addEventListener('close',()=>rst.classList.remove('show'));
-$('#mon').onclick=openPick;
+
 $('#pk-cl').onclick=cancelPick;$('#py').onclick=toggleYears;
 $('#pk-now').onclick=()=>choose(nowYm());
 $('#py-prev').onclick=()=>stepYear(-1);
@@ -618,7 +621,7 @@ pkd.addEventListener('click',e=>{if(e.target===pkd)closePick()});
 pkd.addEventListener('cancel',e=>{e.preventDefault();cancelPick()});
 pkd.addEventListener('close',()=>pkd.classList.remove('show'));
 swipe($('#list'));swipe($('#cats'));
-function setType(t){f.type=t;if(!CATS[t].includes(f.cat))f.cat=CATS[t][0];chips();paint();keep()}
+function setType(t){f.type=t;if(!CATS[t].includes(f.cat))f.cat=CATS[t][0];chips();paint();$('#chips').scrollLeft=0;seeChip();keep()}
 $$('.seg button').forEach(b=>b.onclick=()=>{if(segNC()||f.type===b.dataset.type)return;setType(b.dataset.type)});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
 $('#amt').addEventListener('input',e=>{f.amt=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);paint()});
@@ -763,7 +766,7 @@ function liquid(root,els,cur,pick,N=2){
   ['pointerup','pointercancel'].forEach(t=>root.addEventListener(t,end));
   return()=>nc;
 }
-const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>TABS.indexOf(tab),i=>goTab(TABS[i]),3);
+const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>Math.min(1,TABS.indexOf(tab)),i=>goTab(TABS[i]));
 const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>setType(i?'in':'out'));
 /* Tampilan: Otomatis / Terang / Gelap. Disimpan di perangkat; theme.js menerapkannya sebelum render pertama. */
 const THEMES=['auto','light','dark'];
