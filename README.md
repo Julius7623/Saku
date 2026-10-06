@@ -6,11 +6,11 @@ Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data ters
 render.yaml            Blueprint Render + header keamanan
 public/                folder yang dipublikasikan
   index.html  sw.js  manifest.webmanifest  _headers
-  assets/  app.js  style.css  icon.svg
+  assets/  app.js  style.css  theme.js  icon.svg  icon-*.png
 ```
 
 ## Deploy ke Render
-1. Push folder ini ke GitHub/GitLab.
+1. Dorong folder ini ke GitHub/GitLab.
 2. Render → New → Static Site → pilih repo.
 3. **Build Command:** kosong (atau `echo "no build"`)
    **Publish Directory:** `public`

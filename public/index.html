@@ -11,12 +11,17 @@
 <meta name="theme-color" content="#0E0E0E" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Catat">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/theme.js"></script>
 <script src="assets/app.js" defer></script>
 </head>
 <body>
-<noscript><p class="mut foot">Catat membutuhkan JavaScript. Aktifkan JavaScript di browser, lalu muat ulang halaman.</p></noscript>
+<noscript><p class="mut foot">Catat membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.</p></noscript>
 <header class="top">
   <h1><button id="mon" type="button" aria-haspopup="dialog" aria-label="Pilih bulan dan tahun"><span id="monT"></span></button><span id="monlive" class="sr" aria-live="polite"></span></h1>
   <div class="nav2 glass" role="group" aria-label="Pindah bulan">
@@ -31,14 +36,14 @@
       <small id="balL">Sisa uang bulan ini</small>
       <p id="bal" class="big">Rp&nbsp;0</p>
       <div class="row">
-        <div><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7L7 17M7 17V9M7 17h8"/></svg></span><div><small>Pemasukan</small><span id="inc" class="plus"></span></div></div>
-        <div><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span><div><small>Pengeluaran</small><span id="out" class="minus"></span></div></div>
+        <div><div><small>Pemasukan</small><span id="inc" class="plus"></span></div></div>
+        <div><div><small>Pengeluaran</small><span id="out" class="minus"></span></div></div>
       </div>
     </div>
     <div id="nudge" class="nudge" hidden>
       <span>Sudah akhir bulan. Simpan cadangan datamu?</span>
-      <button id="nb" class="lnk">Cadangkan</button>
-      <button id="nx" class="lnk">Nanti</button>
+      <button id="nb" type="button" class="lnk">Cadangkan</button>
+      <button id="nx" type="button" class="lnk">Nanti</button>
     </div>
     <label id="sq" class="group fr" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Cari catatan atau nominal" aria-label="Cari catatan"></label>
     <div id="list"></div>
@@ -53,8 +58,8 @@
     <p class="mut foot">Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.</p>
     <h2 class="day">Cadangan data</h2>
     <div class="card">
-      <button id="ex" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></span>Simpan cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button id="im" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4l4 4M5 20h14"/></svg></span>Pulihkan cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button id="ex" type="button" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></span>Simpan cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button id="im" type="button" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4l4 4M5 20h14"/></svg></span>Pulihkan cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
     <p class="mut foot">Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.</p>
     <input id="file" type="file" accept="application/json,.json" hidden>
@@ -75,10 +80,10 @@
 
 <div class="dock">
   <nav id="tabs" class="tabs glass" data-t="home" aria-label="Menu utama">
-    <button class="tab" data-t="home"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Beranda</button>
-    <button class="tab" data-t="sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-8"/></svg>Ringkasan</button>
+    <button class="tab" type="button" data-t="home"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Beranda</button>
+    <button class="tab" type="button" data-t="sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-8"/></svg>Ringkasan</button>
   </nav>
-  <button id="add" class="fab glass" aria-label="Tambah catatan"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button id="add" type="button" class="fab glass" aria-label="Tambah catatan"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 </div>
 
 <input id="kb" class="kb" inputmode="numeric" tabindex="-1" aria-hidden="true">
@@ -148,12 +153,12 @@
     <div>
       <p class="mut lbl">Pengeluaran</p>
       <div id="cl-out" class="elist"></div>
-      <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-out" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori pengeluaran baru" aria-label="Nama kategori pengeluaran baru"><button id="cb-out" type="button" class="ad" disabled>Tambah</button></label></div>
+      <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-out" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori baru" aria-label="Nama kategori pengeluaran baru"><button id="cb-out" type="button" class="ad" disabled>Tambah</button></label></div>
     </div>
     <div>
       <p class="mut lbl">Pemasukan</p>
       <div id="cl-in" class="elist"></div>
-      <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-in" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori pemasukan baru" aria-label="Nama kategori pemasukan baru"><button id="cb-in" type="button" class="ad" disabled>Tambah</button></label></div>
+      <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-in" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori baru" aria-label="Nama kategori pemasukan baru"><button id="cb-in" type="button" class="ad" disabled>Tambah</button></label></div>
     </div>
     <p id="cerr" class="err" role="alert"></p>
     </div>

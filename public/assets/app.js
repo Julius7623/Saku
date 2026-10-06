@@ -2,7 +2,7 @@
 /* Catat — vanilla JS. Data lokal di IndexedDB, tanpa request jaringan. */
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 /* Kategori bawaan; pengguna bisa menambah, menghapus, dan mengurutkan sendiri (disimpan di localStorage `catat.cats`) */
-const DEF={out:['Makan','Transport','Belanja','Tagihan','Hiburan','Kesehatan','Lainnya'],in:['Gaji','Bonus','Hadiah','Lainnya']};
+const DEF={out:['Makan','Transportasi','Belanja','Tagihan','Hiburan','Kesehatan','Lainnya'],in:['Gaji','Bonus','Hadiah','Lainnya']};
 const CATS={out:[...DEF.out],in:[...DEF.in]};
 const MAX=9999999999,NOTE=60,CAT=20,CATV=30,fmt=new Intl.NumberFormat('id-ID');
 /* Durasi gerak (ms). D = --d3 di CSS; CLOSE = waktu sheet menutup; NUM = hitung angka */
@@ -138,6 +138,7 @@ function renderHome(){
   count($('#bal'),inc-out,rp,fx);
   count($('#inc'),inc,v=>(v?'+':'')+rp(v),fx);
   count($('#out'),out,v=>(v?'−':'')+rp(v),fx);
+  $('#bal').classList.toggle('sm',Math.abs(inc-out)>=1e8);$('#inc').classList.toggle('sm',inc>=1e8);$('#out').classList.toggle('sm',out>=1e8);
   $('#nudge').hidden=!(new Date().getDate()>=25&&all.length&&ls('catat.bk')!==today().slice(0,7));
   const list=$('#list');list.replaceChildren();
   if(q&&!m.length){list.append(h('div',{class:'empty'},h('p',{},'Tidak ada hasil'),h('p',{class:'mut'},'Pencarian mencakup semua bulan.')));return}
@@ -189,7 +190,7 @@ function renderSum(){
     fill.style.width=Math.min(100,Math.round(v/b.amount*100))+'%';
     return h('button',{type:'button',class:'set bd',onclick:e=>openBud(b,e.currentTarget)},
       h('span',{class:'bw'},h('b',{},b.name),h('small',{},b.cats.join(' · ')),
-        h('small',{class:left<0?'over':''},left<0?`Lebih ${rp(-left)} dari anggaran ${rp(b.amount)}`:`Sisa ${rp(left)} dari anggaran ${rp(b.amount)}`),
+        h('small',{class:left<0?'over':''},left<0?`Lebih ${rp(-left)} dari ${rp(b.amount)}`:`Sisa ${rp(left)} dari ${rp(b.amount)}`),
         h('div',{class:'track'},fill)),
       chevR());
   }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),'Tambah anggaran')),h('p',{class:'mut foot'},'Dihitung dari pengeluaran di kategori yang dipilih, per bulan.'));
@@ -236,7 +237,7 @@ function paint(){
 function openSheet(t,src){
   ed=t||null;sheet._src=src||$('#add');
   f=t?{type:t.type,amt:String(t.amount),cat:t.cat}:{type:'out',amt:'',cat:CATS.out[0]};
-  $('#note').value=t?t.note:'';$('#date').value=t?t.date:today();
+  $('#note').value=t?t.note:'';$('#date').max=today();$('#date').value=t?t.date:today();
   $('#st').textContent=t?'Ubah catatan':'Catatan baru';$('#sh-del').hidden=!t;
   lf=null;chips();paint();hideToast();
   if(!t)$('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
@@ -248,7 +249,7 @@ function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout
 async function save(){
   if(!f.amt)return;
   const t=clean({id:ed?ed.id:newId(),type:f.type,amount:+f.amt,cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
-  if(!t){$('#err').textContent='Tanggalnya belum benar. Pilih tanggal lagi.';return}
+  if(!t||t.date>today()){$('#err').textContent=t?'Tanggal tidak boleh melewati hari ini.':'Tanggalnya belum benar. Pilih tanggal lagi.';return}
   $('#ok').disabled=true;
   try{await dbPut(t)}catch{$('#ok').disabled=false;$('#err').textContent='Gagal menyimpan. Coba lagi.';return}
   const i=all.findIndex(x=>x.id===t.id);i<0?all.push(t):all[i]=t;
@@ -283,7 +284,7 @@ const cleanBud=b=>{
 const bdGet=()=>{let a=[];try{const j=JSON.parse(ls('catat.bud2')||'[]');if(Array.isArray(j))a=j.map(cleanBud).filter(Boolean)}catch{}return a};
 const bdSave=a=>ls('catat.bud2',JSON.stringify(a));
 /* format lama (satu anggaran per kategori, objek {kategori: nominal}); id tetap supaya impor ulang tidak menggandakan */
-const oldBud=o=>{const r=[];if(o&&typeof o==='object')for(const c of DEF.out){const v=o[c];if(Number.isInteger(v)&&v>0&&v<=MAX)r.push({id:'old-'+c,name:c,amount:v,cats:[c]})}return r};
+const oldBud=o=>{const r=[];if(o&&typeof o==='object')for(const c of [...DEF.out,'Transport']){const v=o[c];if(Number.isInteger(v)&&v>0&&v<=MAX)r.push({id:'old-'+c,name:c,amount:v,cats:[c]})}return r};
 function bdMigrate(){
   const o=ls('catat.bud');if(o==null)return;
   try{const old=oldBud(JSON.parse(o)),a=bdGet(),ids=new Set(a.map(x=>x.id));old.forEach(x=>ids.has(x.id)||a.push(x));if(old.length)bdSave(a)}catch{}
@@ -470,7 +471,7 @@ function paintPick(){
   if(yv){
     g.replaceChildren(...Array.from({length:PG},(_,i)=>{
       const y=pp+i,has=pHasY.has(y),off=y>cy||y<MINY;
-      return h('button',{type:'button',class:'mo','aria-pressed':String(y===py),'aria-label':y+(has?', ada catatan':''),...(has?{'data-d':'1'}:{}),...(off?{disabled:'',style:'visibility:hidden'}:{}),onclick:()=>chooseYear(y)},String(y));
+      return h('button',{type:'button',class:'mo','aria-pressed':String(y===py),'aria-label':y+(has?', ada catatan':''),...(has?{'data-d':'1'}:{}),...(off?{disabled:'',class:'mo off'}:{}),onclick:()=>chooseYear(y)},String(y));
     }));
   }else{
     g.replaceChildren(...MS.map((s,i)=>{
@@ -541,7 +542,7 @@ function exportJSON(){
   const data=JSON.stringify({app:'catat',v:1,exported:new Date().toISOString(),tx:all,bud:bdGet(),cats:{out:CATS.out,in:CATS.in}},null,1);
   const a=h('a',{href:URL.createObjectURL(new Blob([data],{type:'application/json'})),download:`catat-${today()}.json`});
   document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-  ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true;toast('Cadangan disimpan sebagai file .json.');
+  ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true;toast('Cadangan disimpan sebagai berkas .json.');
 }
 async function importJSON(file){
   try{
@@ -557,7 +558,7 @@ async function importJSON(file){
     if(j.cats&&typeof j.cats==='object'){for(const t of['out','in'])for(const c of catList(j.cats[t]))if(!CATS[t].some(y=>catSame(y,c)))CATS[t].push(c);catSave()}
     const m=new Map(all.map(t=>[t.id,t]));list.forEach(t=>m.set(t.id,t));all=[...m.values()];
     render();toast(`${list.length} catatan dipulihkan.`);
-  }catch{toast('File ini bukan cadangan Catat. Pilih file .json dari "Simpan cadangan".')}
+  }catch{toast('Berkas ini bukan cadangan Catat. Pilih berkas .json dari “Simpan cadangan”.')}
 }
 
 /* Event */
