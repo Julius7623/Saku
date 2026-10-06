@@ -1,4 +1,4 @@
-# Catat
+# KasKu
 Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data tersimpan di IndexedDB perangkat.
 
 ## Struktur
@@ -45,3 +45,11 @@ public/                folder yang dipublikasikan
 - Form catatan adalah jendela kaca melayang; posisinya dihitung dari visual viewport sehingga selalu di atas keyboard (plus ruang untuk bar bantu iOS).
 - Radius: kapsul untuk kontrol (termasuk kolom cari dan stepper tahun), 16 untuk elemen di dalam kartu/sheet (`--r-sm`), 24 untuk kartu (`--r-md`), 28 untuk hero (`--r-lg`), 36 untuk sheet (`--r-sheet`). Merah (`--red`) hanya untuk aksi hapus, pesan galat, dan anggaran terlampaui.
 - Teks terkecil 11px (label tab), teks sekunder minimal 14px. Istilah: "catatan" = satu transaksi, "keterangan" = isi kolom teks opsional.
+
+## Bahasa (ID/EN)
+- Pemilih bahasa ada di Ringkasan → Bahasa. Disimpan di `localStorage` kunci `catat.lang`; bawaannya mengikuti bahasa perangkat.
+- Teks statis `index.html` diterjemahkan lewat kamus `EN` di `assets/app.js` (teks asli dikembalikan saat kembali ke Indonesia). Teks dinamis memakai `tr()`. Tambah string baru: tulis dalam bahasa Indonesia, lalu tambahkan padanannya di `EN`.
+- Kategori bawaan disimpan dengan nama Indonesia (kunci tetap) dan ditampilkan lewat `cn()`, jadi ganti bahasa tidak mengubah data. Kategori buatan pengguna tampil apa adanya.
+- Pergantian bahasa dan tema memakai crossfade View Transition.
+
+Dibuat oleh Joel G. Thompson.

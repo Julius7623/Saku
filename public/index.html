@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Catat: pencatat keuangan pribadi</title>
+<title>KasKu: pencatat keuangan pribadi</title>
 <meta name="description" content="Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.">
 <meta name="color-scheme" content="light dark">
 <meta name="referrer" content="no-referrer">
@@ -12,14 +12,14 @@
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Catat">
+<meta name="apple-mobile-web-app-title" content="KasKu">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/theme.js"></script>
 <script src="assets/app.js" defer></script>
 </head>
 <body>
-<noscript><p class="mut foot">Catat membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.</p></noscript>
+<noscript><p class="mut foot">KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.</p></noscript>
 <header class="top">
   <h1><button id="mon" type="button" aria-haspopup="dialog" aria-label="Pilih bulan dan tahun"><span id="monT"></span></button><span id="monlive" class="sr" aria-live="polite"></span></h1>
   <div class="nav2 glass" role="group" aria-label="Pindah bulan">
@@ -68,11 +68,18 @@
         <button type="button" role="radio" data-theme="dark"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>Gelap</button>
     </div>
     <p class="mut foot">Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.</p>
+    <h2 class="day">Bahasa</h2>
+    <div id="lang" class="seg3 two glass" data-v="0" role="radiogroup" aria-label="Bahasa">
+        <button type="button" role="radio" data-lang="id"><span class="lc" aria-hidden="true">ID</span>Indonesia</button>
+        <button type="button" role="radio" data-lang="en"><span class="lc" aria-hidden="true">EN</span>English</button>
+    </div>
+    <p class="mut foot">Pilih bahasa tampilan aplikasi.</p>
     <h2 class="day">Reset</h2>
     <div class="card">
       <button id="rs" type="button" class="set rd"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></span>Reset catatan keuangan</button>
     </div>
     <p class="mut foot">Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.</p>
+    <p class="credit"><span>Dibuat oleh</span> Joel G. Thompson</p>
   </section>
 </main>
 

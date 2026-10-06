@@ -325,3 +325,12 @@ html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:ba
 @keyframes vt-out{to{opacity:0}}
 @keyframes vt-in{from{opacity:0}}
 @media(prefers-reduced-transparency:reduce){dialog::backdrop,dialog.show::backdrop{-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* Pemilih bahasa (2 segmen) + kredit */
+.seg3.two{grid-template-columns:repeat(2,1fr)}
+.seg3.two::before{width:calc((100% - 8px)/2)!important}
+.seg3 .lc{display:block;height:24px;line-height:24px;font-size:15px;font-weight:700;letter-spacing:.02em;transition:transform var(--d3) var(--spring)}
+.seg3 [aria-checked=true] .lc{transform:translateY(-1px) scale(1.1)}
+.seg3.two[data-v="1"]{--k:1}
+.credit{margin:28px 0 8px;text-align:center;font-size:13px;color:var(--t2)}
+.credit::before{content:'';display:block;width:28px;height:1px;margin:0 auto 14px;background:var(--bd)}
