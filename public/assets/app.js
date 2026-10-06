@@ -113,7 +113,7 @@ function render(){
   tab==='home'?renderHome():renderSum();
   enter();fx=false;
 }
-const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:()=>openSheet(t)},
+const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:e=>openSheet(t,e.currentTarget)},
   h('span',{class:'mono','aria-hidden':'true'},t.cat[0]),
   h('span',{},h('b',{},t.cat),t.note?h('small',{},t.note):null),
   h('span',{class:t.type==='in'?'plus':'minus'},(t.type==='in'?'+':'−')+rp(t.amount)));
@@ -130,7 +130,7 @@ function renderHome(){
   if(q&&!m.length){list.append(h('div',{class:'empty'},h('p',{},'Tidak ada hasil'),h('p',{class:'mut'},'Pencarian mencakup semua bulan.')));return}
   if(!m.length){
     list.append(h('div',{class:'empty'},h('div',{class:'eico','aria-hidden':'true'},'Rp'),h('p',{},all.length?'Belum ada catatan bulan ini':'Belum ada catatan'),h('p',{class:'mut'},'Semua catatan tersimpan di perangkatmu.'),
-      h('button',{class:'pri',onclick:()=>openSheet()},all.length?'Tambah catatan':'Tambah catatan pertama')));
+      h('button',{class:'pri',onclick:e=>openSheet(null,e.currentTarget)},all.length?'Tambah catatan':'Tambah catatan pertama')));
     return;
   }
   const g={};m.sort(cmp).forEach(t=>(g[t.date]??=[]).push(t));
@@ -165,7 +165,7 @@ function renderSum(){
   box.append(h('h2',{class:'day'},'Anggaran'),h('div',{class:'card'},...CATS.out.map(c=>{
     const b=bg[c],v=by[c]||0,left=b?b-v:0,fill=h('div',{class:'fill'});
     if(b)fill.style.width=Math.min(100,Math.round(v/b*100))+'%';
-    return h('button',{type:'button',class:'set bd',onclick:()=>openBud(c)},
+    return h('button',{type:'button',class:'set bd',onclick:e=>openBud(c,e.currentTarget)},
       h('span',{class:'bw'},h('b',{},c),
         h('small',{class:left<0?'over':''},b?(left<0?`Lebih ${rp(-left)} dari anggaran ${rp(b)}`:`Sisa ${rp(left)} dari anggaran ${rp(b)}`):'Belum diatur'),
         b?h('div',{class:'track'},fill):null),
@@ -210,18 +210,18 @@ function paint(){
   $('.seg').dataset.v=f.type;bx.style.fontSize=Math.min(52,Math.floor(560/Math.max(a.value.length+3,6)))+'px';const rl=$('#ruler');rl.textContent=a.value||'0';a.style.width=rl.offsetWidth+3+'px';$('#dl').textContent=dateText($('#date').value);
   $('#ok').disabled=!f.amt;$('#err').textContent='';
 }
-function openSheet(t){
-  ed=t||null;
+function openSheet(t,src){
+  ed=t||null;sheet._src=src||$('#add');
   f=t?{type:t.type,amt:String(t.amount),cat:t.cat}:{type:'out',amt:'',cat:CATS.out[0]};
   $('#note').value=t?t.note:'';$('#date').value=t?t.date:today();
   $('#st').textContent=t?'Ubah catatan':'Catatan baru';$('#sh-del').hidden=!t;
   lf=null;chips();paint();hideToast();
   if(!t)$('#kb').focus({preventScroll:true});/* buka keyboard di dalam gestur ketuk, lalu pindahkan ke nominal */
-  sheet.showModal();place();t?sheet.focus({preventScroll:true}):$('#amt').focus({preventScroll:true});settle();
+  modal(sheet);place();t?sheet.focus({preventScroll:true}):$('#amt').focus({preventScroll:true});settle();
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
   requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');if(!t)$('#amt').focus({preventScroll:true});paint()}));
 }
-function closeSheet(){sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
+function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
 async function save(){
   if(!f.amt)return;
   const t=clean({id:ed?ed.id:newId(),type:f.type,amount:+f.amt,cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
@@ -251,15 +251,15 @@ async function restore(){
 const bud=$('#bud');let bc='',bBusy=false;
 const bdGet=()=>{let o={};try{o=JSON.parse(ls('catat.bud')||'{}')}catch{}const r={};for(const c of CATS.out){const v=o?.[c];if(Number.isInteger(v)&&v>0&&v<=MAX)r[c]=v}return r};
 const bdSave=o=>ls('catat.bud',JSON.stringify(o));
-function openBud(c){
+function openBud(c,src){
   if(bud.open||sheet.open||pkd.open)return;
-  bc=c;const v=bdGet()[c];$('#bt').textContent=c;$('#bam').value=v?fmt.format(v):'';$('#bd-del').hidden=!v;$('#bd-ok').disabled=!v;
-  bud.showModal();place();$('#bam').focus({preventScroll:true});settle();
+  bud._src=src;bc=c;const v=bdGet()[c];$('#bt').textContent=c;$('#bam').value=v?fmt.format(v):'';$('#bd-del').hidden=!v;$('#bd-ok').disabled=!v;
+  modal(bud);place();$('#bam').focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>bud.classList.add('show')));
 }
 async function closeBud(then){
   if(!bud.open||bBusy)return;bBusy=true;
-  bud.classList.remove('show');await sleep(CLOSE);if(bud.open)bud.close();bBusy=false;then?.();
+  setOrigin(bud);bud.classList.remove('show');await sleep(CLOSE);if(bud.open)bud.close();bBusy=false;then?.();
 }
 function saveBud(del){
   const v=del?0:+$('#bam').value.replace(/\D/g,'').slice(0,10),o=bdGet();
@@ -299,14 +299,14 @@ function openPick(){
   if(pkd.open||sheet.open)return;
   py=+ym.slice(0,4);pv='m';pp=pageStart(py);
   pHas=new Set(all.map(t=>t.date.slice(0,7)));pHasY=new Set([...pHas].map(v=>+v.slice(0,4)));
-  paintPick();pkd.showModal();
+  pkd._src=$('#mon');paintPick();modal(pkd);setOrigin(pkd);
   $('.mo[aria-pressed=true]')?.focus({preventScroll:true});
   requestAnimationFrame(()=>requestAnimationFrame(()=>pkd.classList.add('show')));
 }
 /* tutup dengan animasi, kembalikan fokus ke judul bulan, lalu jalankan `then` */
 async function closePick(then){
   if(!pkd.open||pBusy)return;pBusy=true;
-  pkd.classList.remove('show');await sleep(CLOSE);
+  setOrigin(pkd);pkd.classList.remove('show');await sleep(CLOSE);
   if(pkd.open)pkd.close();
   pBusy=false;$('#mon').focus({preventScroll:true});then?.();
 }
@@ -374,7 +374,7 @@ async function importJSON(file){
 /* Event */
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
-$('#add').onclick=()=>openSheet();
+$('#add').onclick=e=>openSheet(null,e.currentTarget);
 $('#q').addEventListener('input',()=>render());
 $('#bam').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);e.target.value=d?fmt.format(+d):'';$('#bd-ok').disabled=!d});
 $('#bam').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(!$('#bd-ok').disabled)saveBud()}});
@@ -395,9 +395,33 @@ function setType(t){f.type=t;if(!CATS[t].includes(f.cat))f.cat=CATS[t][0];chips(
 $$('.seg button').forEach(b=>b.onclick=()=>{if(segNC()||f.type===b.dataset.type)return;setType(b.dataset.type)});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
 $('#amt').addEventListener('input',e=>{f.amt=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);paint()});
+/* Kunci gulir latar saat jendela terbuka: body dibekukan di posisinya (iOS tidak mengunci gulir di balik <dialog>), dikembalikan saat tutup */
+let lockY=0,locks=0;
+const lockOn=()=>{if(locks++)return;lockY=scrollY;document.documentElement.classList.add('lock');document.body.style.top=-lockY+'px'};
+const lockOff=()=>{if(!locks||--locks)return;document.documentElement.classList.remove('lock');document.body.style.top='';scrollTo(0,lockY)};
+const modal=d=>{if(d.open)return;lockOn();d.showModal()};
+[sheet,bud,pkd].forEach(d=>d.addEventListener('close',lockOff));
+document.addEventListener('touchmove',e=>{
+  if(!document.querySelector('dialog[open]'))return;
+  const t=e.target,d=t.closest?.('dialog');
+  if(t.closest?.('.seg'))return;
+  const c=t.closest?.('.chips');if(c&&c.scrollWidth>c.clientWidth+1)return;
+  if(d&&d.scrollHeight>d.clientHeight+1)return;
+  e.preventDefault();
+},{passive:false});
 /* Jendela melayang: dihitung dari visual viewport supaya selalu duduk di atas keyboard (dan bar bantu iOS) */
 const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const sab=h('div',{class:'sab','aria-hidden':'true'});document.body.append(sab);
+/* Morf: jendela tumbuh dari elemen yang membukanya (FAB, baris catatan, judul bulan) dan menyusut kembali ke sana saat ditutup.
+   Titik asal dihitung dalam koordinat jendela; jendela berada di tengah horizontal dan top-nya diatur place() (picker: menempel di bawah). */
+function setOrigin(d){
+  const s=d._src;
+  if(!s||!s.isConnected){d.style.removeProperty('--ox');d.style.removeProperty('--oy');return}
+  const r=s.getBoundingClientRect(),cw=document.documentElement.clientWidth,ch=document.documentElement.clientHeight,L=(cw-d.offsetWidth)/2;
+  let T=parseFloat(d.style.top);
+  if(!(T>=0))T=ch-(parseFloat(getComputedStyle(sab).paddingBottom)||0)-12-d.offsetHeight;
+  d.style.setProperty('--ox',(r.left+r.width/2-L).toFixed(1)+'px');d.style.setProperty('--oy',(r.top+r.height/2-T).toFixed(1)+'px');
+}
 let pr=0;
 function place(){
   const sheet=bud.open?bud:$('#sheet');if(!sheet.open)return;
@@ -405,7 +429,7 @@ function place(){
   const gap=open?10:(parseFloat(getComputedStyle(sab).paddingBottom)||0)+12;
   sheet.style.bottom='auto';
   sheet.style.maxHeight=Math.max(240,v.height-acc-gap-12)+'px';
-  sheet.style.top=Math.max(8,v.offsetTop+v.height-acc-gap-sheet.offsetHeight)+'px';
+  sheet.style.top=Math.max(8,v.offsetTop+v.height-acc-gap-sheet.offsetHeight)+'px';setOrigin(sheet);
 }
 const settle=()=>{cancelAnimationFrame(pr);const t0=performance.now();(function f(){place();if(performance.now()-t0<900)pr=requestAnimationFrame(f)})()};
 if(window.visualViewport){visualViewport.addEventListener('resize',place);visualViewport.addEventListener('scroll',place)}
@@ -490,92 +514,6 @@ let lq=null;
 const litFlush=()=>{const q=lq;lq=null;if(!q)return;const r=q.g.getBoundingClientRect();q.g.style.setProperty('--mx',(q.x-r.left)/r.width*100+'%');q.g.style.setProperty('--my',(q.y-r.top)/r.height*100+'%')};
 const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;if(!lq)requestAnimationFrame(litFlush);lq={g,x:e.clientX,y:e.clientY}};
 document.addEventListener('pointerdown',lit,{passive:true});document.addEventListener('pointermove',lit,{passive:true});
-
-/* Rim kaca dinamis: warna di sekitar tiap elemen kaca (di luar dan tepat di bawah tepinya) disampel di 8 titik keliling,
-   dihaluskan, lalu dipasang sebagai conic-gradient di --rim. Hanya berjalan sebentar setelah scroll, ketukan, atau perubahan isi. */
-const glassEls=[...$$('.glass')],rimSt=new WeakMap(),bgCache=new WeakMap();
-const isDark=()=>{const t=document.documentElement.dataset.theme;return t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches)};
-const nums=v=>(v.match(/-?[\d.]+(?:e-?\d+)?/g)||[]).map(Number);
-function parseCol(v){
-  if(!v)return null;
-  const n=nums(v);if(n.length<3)return null;
-  if(v.startsWith('color(')){const a=n.length>3?n[3]:1;return[n[0]*255,n[1]*255,n[2]*255,a]}
-  return[n[0],n[1],n[2],n.length>3?n[3]:1];
-}
-function gradAt(img,r,x,y){
-  const am=img.match(/linear-gradient\(\s*(-?[\d.]+)deg/);if(!am)return null;
-  const th=am[1]*Math.PI/180,st=[];let m;const re=/(rgba?\([^)]*\))(?:\s+(-?[\d.]+)%)?/g;
-  while(m=re.exec(img))st.push({c:parseCol(m[1]),p:m[2]==null?null:m[2]/100});
-  if(st.length<2||st.some(q=>!q.c))return null;
-  st.forEach((q,i)=>{if(q.p==null)q.p=i/(st.length-1)});
-  const w=r.width,h=r.height,L=Math.abs(w*Math.sin(th))+Math.abs(h*Math.cos(th))||1;
-  const t=Math.max(0,Math.min(1,((x-r.left-w/2)*Math.sin(th)-(y-r.top-h/2)*Math.cos(th))/L+.5));
-  for(let i=1;i<st.length;i++)if(t<=st[i].p||i===st.length-1){
-    const a=st[i-1],b=st[i],k=b.p>a.p?Math.max(0,Math.min(1,(t-a.p)/(b.p-a.p))):1;
-    return a.c.map((v,j)=>v+(b.c[j]-v)*k);
-  }
-  return null;
-}
-function colorAt(el,x,y){
-  const now=performance.now();let c=bgCache.get(el);
-  if(!c||now-c.t>300){
-    const cs=getComputedStyle(el);
-    c={t:now,col:parseCol(cs.backgroundColor),img:/^linear-gradient/.test(cs.backgroundImage)?cs.backgroundImage:''};
-    bgCache.set(el,c);
-  }
-  if(c.img){const g=gradAt(c.img,el.getBoundingClientRect(),x,y);if(g)return g}
-  return c.col;
-}
-function sampleAt(x,y){
-  x=Math.max(1,Math.min(innerWidth-2,x));y=Math.max(1,Math.min(innerHeight-2,y));
-  let R=0,G=0,B=0,A=0;
-  for(const el of document.elementsFromPoint(x,y)){
-    if(el.closest('.glass,.dock'))continue;
-    const c=colorAt(el,x,y);if(!c||c[3]<.02)continue;
-    const w=(1-A)*c[3];R+=c[0]*w;G+=c[1]*w;B+=c[2]*w;A+=w;
-    if(A>.97)break;
-  }
-  return A>.01?[R/A,G/A,B/A]:null;
-}
-function rimTargets(g){
-  const r=g.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,o=7,i=5;
-  // 8 titik di keliling: [titik di tepi, arah ke luar]
-  const P=[[r.left,r.top,-1,-1],[cx,r.top,0,-1],[r.right,r.top,1,-1],[r.right,cy,1,0],[r.right,r.bottom,1,1],[cx,r.bottom,0,1],[r.left,r.bottom,-1,1],[r.left,cy,-1,0]];
-  const dark=isDark(),al=dark?.95:.85;
-  return P.map(([x,y,dx,dy])=>{
-    const a=sampleAt(x+dx*o,y+dy*o),b=sampleAt(x-dx*i,y-dy*i);
-    const m=a&&b?a.map((v,k)=>v*.7+b[k]*.3):a||b||(dark?[14,14,14]:[250,250,250]);
-    // pantulan dibuat lebih terang dari sumbernya, seperti kaca sungguhan
-    const L=(m[0]+m[1]+m[2])/3,sat=dark?1.5:1.2;
-    return{c:m.map(v=>Math.max(0,Math.min(255,(L+(v-L)*sat)*1.35+(dark?22:10)))),ang:(Math.atan2(x-cx,-(y-cy))*180/Math.PI+360)%360,a:al};
-  });
-}
-let rimRaf=0,rimUntil=0,rimN=0;
-function rimFrame(){
-  let busy=false;rimN++;
-  for(const g of glassEls){
-    const r=g.getBoundingClientRect();
-    if(r.width<2||r.height<2||r.bottom<0||r.top>innerHeight||getComputedStyle(g).visibility==='hidden')continue;
-    let st=rimSt.get(g);if(!st){st={cur:null,tg:null};rimSt.set(g,st)}
-    if(!st.tg||rimN%2===0)st.tg=rimTargets(g);
-    const k=rm()?1:.3;
-    if(!st.cur)st.cur=st.tg.map(t=>({c:[...t.c],ang:t.ang,a:t.a}));
-    else st.tg.forEach((t,j)=>{const c=st.cur[j];t.c.forEach((v,q)=>{c.c[q]+=(v-c.c[q])*k;if(Math.abs(v-c.c[q])>1)busy=true});c.ang=t.ang;c.a=t.a});
-    const s=[...st.cur].sort((a,b)=>a.ang-b.ang),a0=s[0].ang,f=c=>`rgb(${c.c.map(Math.round).join(" ")} / ${c.a})`;
-    g.style.setProperty('--rim',`conic-gradient(from ${a0.toFixed(1)}deg at 50% 50%,${s.map(c=>f(c)+' '+(c.ang-a0).toFixed(1)+'deg').join(',')},${f(s[0])} 360deg)`);
-  }
-  return busy;
-}
-function rimTick(t){rimRaf=0;if((rimFrame()||t<rimUntil)&&!document.hidden)rimRaf=requestAnimationFrame(rimTick)}
-const rimGo=(ms=700)=>{rimUntil=Math.max(rimUntil,performance.now()+ms);rimRaf||(rimRaf=requestAnimationFrame(rimTick))};
-addEventListener('scroll',()=>rimGo(250),{passive:true});
-addEventListener('resize',()=>rimGo(300));
-['pointerup','click','keyup'].forEach(t=>document.addEventListener(t,()=>rimGo(900),{passive:true,capture:true}));
-['transitionend','animationend'].forEach(t=>document.addEventListener(t,()=>rimGo(150),true));
-new MutationObserver(()=>rimGo(900)).observe($('main'),{childList:true,subtree:true});
-matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{rimGo(400)});
-document.fonts?.ready.then(()=>rimGo(300));
-rimGo(900);
 
 /* Mulai */
 (async()=>{
