@@ -25,6 +25,9 @@ public/                folder yang dipublikasikan
 - Nominal berupa kolom teks dengan keyboard angka bawaan (diformat Rp saat mengetik); font input minimal 16px dan `touch-action:manipulation` agar iOS tidak zoom.
 - Masuk = "+" tebal, keluar = "−" biasa. Edit/hapus lewat tap baris; hapus bisa Urungkan.
 - Mengikuti panduan Apple "Adopting Liquid Glass": kaca hanya untuk lapisan fungsional di atas konten (dock, tombol +, navigasi bulan, snackbar, sheet). Kartu dan daftar flat. Jangan menumpuk kaca di atas kaca.
+- Slider (tab bar, Keluar/Masuk, Tampilan): hanya bisa digeser setelah thumb ditahan ±0,22 dtk (lalu jadi lensa dan gulir halaman terkunci). Geseran tanpa menahan atau yang dimulai di luar thumb diabaikan; ketukan singkat tetap memilih segmen. Mouse langsung bisa menyeret thumb.
+- Anggaran buatan pengguna, awalnya kosong: `{id, name, amount, cats[]}` di `localStorage` kunci `catat.bud2`. Nama bebas (maks 30), nominal per bulan, dan satu atau lebih kategori pengeluaran yang dihitung. Anggaran lama (satu per kategori, kunci `catat.bud`) dipindah sekali ke format baru. Cadangan menyimpan daftar anggaran; cadangan lama tetap bisa dipulihkan.
+- Reset catatan keuangan (Ringkasan, paling bawah): dialog konfirmasi dengan tombol merah, fokus awal di Batal, bisa Simpan cadangan dulu. Menghapus semua catatan dan anggaran (tampilan tidak ikut). Setelah itu ada Kembalikan di snackbar selama beberapa detik.
 - Slider/segmented: lintasan flat (`--fill`), thumb putih (terang) / abu (gelap); saat disentuh thumb berubah jadi lensa kaca bening yang membesar, lintasannya diam. Tanpa warna pelangi, tanpa rim yang dihitung dari latar.
 - Sheet/picker/anggaran: tumbuh dari elemen yang membukanya (FAB, baris, judul bulan) dan menyusut kembali ke sana (`setOrigin`). Radius sheet 36 = padding 20 + radius isi 16 (konsentris).
 - Konten yang bergulir di bawah dock memakai scroll edge effect (blur progresif + pudar), bukan gradasi pekat.

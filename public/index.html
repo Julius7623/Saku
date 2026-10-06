@@ -62,6 +62,11 @@
       </div>
     </div>
     <p class="mut foot">Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.</p>
+    <h2 class="day">Reset</h2>
+    <div class="card">
+      <button id="rs" type="button" class="set rd"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></span>Reset catatan keuangan</button>
+    </div>
+    <p class="mut foot">Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan tidak ikut terhapus.</p>
   </section>
 </main>
 
@@ -116,8 +121,29 @@
       <h2 id="bt" class="bt"></h2>
       <button id="bd-del" type="button" class="txt" hidden>Hapus</button>
     </div>
-    <label class="group fr"><span class="mut">Rp</span><input id="bam" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Anggaran per bulan" aria-label="Anggaran per bulan dalam rupiah"></label>
-    <button id="bd-ok" type="button" class="sv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
+    <div class="group">
+      <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="bnm" maxlength="30" autocomplete="off" enterkeyhint="next" placeholder="Nama anggaran" aria-label="Nama anggaran"></label>
+      <label class="fr"><span class="mut">Rp</span><input id="bam" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Nominal per bulan" aria-label="Anggaran per bulan dalam rupiah"></label>
+    </div>
+    <div>
+      <p class="mut lbl">Dihitung dari kategori</p>
+      <div id="bcats" class="chips wrap" role="group" aria-label="Kategori pengeluaran yang dihitung"></div>
+    </div>
+    <p id="berr" class="err" role="alert"></p>
+    <button id="bd-ok" type="button" class="sv" disabled><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
+  </div>
+</dialog>
+
+<dialog id="rst" aria-labelledby="rt" aria-describedby="rd" tabindex="-1">
+  <div class="sh">
+    <div class="rsh">
+      <div class="eico red" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></div>
+      <h2 id="rt">Reset catatan keuangan?</h2>
+      <p id="rd" class="mut"></p>
+    </div>
+    <button id="rs-ok" type="button" class="sv dng">Hapus semua</button>
+    <button id="rs-bk" type="button" class="alt">Simpan cadangan dulu</button>
+    <button id="rs-cl" type="button" class="alt" autofocus>Batal</button>
   </div>
 </dialog>
 

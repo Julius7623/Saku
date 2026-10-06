@@ -45,7 +45,7 @@ const dbDel=id=>write(s=>s.delete(id));
 const dbBulk=l=>write(s=>l.forEach(t=>s.put(t)));
 
 /* State */
-let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},enterId=null,undo=null,tt,fx=true,dx=0,lastYm='';
+let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},enterId=null,undo=null,undoAll=null,tt,fx=true,dx=0,lastYm='';
 const inMonth=()=>all.filter(t=>t.date.startsWith(ym));
 
 /* Angka berhitung naik/turun ke nilai baru; kalau dipotong di tengah, lanjut dari angka yang sedang tampil */
@@ -67,6 +67,7 @@ const NS='http://www.w3.org/2000/svg';
 /* panah ▾ kecil ikut bergeser bersama teks bulan */
 function chev(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M6 9l6 6 6-6');s.append(p);return s}
 function chevR(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i chev');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M9 6l6 6-6 6');s.append(p);return s}
+function ico(d){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d',d);s.append(p);return s}
 function setMon(txt,anim){
   const m=$('#monT'),cur=m.querySelector('.cur');
   $('#monlive').textContent=txt;
@@ -161,16 +162,19 @@ function renderSum(){
       return h('div',{class:'br'},h('div',{},h('span',{},`${c} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
   }
-  const bg=bdGet(),by={};m.forEach(t=>{if(t.type==='out')by[t.cat]=(by[t.cat]||0)+t.amount});
-  box.append(h('h2',{class:'day'},'Anggaran'),h('div',{class:'card'},...CATS.out.map(c=>{
-    const b=bg[c],v=by[c]||0,left=b?b-v:0,fill=h('div',{class:'fill'});
-    if(b)fill.style.width=Math.min(100,Math.round(v/b*100))+'%';
-    return h('button',{type:'button',class:'set bd',onclick:e=>openBud(c,e.currentTarget)},
-      h('span',{class:'bw'},h('b',{},c),
-        h('small',{class:left<0?'over':''},b?(left<0?`Lebih ${rp(-left)} dari anggaran ${rp(b)}`:`Sisa ${rp(left)} dari anggaran ${rp(b)}`):'Belum diatur'),
-        b?h('div',{class:'track'},fill):null),
+  const bg=bdGet();
+  box.append(h('h2',{class:'day'},'Anggaran'));
+  if(!bg.length)box.append(h('div',{class:'card p16 bde'},h('p',{class:'mut'},'Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.'),h('button',{type:'button',class:'alt mt',onclick:e=>openBud(null,e.currentTarget)},'Tambah anggaran')));
+  else box.append(h('div',{class:'card'},...bg.map(b=>{
+    const v=m.reduce((q,t)=>t.type==='out'&&b.cats.includes(t.cat)?q+t.amount:q,0),left=b.amount-v,fill=h('div',{class:'fill'});
+    fill.style.width=Math.min(100,Math.round(v/b.amount*100))+'%';
+    return h('button',{type:'button',class:'set bd',onclick:e=>openBud(b,e.currentTarget)},
+      h('span',{class:'bw'},h('b',{},b.name),h('small',{},b.cats.join(' · ')),
+        h('small',{class:left<0?'over':''},left<0?`Lebih ${rp(-left)} dari anggaran ${rp(b.amount)}`:`Sisa ${rp(left)} dari anggaran ${rp(b.amount)}`),
+        h('div',{class:'track'},fill)),
       chevR());
-  })),h('p',{class:'mut foot'},'Ketuk kategori untuk mengatur anggaran bulanan.'));
+  }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),'Tambah anggaran')),h('p',{class:'mut foot'},'Dihitung dari pengeluaran di kategori yang dipilih, per bulan.'));
+  $('#rs').disabled=!(all.length||bg.length);
   bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
 function jump(month){const n=month>ym?1:-1,was=blank();dx=n;const x=slidePrep();fx=false;ym=month;render();
@@ -190,7 +194,7 @@ function toast(msg,act,fn){
   if(act)t.append(h('button',{type:'button',onclick:fn},act));
   t.classList.add('show');tt=setTimeout(hideToast,act?6000:3500);
 }
-function hideToast(){$('#toast').classList.remove('show');undo=null}
+function hideToast(){$('#toast').classList.remove('show');undo=null;undoAll=null}
 
 /* Bottom sheet input */
 const sheet=$('#sheet');
@@ -247,14 +251,40 @@ async function restore(){
   all.push(t);enterId=t.id;reveal(t.date.slice(0,7));enterId=null;hideToast();
 }
 
-/* Anggaran per kategori: disimpan di perangkat (localStorage) dan ikut cadangan */
-const bud=$('#bud');let bc='',bBusy=false;
-const bdGet=()=>{let o={};try{o=JSON.parse(ls('catat.bud')||'{}')}catch{}const r={};for(const c of CATS.out){const v=o?.[c];if(Number.isInteger(v)&&v>0&&v<=MAX)r[c]=v}return r};
-const bdSave=o=>ls('catat.bud',JSON.stringify(o));
-function openBud(c,src){
-  if(bud.open||sheet.open||pkd.open)return;
-  bud._src=src;bc=c;const v=bdGet()[c];$('#bt').textContent=c;$('#bam').value=v?fmt.format(v):'';$('#bd-del').hidden=!v;$('#bd-ok').disabled=!v;
-  modal(bud);place();$('#bam').focus({preventScroll:true});settle();
+/* Anggaran buatan pengguna: {id, name, amount, cats[]}. Disimpan di perangkat (localStorage) dan ikut cadangan. Awalnya kosong. */
+const bud=$('#bud');let be=null,bs=new Set(),bBusy=false;
+const cleanBud=b=>{
+  if(!b||typeof b!=='object')return null;
+  const{id,amount,cats}=b,name=typeof b.name==='string'?b.name.trim():'';
+  if(typeof id!=='string'||!/^[\w-]{1,40}$/.test(id)||!name||name.length>30)return null;
+  if(!Number.isInteger(amount)||amount<1||amount>MAX)return null;
+  if(!Array.isArray(cats)||!cats.length||cats.some(c=>!CATS.out.includes(c)))return null;
+  return{id,name,amount,cats:[...new Set(cats)]};
+};
+const bdGet=()=>{let a=[];try{const j=JSON.parse(ls('catat.bud2')||'[]');if(Array.isArray(j))a=j.map(cleanBud).filter(Boolean)}catch{}return a};
+const bdSave=a=>ls('catat.bud2',JSON.stringify(a));
+/* format lama (satu anggaran per kategori, objek {kategori: nominal}); id tetap supaya impor ulang tidak menggandakan */
+const oldBud=o=>{const r=[];if(o&&typeof o==='object')for(const c of CATS.out){const v=o[c];if(Number.isInteger(v)&&v>0&&v<=MAX)r.push({id:'old-'+c,name:c,amount:v,cats:[c]})}return r};
+function bdMigrate(){
+  const o=ls('catat.bud');if(o==null)return;
+  try{const old=oldBud(JSON.parse(o)),a=bdGet(),ids=new Set(a.map(x=>x.id));old.forEach(x=>ids.has(x.id)||a.push(x));if(old.length)bdSave(a)}catch{}
+  try{localStorage.removeItem('catat.bud')}catch{}
+}
+function bdValid(){$('#bd-ok').disabled=!($('#bnm').value.trim()&&+$('#bam').value.replace(/\D/g,'')>0&&bs.size)}
+function bdChips(){
+  $('#bcats').replaceChildren(...CATS.out.map(c=>{
+    const b=h('button',{type:'button',class:'chip','aria-pressed':String(bs.has(c))},c);
+    b.onclick=()=>{bs.has(c)?bs.delete(c):bs.add(c);b.setAttribute('aria-pressed',String(bs.has(c)));bdValid()};
+    return b;
+  }));
+}
+function openBud(b,src){
+  if(bud.open||sheet.open||pkd.open||rst.open)return;
+  bud._src=src;be=b||null;bs=new Set(b?b.cats:[]);
+  $('#bt').textContent=b?'Ubah anggaran':'Anggaran baru';
+  $('#bnm').value=b?b.name:'';$('#bam').value=b?fmt.format(b.amount):'';$('#bd-del').hidden=!b;$('#berr').textContent='';
+  bdChips();bdValid();
+  modal(bud);place();b?bud.focus({preventScroll:true}):$('#bnm').focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>bud.classList.add('show')));
 }
 async function closeBud(then){
@@ -262,9 +292,38 @@ async function closeBud(then){
   setOrigin(bud);bud.classList.remove('show');await sleep(CLOSE);if(bud.open)bud.close();bBusy=false;then?.();
 }
 function saveBud(del){
-  const v=del?0:+$('#bam').value.replace(/\D/g,'').slice(0,10),o=bdGet();
-  if(v>0)o[bc]=v;else delete o[bc];
-  bdSave(o);closeBud(()=>{render();toast(v>0?`Anggaran ${bc} disimpan.`:`Anggaran ${bc} dihapus.`)});
+  let a=bdGet();
+  if(del){const nm=be.name;a=a.filter(x=>x.id!==be.id);bdSave(a);closeBud(()=>{render();toast(`Anggaran ${nm} dihapus.`)});return}
+  const name=$('#bnm').value.trim().slice(0,30),nb=cleanBud({id:be?be.id:newId(),name,amount:+$('#bam').value.replace(/\D/g,'').slice(0,10),cats:CATS.out.filter(c=>bs.has(c))});
+  if(!nb){$('#berr').textContent='Lengkapi nama, nominal, dan minimal satu kategori.';return}
+  const i=a.findIndex(x=>x.id===nb.id);i<0?a.push(nb):a[i]=nb;
+  bdSave(a);closeBud(()=>{render();toast(`Anggaran ${name} disimpan.`)});
+}
+
+/* Reset catatan keuangan: dialog konfirmasi (tombol merah), bisa simpan cadangan dulu; setelah reset ada Kembalikan di snackbar */
+const rst=$('#rst');let rBusy=false;
+function openRst(src){
+  if(rst.open)return;
+  const n=all.length,m=bdGet().length,bk=$('#rs-bk');
+  $('#rd').textContent=`${n} catatan${m?` dan ${m} anggaran`:''} akan dihapus permanen dari perangkat ini. Simpan cadangan dulu kalau masih dibutuhkan.`;
+  bk.disabled=false;bk.textContent='Simpan cadangan dulu';
+  rst._src=src;modal(rst);setOrigin(rst);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>rst.classList.add('show')));
+}
+async function closeRst(then){
+  if(!rst.open||rBusy)return;rBusy=true;
+  setOrigin(rst);rst.classList.remove('show');await sleep(CLOSE);if(rst.open)rst.close();rBusy=false;then?.();
+}
+async function resetAll(){
+  const snap={tx:[...all],bud:bdGet()};
+  try{await write(s=>s.clear())}catch{closeRst(()=>toast('Gagal mereset. Coba lagi.'));return}
+  all=[];bdSave([]);
+  closeRst(()=>{$('#q').value='';render();toast('Semua catatan dihapus.','Kembalikan',restoreAll);undoAll=snap});
+}
+async function restoreAll(){
+  const s=undoAll;if(!s)return;undoAll=null;
+  try{await dbBulk(s.tx)}catch{toast('Gagal mengembalikan. Coba lagi.');return}
+  all=s.tx;bdSave(s.bud);hideToast();render();
 }
 
 /* Picker bulan/tahun. Dua tampilan: bulan (per tahun) dan tahun (halaman 12 tahun, mundur sampai MINY).
@@ -365,7 +424,10 @@ async function importJSON(file){
     if(!j||j.app!=='catat'||j.v!==1||!Array.isArray(j.tx)||j.tx.length>1e5)throw 0;
     const list=j.tx.map(clean);if(list.includes(null))throw 0;
     await dbBulk(list);
-    if(j.bud&&typeof j.bud==='object'){const b=bdGet();for(const c of CATS.out){const v=j.bud[c];if(Number.isInteger(v)&&v>0&&v<=MAX)b[c]=v}bdSave(b)}
+    if(j.bud){
+      const L=Array.isArray(j.bud)?j.bud.map(cleanBud).filter(Boolean):oldBud(j.bud),cur=bdGet(),ids=new Set(cur.map(x=>x.id));
+      L.forEach(x=>ids.has(x.id)||cur.push(x));bdSave(cur);
+    }
     const m=new Map(all.map(t=>[t.id,t]));list.forEach(t=>m.set(t.id,t));all=[...m.values()];
     render();toast(`${list.length} catatan dipulihkan.`);
   }catch{toast('File ini bukan cadangan Catat. Pilih file .json dari "Simpan cadangan".')}
@@ -376,12 +438,19 @@ $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
 $('#add').onclick=e=>openSheet(null,e.currentTarget);
 $('#q').addEventListener('input',()=>render());
-$('#bam').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);e.target.value=d?fmt.format(+d):'';$('#bd-ok').disabled=!d});
+$('#bam').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);e.target.value=d?fmt.format(+d):'';bdValid()});
 $('#bam').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(!$('#bd-ok').disabled)saveBud()}});
+$('#bnm').addEventListener('input',bdValid);
+$('#bnm').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#bam').focus()}});
 $('#bd-ok').onclick=()=>saveBud();$('#bd-del').onclick=()=>saveBud(true);$('#bd-cl').onclick=()=>closeBud();
 bud.addEventListener('click',e=>{if(e.target===bud)closeBud()});
 bud.addEventListener('cancel',e=>{e.preventDefault();closeBud()});
 bud.addEventListener('close',()=>bud.classList.remove('show'));
+$('#rs').onclick=e=>openRst(e.currentTarget);$('#rs-cl').onclick=()=>closeRst();$('#rs-ok').onclick=resetAll;
+$('#rs-bk').onclick=e=>{exportJSON();e.currentTarget.textContent='Cadangan tersimpan';e.currentTarget.disabled=true};
+rst.addEventListener('click',e=>{if(e.target===rst)closeRst()});
+rst.addEventListener('cancel',e=>{e.preventDefault();closeRst()});
+rst.addEventListener('close',()=>rst.classList.remove('show'));
 $('#mon').onclick=openPick;
 $('#pk-cl').onclick=cancelPick;$('#py').onclick=toggleYears;
 $('#pk-now').onclick=()=>choose(nowYm());
@@ -400,7 +469,7 @@ let lockY=0,locks=0;
 const lockOn=()=>{if(locks++)return;lockY=scrollY;document.documentElement.classList.add('lock');document.body.style.top=-lockY+'px'};
 const lockOff=()=>{if(!locks||--locks)return;document.documentElement.classList.remove('lock');document.body.style.top='';scrollTo(0,lockY)};
 const modal=d=>{if(d.open)return;lockOn();d.showModal()};
-[sheet,bud,pkd].forEach(d=>d.addEventListener('close',lockOff));
+[sheet,bud,pkd,rst].forEach(d=>d.addEventListener('close',lockOff));
 document.addEventListener('touchmove',e=>{
   if(!document.querySelector('dialog[open]'))return;
   const t=e.target,d=t.closest?.('dialog');
@@ -450,36 +519,61 @@ $('#im').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const fl=e.target.files[0];e.target.value='';if(fl)importJSON(fl)};
 $('#nx').onclick=()=>{ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true};
 
-/* Slider kaca (tab bar & Keluar/Masuk): tekan = lensa mengembang; geser = lensa mengikuti jari dengan pegas, lalu mengunci ke segmen terdekat */
+/* Slider kaca (tab bar & Keluar/Masuk & Tampilan): hanya bisa digeser setelah thumb DITAHAN (±0,22 dtk) lalu jadi lensa; geseran tanpa menahan,
+   atau yang dimulai di luar thumb, diabaikan (tidak menggeser slider, tidak memilih segmen, tidak bocor ke elemen lain). Ketukan singkat tetap memilih segmen.
+   Mouse: thumb langsung bisa diseret. Saat lensa aktif, gulir halaman dikunci. */
 function liquid(root,els,cur,pick,N=2){
-  let x0=0,x=0,t0=0,vx=0,b=0,down=false,drag=false,nc=false,ck=0,tk=0,tv=0,raf=0;
+  const HOLD=220,SLOP=8;
+  let x0=0,y0=0,x=0,t0=0,vx=0,b=0,pid=0,down=false,armed=false,drag=false,nc=false,ck=0,tk=0,tv=0,raf=0,ht=0;
   const rub=k=>k<0?k*.08:k>N-1?N-1+(k-(N-1))*.08:k,sw=()=>(root.clientWidth-8)/N;
-  const paint=()=>{root.style.setProperty('--k',Math.max(-.03,Math.min(N-1+.03,ck)).toFixed(4));if(down)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
+  const noClick=()=>{nc=true;setTimeout(()=>nc=false,350)};
+  const paint=()=>{root.style.setProperty('--k',Math.max(-.03,Math.min(N-1+.03,ck)).toFixed(4));if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
   const done=()=>{root.classList.remove('drive');root.style.removeProperty('--k')};
   function step(){
     if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.1)*.68;ck+=tv}
     paint();
     if(Math.abs(tk-ck)>.002||Math.abs(tv)>.002)raf=requestAnimationFrame(step);
-    else{raf=0;ck=tk;paint();if(!down)done()}
+    else{raf=0;ck=tk;paint();if(!armed)done()}
   }
   const run=()=>{raf||(raf=requestAnimationFrame(step))};
+  function arm(){
+    if(!down||armed)return;
+    armed=true;drag=false;x0=x;t0=performance.now();vx=0;b=ck=tk=cur();tv=0;
+    root.classList.add('lens','drive');paint();
+    try{root.setPointerCapture(pid)}catch{}
+    navigator.vibrate?.(6);
+  }
   root.addEventListener('pointerdown',e=>{
-    down=true;drag=false;x0=x=e.clientX;t0=performance.now();vx=0;
-    b=ck=tk=cur();tv=0;root.classList.add('lens','drive');paint();
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    clearTimeout(ht);down=true;armed=false;drag=false;pid=e.pointerId;x0=x=e.clientX;y0=e.clientY;
+    const c=cur(),r=root.getBoundingClientRect(),s=sw(),l=r.left+4+c*s;
+    if(e.clientX<l-2||e.clientX>l+s+2)return;/* di luar thumb: hanya ketukan */
+    e.pointerType==='mouse'?arm():ht=setTimeout(arm,HOLD);
   });
   root.addEventListener('pointermove',e=>{
-    if(!down)return;
-    if(!drag){if(Math.abs(e.clientX-x0)<6)return;drag=true;root.setPointerCapture(e.pointerId);x=e.clientX;t0=performance.now()}
+    if(!down||e.pointerId!==pid)return;
+    if(!armed){
+      /* bergerak sebelum thumb tertahan = bukan geseran slider: batalkan dan jangan jadikan ketukan */
+      if(Math.hypot(e.clientX-x0,e.clientY-y0)>SLOP){clearTimeout(ht);down=false;noClick()}
+      return;
+    }
+    if(!drag){if(Math.abs(e.clientX-x0)<4)return;drag=true;x=e.clientX;t0=performance.now()}
     const now=performance.now();
     if(now>t0)vx=.6*vx+.4*(e.clientX-x)/(now-t0);
     x=e.clientX;t0=now;
     tk=rub(b+(e.clientX-x0)/sw());run();
   });
+  /* lensa aktif: cegah halaman ikut tergulir */
+  root.addEventListener('touchmove',e=>{if(armed&&e.cancelable)e.preventDefault()},{passive:false});
+  root.addEventListener('contextmenu',e=>e.preventDefault());
   const end=()=>{
+    clearTimeout(ht);
     if(!down)return;down=false;
+    if(!armed)return;/* ketukan singkat: biarkan klik memilih segmen */
+    armed=false;
     root.classList.remove('lens');els.forEach(e=>e.style.removeProperty('--s'));
-    if(!drag){done();return}
-    drag=false;nc=true;setTimeout(()=>nc=false,60);
+    if(!drag){tk=ck=cur();done();return}
+    drag=false;noClick();
     const to=Math.max(0,Math.min(N-1,Math.round(tk+vx*120/sw())));
     tk=to;run();
     if(to!==cur())pick(to);
@@ -517,7 +611,7 @@ document.addEventListener('pointerdown',lit,{passive:true});document.addEventLis
 
 /* Mulai */
 (async()=>{
-  navigator.storage?.persist?.();
+  navigator.storage?.persist?.();bdMigrate();
   try{db=await openDB();all=(await getAll()).map(clean).filter(Boolean)}catch{toast('Browser ini tidak bisa menyimpan data. Matikan mode privat atau coba browser lain.')}
   render();
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
