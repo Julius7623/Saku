@@ -738,12 +738,16 @@ const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>set
 /* Tampilan: Otomatis / Terang / Gelap. Disimpan di perangkat; theme.js menerapkannya sebelum render pertama. */
 const THEMES=['auto','light','dark'],tbtn=[...$$('#theme button')];
 const curTheme=()=>{const t=ls('catat.theme');return t==='light'||t==='dark'?t:'auto'};
-function applyTheme(t,save){
+let thT=0;
+/* Ganti tema semulus mungkin: crossfade seluruh halaman lewat View Transition (satu kurva untuk semua elemen, termasuk gradien kartu).
+   Cadangan: transisi warna CSS di semua elemen selama sebentar. Lewati saat render pertama dan saat Reduce Motion. */
+function applyTheme(t,save,first){
   const r=document.documentElement;
-  t==='auto'?delete r.dataset.theme:r.dataset.theme=t;
+  const swap=()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t};
+  if(first||rm())swap();
+  else if(document.startViewTransition){try{document.startViewTransition(swap)}catch{swap()}}
+  else{r.classList.add('themeX');swap();clearTimeout(thT);thT=setTimeout(()=>r.classList.remove('themeX'),520)}
   if(save)ls('catat.theme',t);
-  const dark=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
-  $$('meta[name=theme-color]').forEach(m=>m.setAttribute('content',dark?'#0E0E0E':'#FAFAFA'));
   $('#theme').dataset.v=String(THEMES.indexOf(t));
   tbtn.forEach(b=>{const on=b.dataset.theme===t;b.setAttribute('aria-checked',String(on));b.tabIndex=on?0:-1});
 }
@@ -754,7 +758,7 @@ tbtn.forEach((b,i)=>{
   b.onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();const j=(i+d+3)%3;setTheme(j);tbtn[j].focus()};
 });
 matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{if(curTheme()==='auto')applyTheme('auto')});
-applyTheme(curTheme());
+applyTheme(curTheme(),false,true);
 /* Kilau kaca mengikuti jari/kursor: dihitung satu kali per frame */
 let lq=null;
 const litFlush=()=>{const q=lq;lq=null;if(!q)return;const r=q.g.getBoundingClientRect();q.g.style.setProperty('--mx',(q.x-r.left)/r.width*100+'%');q.g.style.setProperty('--my',(q.y-r.top)/r.height*100+'%')};
