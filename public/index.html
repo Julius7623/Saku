@@ -6,7 +6,15 @@
 <title>KasKu: pencatat keuangan pribadi</title>
 <meta name="description" content="Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0E0E" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KasKu">
+<meta property="og:title" content="KasKu: pencatat keuangan pribadi">
+<meta property="og:description" content="Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -75,7 +83,7 @@
     </div>
     <p class="mut foot">Pilih bahasa tampilan aplikasi.</p>
     <h2 class="day">Mata uang</h2>
-    <div class="card p16"><div id="cur" class="chips wrap" role="radiogroup" aria-label="Mata uang"></div></div>
+    <div class="card p16"><div id="cur" class="chips wrap" role="group" aria-label="Mata uang"></div></div>
     <p class="mut foot">Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.</p>
     <h2 class="day">Reset</h2>
     <div class="card">

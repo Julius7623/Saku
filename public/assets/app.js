@@ -206,7 +206,7 @@ function renderSum(){
   }
   else box.append(h('div',{class:'card'},...bg.map(b=>{
     const v=m.reduce((q,t)=>t.type==='out'&&b.cats.includes(t.cat)?q+t.amount:q,0),left=b.amount-v,fill=h('div',{class:'fill'});
-    fill.style.width=Math.min(100,Math.round(v/b.amount*100))+'%';
+    fill.style.transform=`translateX(${Math.min(100,Math.round(v/b.amount*100))-100}%)`;
     return h('button',{type:'button',class:'set bd',onclick:e=>openBud(b,e.currentTarget)},
       h('span',{class:'bw'},h('b',{},b.name),h('small',{},b.cats.map(cn).join(' · ')),
         h('small',{class:left<0?'over':''},LANG==='en'?(left<0?`Over by ${rp(-left)} of ${rp(b.amount)}`:`${rp(left)} left of ${rp(b.amount)}`):(left<0?`Lebih ${rp(-left)} dari ${rp(b.amount)}`:`Sisa ${rp(left)} dari ${rp(b.amount)}`)),
@@ -214,7 +214,7 @@ function renderSum(){
       chevR());
   }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),tr('Tambah anggaran'))),h('p',{class:'mut foot'},tr('Dihitung dari pengeluaran di kategori yang dipilih, per bulan.')));
   $('#rs').disabled=!(all.length||bg.length);
-  bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
+  bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.transform=`translateX(${p-100}%)`));else{f.style.transition='none';f.style.transform=`translateX(${p-100}%)`}});
 }
 function jump(month){const n=month>ym?1:-1,was=blank();dx=n;const x=slidePrep();fx=false;ym=month;render();
   /* kosong ke kosong: tidak perlu geser, isinya sama saja */
@@ -264,7 +264,7 @@ function openSheet(t,src){
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
   requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');if(!t)$('#amt').focus({preventScroll:true});paint()}));
 }
-function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
+function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>{if(!sheet.open)return;sheet.close();const a=document.activeElement,s=sheet._src;/* dialog mengembalikan fokus ke #kb (pembantu keyboard iOS); arahkan ke pemicu */if(s&&s.isConnected&&(!a||a===document.body||a.id==='kb'))s.focus({preventScroll:true})},rm()?0:CLOSE)}
 async function save(){
   if(!f.amt)return;
   const t=clean({id:ed?ed.id:newId(),type:f.type,amount:+f.amt,cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
@@ -662,6 +662,7 @@ $('#note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault()
 $('#amt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}});
 $('#ok').onclick=save;$('#sh-del').onclick=del;$('#cl').onclick=closeSheet;
 sheet.addEventListener('click',e=>{if(e.target===sheet)closeSheet()});
+sheet.addEventListener('cancel',e=>{e.preventDefault();closeSheet()});/* Esc: animasi keluar + fokus kembali, seperti dialog lain */
 sheet.addEventListener('close',()=>sheet.classList.remove('show'));
 $('#ex').onclick=exportJSON;$('#nb').onclick=exportJSON;
 $('#im').onclick=()=>$('#file').click();
@@ -770,6 +771,7 @@ function applyTheme(t,save,first){
   const r=document.documentElement;
   morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t},first);
   if(save)ls('catat.theme',t);
+  document.querySelectorAll('meta[name=theme-color]').forEach((m,i)=>m.content=t==='auto'?(i?'#0E0E0E':'#FAFAFA'):t==='dark'?'#0E0E0E':'#FAFAFA');
   $('#theme').dataset.v=String(THEMES.indexOf(t));
   tbtn.forEach(b=>{const on=b.dataset.theme===t;b.setAttribute('aria-checked',String(on));b.tabIndex=on?0:-1});
 }
@@ -823,7 +825,7 @@ applyLang(LANG,false,true);
 /* Mata uang: deretan chip di Ringkasan */
 function curText(){$('#amtbox .cur').textContent=CURS[CUR][0];$('#bam').previousElementSibling.textContent=CURS[CUR][0]}
 function curChips(){$('#cur').replaceChildren(...Object.keys(CURS).map(c=>{
-  const b=h('button',{type:'button',class:'chip',role:'radio','aria-checked':String(c===CUR),'aria-pressed':String(c===CUR),onclick:()=>applyCur(c,true)},c+' · '+CURS[c][0]);
+  const b=h('button',{type:'button',class:'chip','aria-pressed':String(c===CUR),onclick:()=>applyCur(c,true)},c+' · '+CURS[c][0]);
   return b}))}
 function applyCur(c,save,first){
   if(save)ls('catat.cur',c);

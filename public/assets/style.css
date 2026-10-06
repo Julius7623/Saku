@@ -112,7 +112,7 @@ main,#home,#sum{position:relative}
 .br{padding:10px 0 4px;font-size:15px}
 .br>div:first-child{display:flex;justify-content:space-between;gap:8px}
 .track{height:10px;margin-top:8px;border-radius:99px;background:var(--fill);overflow:hidden}
-.fill{width:0;height:100%;border-radius:99px;background:var(--ac);transition:width calc(var(--d3) + .2s) var(--ease) calc(var(--i,0)*70ms + .15s)}
+.fill{width:100%;height:100%;border-radius:99px;background:var(--ac);transform:translateX(-100%);transition:transform calc(var(--d3) + .2s) var(--ease) calc(var(--i,0)*70ms + .15s)}
 #cats{overflow-y:clip}
 
 /* Geser bulan: salinan panel lama (ghost) keluar, panel baru masuk */
@@ -207,6 +207,7 @@ dialog.show::backdrop{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:b
 .fr>.i{width:20px;height:20px;color:var(--t2)}
 .fr input{flex:1;height:48px;padding:0;font-size:17px}
 .fr input:focus-visible{outline:none}
+.fr:has(input:focus-visible){outline:2px solid var(--ac);outline-offset:-2px}
 .fr.dt{cursor:pointer}
 #dl{flex:1;min-width:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fr.dt .chev{width:16px;height:16px;margin-left:auto}
@@ -334,3 +335,11 @@ html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:ba
 .seg3.two[data-v="1"]{--k:1}
 .credit{margin:28px 0 8px;text-align:center;font-size:13px;color:var(--t2)}
 .credit::before{content:'';display:block;width:28px;height:1px;margin:0 auto 14px;background:var(--bd)}
+/* Hover hanya untuk penunjuk presisi (desktop); sentuh tidak terpengaruh */
+@media(hover:hover) and (pointer:fine){
+.tx:hover,.set:hover{background:var(--fill)}
+.chip:hover:not([aria-pressed=true]),.alt:hover,.mo:hover:not([aria-pressed=true]):not(:disabled){background-color:var(--fill2)}
+.pri:hover,.sv:hover:not(:disabled),#toast button:hover{opacity:.85}
+.txt:hover{opacity:.6}
+.tab:hover{color:var(--tx)}
+}

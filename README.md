@@ -5,7 +5,7 @@ Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data ters
 ```
 render.yaml            Blueprint Render + header keamanan
 public/                folder yang dipublikasikan
-  index.html  sw.js  manifest.webmanifest  _headers
+  index.html  sw.js  manifest.webmanifest  _headers  robots.txt
   assets/  app.js  style.css  theme.js  icon.svg  icon-*.png
 ```
 
@@ -57,3 +57,10 @@ Dibuat oleh Joel G. Thompson.
 ## Mata uang
 - Ringkasan → Mata uang: IDR (bawaan), USD, EUR, SGD, MYR, JPY. Disimpan di `localStorage` kunci `catat.cur`.
 - Hanya mengubah simbol tampilan, tanpa konversi kurs; nominal tetap bilangan bulat (belum ada sen). Pemisah ribuan mengikuti mata uang, bukan bahasa.
+
+## Catatan v31–v32
+- `theme-color` mengikuti tema (sistem dan pilihan manual); diperbarui di `theme.js` (muat awal) dan `applyTheme()`.
+- Bar progres (kategori, anggaran) bergerak lewat `transform: translateX`, bukan `width`.
+- Chip mata uang adalah tombol toggle (`aria-pressed`) dalam `role=group`, bukan radio.
+- Tambah Open Graph dasar dan `robots.txt`. Belum ada `og:image` dan `sitemap.xml` karena butuh URL absolut situs.
+- v32: Esc pada form catatan kini lewat handler `cancel` (animasi keluar) dan fokus kembali ke pemicu, bukan `#kb`. Kolom input (`.fr`) punya cincin fokus inset. Gaya hover hanya untuk `(hover:hover) and (pointer:fine)`.
