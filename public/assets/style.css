@@ -445,3 +445,15 @@ body[data-tab=cfg] .fab{display:none}
 .chips{margin:0 -16px;padding:4px 16px}
 .cbody{margin:0 -16px;padding:10px 16px 20px}
 }
+
+/* v37: lebih sederhana (kaca tidak disentuh) */
+.track{height:6px}
+.fill{background:color-mix(in srgb,var(--ac) 72%,transparent)}
+.ic,.set.rd .ic{width:24px;height:24px;background:none;color:var(--t2)}
+.ic .i{width:20px;height:20px}
+.set.rd .ic{color:var(--red)}
+.set+.set:has(>.ic)::before{left:52px}
+.tx b{font-weight:500}
+.hero::before{display:none}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .card{border-color:transparent}}
+:root[data-theme=dark] .card{border-color:transparent}
