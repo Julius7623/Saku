@@ -20,7 +20,7 @@ const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&ymd(parse(s))===s;
 const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.setItem(k,v)}catch{}};
 
 /* Bahasa: Indonesia (id) atau Inggris (en). Dipilih pengguna di Ringkasan; bawaannya mengikuti bahasa perangkat. */
-const EN={'Pengaturan':'Settings','Mata uang':'Currency','Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.':'Only changes the displayed symbol; amounts are not converted.',"KasKu: pencatat keuangan pribadi": "KasKu: personal finance tracker", "Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.": "Log daily income and expenses quickly. Your data stays on your device.", "KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.": "KasKu needs JavaScript. Enable JavaScript in your browser, then reload the page.", "Pilih bulan dan tahun": "Choose month and year", "Pindah bulan": "Change month", "Bulan sebelumnya": "Previous month", "Bulan berikutnya": "Next month", "Sisa uang bulan ini": "Money left this month", "Pemasukan": "Income", "Pengeluaran": "Expenses", "Sudah akhir bulan. Simpan cadangan datamu?": "It’s the end of the month. Back up your data?", "Cadangkan": "Back up", "Nanti": "Later", "Cari catatan atau nominal": "Search entries or amounts", "Cari catatan": "Search entries", "Kategori": "Categories", "Kelola kategori": "Manage categories", "Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.": "Add, delete, and reorder your income and expense categories. Existing entries stay unchanged.", "Cadangan data": "Data backup", "Simpan cadangan": "Save backup", "Pulihkan cadangan": "Restore backup", "Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.": "Your data lives only on this device. Save a backup regularly so you don’t lose it.", "Tampilan": "Appearance", "Otomatis": "Auto", "Terang": "Light", "Gelap": "Dark", "Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.": "Auto follows your device’s light or dark setting.", "Bahasa": "Language", "Pilih bahasa tampilan aplikasi.": "Choose the app’s display language.", "Reset": "Reset", "Reset catatan keuangan": "Reset financial records", "Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.": "Deletes all entries and budgets from this device. Appearance and category settings are kept.", "Dibuat oleh": "Made by", "Menu utama": "Main menu", "Beranda": "Home", "Ringkasan": "Summary", "Tambah catatan": "Add entry", "Batal": "Cancel", "Jenis catatan": "Entry type", "Hapus": "Delete", "Catatan baru": "New entry", "Nominal dalam rupiah": "Amount in rupiah", "Keterangan (opsional)": "Note (optional)", "Keterangan": "Note", "Tanggal": "Date", "Simpan": "Save", "Pilih tahun": "Choose year", "Tahun sebelumnya": "Previous year", "Tahun berikutnya": "Next year", "Bulan": "Month", "Bulan ini": "This month", "Nama anggaran": "Budget name", "Nominal per bulan": "Amount per month", "Anggaran per bulan dalam rupiah": "Monthly budget in rupiah", "Dihitung dari kategori": "Counted from categories", "Kategori pengeluaran yang dihitung": "Expense categories counted", "Selesai": "Done", "Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.": "Tap − to delete, drag ≡ to reorder.", "Kategori baru": "New category", "Nama kategori pengeluaran baru": "New expense category name", "Tambah": "Add", "Nama kategori pemasukan baru": "New income category name", "Reset catatan keuangan?": "Reset financial records?", "Hapus semua": "Delete all", "Simpan cadangan dulu": "Back up first", "Hari ini": "Today", "Kemarin": "Yesterday", "Tidak ada hasil": "No results", "Pencarian mencakup semua bulan.": "Search covers all months.", "Belum ada catatan bulan ini": "No entries this month", "Belum ada catatan": "No entries yet", "Semua catatan tersimpan di perangkatmu.": "All entries are stored on your device.", "Tambah catatan pertama": "Add your first entry", "Belum ada data bulan ini.": "No data this month.", "Anggaran": "Budgets", "Atur": "Edit", "Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.": "No budgets yet. Create your own, e.g. “Eating out” or “Fun”.", "Tambah anggaran": "Add budget", "Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.": "Drag ≡ to reorder. Tap − then Delete to remove a budget.", "Dihitung dari pengeluaran di kategori yang dipilih, per bulan.": "Calculated from expenses in the selected categories, per month.", "Catatan dihapus": "Entry deleted", "Kembalikan": "Undo", "Gagal menghapus. Coba lagi.": "Couldn’t delete. Try again.", "Gagal mengembalikan catatan. Coba lagi.": "Couldn’t restore the entry. Try again.", "Pilih tanggal": "Pick a date", "Ubah catatan": "Edit entry", "Tanggal tidak boleh melewati hari ini.": "The date can’t be after today.", "Tanggalnya belum benar. Pilih tanggal lagi.": "That date isn’t valid. Pick another.", "Gagal menyimpan. Coba lagi.": "Couldn’t save. Try again.", "Ubah anggaran": "Edit budget", "Anggaran baru": "New budget", "Lengkapi nama, nominal, dan minimal satu kategori.": "Fill in a name, amount, and at least one category.", "Cadangan tersimpan": "Backup saved", "Gagal mereset. Coba lagi.": "Couldn’t reset. Try again.", "Semua catatan dihapus.": "All entries deleted.", "Gagal mengembalikan. Coba lagi.": "Couldn’t restore. Try again.", "Kembali ke pilihan bulan": "Back to months", "12 tahun sebelumnya": "Previous 12 years", "12 tahun berikutnya": "Next 12 years", "Tahun": "Year", ", ada catatan": ", has entries", "Cadangan disimpan sebagai berkas .json.": "Backup saved as a .json file.", "Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.": "This file isn’t a KasKu backup. Choose the .json file from “Save backup”."};
+const EN={'Pengaturan':'Settings','Mata uang':'Currency','Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.':'Only changes the displayed symbol; amounts are not converted.',"KasKu: pencatat keuangan pribadi": "KasKu: personal finance tracker", "Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.": "Log daily income and expenses quickly. Your data stays on your device.", "KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.": "KasKu needs JavaScript. Enable JavaScript in your browser, then reload the page.", "Pilih bulan dan tahun": "Choose month and year", "Pindah bulan": "Change month", "Bulan sebelumnya": "Previous month", "Bulan berikutnya": "Next month", "Sisa uang bulan ini": "Money left this month", "Pemasukan": "Income", "Pengeluaran": "Expenses", "Sudah akhir bulan. Simpan cadangan datamu?": "It’s the end of the month. Back up your data?", "Cadangkan": "Back up", "Nanti": "Later", "Cari catatan atau nominal": "Search entries or amounts", "Cari catatan": "Search entries", "Kategori": "Categories", "Kelola kategori": "Manage categories", "Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.": "Add, delete, and reorder your income and expense categories. Existing entries stay unchanged.", "Cadangan data": "Data backup", "Simpan cadangan": "Save backup", "Pulihkan cadangan": "Restore backup", "Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.": "Your data lives only on this device. Save a backup regularly so you don’t lose it.", "Tampilan": "Appearance", "Otomatis": "Auto", "Terang": "Light", "Gelap": "Dark", "Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.": "Auto follows your device’s light or dark setting.", "Bahasa": "Language", "Pilih bahasa tampilan aplikasi.": "Choose the app’s display language.", "Reset": "Reset", "Reset catatan keuangan": "Reset financial records", "Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.": "Deletes all entries and budgets from this device. Appearance and category settings are kept.", "Dibuat oleh": "Made by", "Menu utama": "Main menu", "Beranda": "Home", "Ringkasan": "Summary", "Tambah catatan": "Add entry", "Batal": "Cancel", "Jenis catatan": "Entry type", "Hapus": "Delete", "Catatan baru": "New entry", "Nominal dalam rupiah": "Amount in rupiah", "Keterangan (opsional)": "Note (optional)", "Keterangan": "Note", "Tanggal": "Date", "Simpan": "Save", "Pilih tahun": "Choose year", "Tahun sebelumnya": "Previous year", "Tahun berikutnya": "Next year", "Bulan": "Month", "Bulan ini": "This month", "Nama anggaran": "Budget name", "Nominal per bulan": "Amount per month", "Anggaran per bulan dalam rupiah": "Monthly budget in rupiah", "Dihitung dari kategori": "Counted from categories", "Kategori pengeluaran yang dihitung": "Expense categories counted", "Selesai": "Done", "Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.": "Tap − to delete, drag ≡ to reorder.", "Kategori baru": "New category", "Nama kategori pengeluaran baru": "New expense category name", "Tambah": "Add", "Nama kategori pemasukan baru": "New income category name", "Reset catatan keuangan?": "Reset financial records?", "Hapus semua": "Delete all", "Ketuk lagi untuk menghapus": "Tap again to delete", "Simpan cadangan dulu": "Back up first", "Hari ini": "Today", "Kemarin": "Yesterday", "Tidak ada hasil": "No results", "Pencarian mencakup semua bulan.": "Search covers all months.", "Belum ada catatan bulan ini": "No entries this month", "Belum ada catatan": "No entries yet", "Semua catatan tersimpan di perangkatmu.": "All entries are stored on your device.", "Tambah catatan pertama": "Add your first entry", "Belum ada data bulan ini.": "No data this month.", "Anggaran": "Budgets", "Atur": "Edit", "Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.": "No budgets yet. Create your own, e.g. “Eating out” or “Fun”.", "Tambah anggaran": "Add budget", "Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.": "Drag ≡ to reorder. Tap − then Delete to remove a budget.", "Dihitung dari pengeluaran di kategori yang dipilih, per bulan.": "Calculated from expenses in the selected categories, per month.", "Catatan dihapus": "Entry deleted", "Kembalikan": "Undo", "Gagal menghapus. Coba lagi.": "Couldn’t delete. Try again.", "Gagal mengembalikan catatan. Coba lagi.": "Couldn’t restore the entry. Try again.", "Pilih tanggal": "Pick a date", "Ubah catatan": "Edit entry", "Tanggal tidak boleh melewati hari ini.": "The date can’t be after today.", "Tanggalnya belum benar. Pilih tanggal lagi.": "That date isn’t valid. Pick another.", "Gagal menyimpan. Coba lagi.": "Couldn’t save. Try again.", "Ubah anggaran": "Edit budget", "Anggaran baru": "New budget", "Lengkapi nama, nominal, dan minimal satu kategori.": "Fill in a name, amount, and at least one category.", "Cadangan tersimpan": "Backup saved", "Gagal mereset. Coba lagi.": "Couldn’t reset. Try again.", "Semua catatan dihapus.": "All entries deleted.", "Gagal mengembalikan. Coba lagi.": "Couldn’t restore. Try again.", "Kembali ke pilihan bulan": "Back to months", "12 tahun sebelumnya": "Previous 12 years", "12 tahun berikutnya": "Next 12 years", "Tahun": "Year", ", ada catatan": ", has entries", "Cadangan disimpan sebagai berkas .json.": "Backup saved as a .json file.", "Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.": "This file isn’t a KasKu backup. Choose the .json file from “Save backup”."};
 const CN={'Makan':'Food','Transportasi':'Transport','Transport':'Transport','Hiburan':'Entertainment','Lainnya':'Other','Uang jajan':'Allowance','Gaji':'Salary','Bonus':'Bonus','Belanja':'Shopping','Tagihan':'Bills','Kesehatan':'Health','Hadiah':'Gift'};
 const getLang=()=>{const s=ls('catat.lang');return s==='en'||s==='id'?s:(/^(id|in)\b/i.test(navigator.language||'')?'id':'en')};
 let LANG=getLang();
@@ -195,9 +195,9 @@ function renderSum(){
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
     const head=[h('small',{class:'mut'},title)];
     if(!rows.length)continue;
-    box.append(h('div',{class:'card p16 mt sumcard'+(type==='in'?' inc':'')},...head,...rows.map(([c,v])=>{
+    box.append(h('div',{class:'card p16 mt sumcard'},...head,...rows.map(([c,v])=>{
       const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,p]);
-      return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},(type==='in'?'+':'')+rp(v))),h('div',{class:'track'},fill));
+      return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
   }
   if(!box.children.length)box.append(h('div',{class:'card p16 mt'},h('p',{class:'mut'},tr('Belum ada data bulan ini.'))));
@@ -322,7 +322,7 @@ function bdValid(){$('#bd-ok').disabled=!($('#bnm').value.trim()&&+$('#bam').val
 const bList=()=>[...CATS.out,...(be?be.cats.filter(c=>!CATS.out.includes(c)):[])];
 function bdChips(){
   $('#bcats').replaceChildren(...bList().map(c=>{
-    const b=h('button',{type:'button',class:'chip','aria-pressed':String(bs.has(c))},ico('M5 12.5l4.5 4.5L19 7.5'),cn(c));
+    const b=h('button',{type:'button',class:'chip','aria-pressed':String(bs.has(c))},cn(c));
     b.onclick=()=>{bs.has(c)?bs.delete(c):bs.add(c);b.setAttribute('aria-pressed',String(bs.has(c)));bdValid()};
     return b;
   }));
@@ -332,7 +332,7 @@ function openBud(b,src){
   bud._src=src;be=b||null;bs=new Set(b?b.cats:[]);
   $('#bt').textContent=b?tr('Ubah anggaran'):tr('Anggaran baru');
   $('#bnm').value=b?b.name:'';$('#bam').value=b?fmt.format(b.amount):'';$('#bd-del').hidden=!b;$('#berr').textContent='';
-  bdChips();$('#bcats').scrollLeft=0;bdValid();
+  bdChips();bdValid();
   modal(bud);place();b?bud.focus({preventScroll:true}):$('#bnm').focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>bud.classList.add('show')));
 }
@@ -352,7 +352,6 @@ function saveBud(del){
 /* Baris yang bisa diatur (kategori & anggaran), gaya Pengaturan iOS: − merah di kiri, nama, ≡ untuk menyeret di kanan.
    Ketuk − → muncul tombol Hapus (− berputar tegak). */
 function erow(o){
-  if(o.plain)return h('div',{class:'er plain','data-l':o.l,'data-k':o.k},h('span',{class:'ew'},h('b',{},o.label)));
   const mn=h('button',{type:'button',class:'mn','aria-label':tr('Hapus')+' '+o.label,'aria-expanded':String(!!o.armed),onclick:o.onMinus},ico('M6 12h12'));
   if(o.only)mn.disabled=true;
   return h('div',{class:'er'+(o.armed?' arm':''),'data-l':o.l,'data-k':o.k},mn,
@@ -412,36 +411,18 @@ function delBud(b,i){
 }
 
 /* Kategori buatan pengguna (Ringkasan → Kelola kategori): tambah, hapus, urutkan. Catatan lama tetap memakai nama kategorinya. */
-const catd=$('#catd'),CK={out:$('#cl-out'),in:$('#cl-in')};let cArm=null,cBusy=false,cEdit=false,cDirty=false;
+const catd=$('#catd'),CK={out:$('#cl-out'),in:$('#cl-in')};let cArm=null,cBusy=false;
 function paintCats(){
   for(const t of['out','in']){
     const l=CATS[t];
     CK[t].replaceChildren(...l.map((c,i)=>{
       const key=t+':'+c;
-      const n=cArm===key&&!catSame(c,'Lainnya')?all.filter(x=>x.type===t&&x.cat===c).length:0;
-      return erow({l:t,k:c,label:cn(c),plain:!cEdit,only:l.length<2,armed:cArm===key,
-        sub:n?(LANG==='en'?`${n} entries will move to ${cn('Lainnya')}`:`${n} catatan dipindah ke ${cn('Lainnya')}`):null,
+      return erow({l:t,k:c,label:cn(c),only:l.length<2,armed:cArm===key,
         onMinus:()=>{cArm=cArm===key?null:key;paintCats()},
-        onDel:()=>delCat(t,c)});
+        onDel:()=>{CATS[t].splice(i,1);cArm=null;catSave();paintCats();place()}});
     }));
   }
 }
-/* hapus kategori: catatan lama (dan anggaran) yang memakainya dipindah ke "Lainnya" */
-async function delCat(t,c){
-  const L='Lainnya',mv=!catSame(c,L);
-  let moved=[],bd=null;
-  if(mv){
-    const dst=CATS[t].find(y=>catSame(y,L))??L;
-    moved=all.filter(x=>x.type===t&&x.cat===c).map(x=>({...x,cat:dst}));
-    if(moved.length){try{await dbBulk(moved)}catch{$('#cerr').textContent=tr('Gagal menyimpan. Coba lagi.');return}
-      const m=new Map(moved.map(x=>[x.id,x]));all=all.map(x=>m.get(x.id)||x)}
-    if(t==='out'){const a=bdGet();if(a.some(b=>b.cats.includes(c))){bd=a.map(b=>b.cats.includes(c)?{...b,cats:[...new Set(b.cats.map(k=>k===c?dst:k))]}:b);bdSave(bd)}}
-    if(!CATS[t].some(y=>catSame(y,L)))CATS[t].push(L);
-  }
-  if(moved.length||bd)cDirty=true;
-  CATS[t]=CATS[t].filter(y=>y!==c);cArm=null;catSave();paintCats();place();
-}
-function setEdit(on){cEdit=on;cArm=null;const b=$('#cat-ed');b.setAttribute('aria-pressed',String(on));paintCats();if(catd.open)place()}
 function updAdd(){for(const t of['out','in'])$('#cb-'+t).disabled=!catName($('#ca-'+t).value)}
 function addCat(t){
   const inp=$('#ca-'+t),c=catName(inp.value),err=$('#cerr');
@@ -454,15 +435,14 @@ function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute
 $$('.ctog button').forEach(b=>b.onclick=()=>setCt(b.dataset.ct));
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
-  catd._src=src;cArm=null;cEdit=false;$('#cat-ed').setAttribute('aria-pressed','false');setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
+  catd._src=src;cArm=null;setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
   updAdd();paintCats();
   modal(catd);place();catd.focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>catd.classList.add('show')));
 }
 async function closeCat(){
   if(!catd.open||cBusy)return;cBusy=true;
-  setOrigin(catd);catd.classList.remove('show');await sleep(CLOSE);if(catd.open)catd.close();cBusy=false;cArm=null;cEdit=false;
-  if(cDirty){cDirty=false;render()}
+  setOrigin(catd);catd.classList.remove('show');await sleep(CLOSE);if(catd.open)catd.close();cBusy=false;cArm=null;
 }
 for(const t of['out','in']){
   sortable(CK[t],(a,z)=>{const[x]=CATS[t].splice(a,1);CATS[t].splice(z,0,x);catSave();paintCats()});
@@ -471,7 +451,23 @@ for(const t of['out','in']){
   $('#cb-'+t).addEventListener('pointerdown',e=>e.preventDefault());/* keyboard tetap terbuka */
   $('#cb-'+t).onclick=()=>addCat(t);
 }
-$('#ct-open').onclick=e=>openCat(e.currentTarget);$('#cat-ok').onclick=()=>closeCat();$('#cat-ed').onclick=()=>setEdit(!cEdit);
+/* Fokus "Kategori baru": jaga posisi gulir daftar; geser seperlunya hanya bila kolom tertutup keyboard */
+{const cb=catd.querySelector('.cbody');let st=0,armed=false,raf=0;
+  cb.addEventListener('touchstart',()=>cancelAnimationFrame(raf),{passive:true});
+  for(const t of['out','in']){const i=$('#ca-'+t);
+    i.addEventListener('pointerdown',()=>{st=cb.scrollTop;armed=true});
+    i.addEventListener('focus',()=>{
+      const keep=armed;armed=false;cancelAnimationFrame(raf);const t0=performance.now();
+      (function f(){
+        if(keep)cb.scrollTop=st;
+        const r=i.getBoundingClientRect(),c=cb.getBoundingClientRect();
+        if(r.bottom>c.bottom-12)cb.scrollTop+=r.bottom-c.bottom+12;
+        if(performance.now()-t0<700)raf=requestAnimationFrame(f);
+      })();
+    });
+  }
+}
+$('#ct-open').onclick=e=>openCat(e.currentTarget);$('#cat-ok').onclick=()=>closeCat();
 catd.addEventListener('click',e=>{if(e.target===catd)closeCat()});
 catd.addEventListener('cancel',e=>{e.preventDefault();closeCat()});
 catd.addEventListener('close',()=>catd.classList.remove('show'));
@@ -627,7 +623,11 @@ $('#bd-ok').onclick=()=>saveBud();$('#bd-del').onclick=()=>saveBud(true);$('#bd-
 bud.addEventListener('click',e=>{if(e.target===bud)closeBud()});
 bud.addEventListener('cancel',e=>{e.preventDefault();closeBud()});
 bud.addEventListener('close',()=>bud.classList.remove('show'));
-$('#rs').onclick=e=>openRst(e.currentTarget);$('#rs-cl').onclick=()=>closeRst();$('#rs-ok').onclick=resetAll;
+$('#rs').onclick=e=>openRst(e.currentTarget);$('#rs-cl').onclick=()=>closeRst();const rok=$('#rs-ok');let rTm=0;
+const disarm=()=>{clearTimeout(rTm);rok.classList.remove('arm');rok.textContent=tr('Hapus semua')};
+rok.onclick=()=>{if(rok.classList.contains('arm')){clearTimeout(rTm);resetAll();return}
+  rok.classList.add('arm');rok.textContent=tr('Ketuk lagi untuk menghapus');rTm=setTimeout(disarm,4000)};
+rst.addEventListener('close',disarm);
 $('#rs-bk').onclick=e=>{exportJSON();e.currentTarget.textContent=tr('Cadangan tersimpan');e.currentTarget.disabled=true};
 rst.addEventListener('click',e=>{if(e.target===rst)closeRst()});
 rst.addEventListener('cancel',e=>{e.preventDefault();closeRst()});
@@ -725,7 +725,7 @@ function dragScroll(el){
   el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
   el.addEventListener('click',e=>{if(performance.now()<nc){e.preventDefault();e.stopPropagation()}},true);
 }
-dragScroll($('#chips'));dragScroll($('#bcats'));
+dragScroll($('#chips'));
 /* Slider kaca (tab bar & Keluar/Masuk & Tampilan): geseran harus dimulai tepat di thumb dan langsung aktif (tanpa menahan): thumb jadi lensa dan mengikuti jari/kursor.
    Sentuhan di luar thumb hanya ketukan (memilih segmen); geseran yang dimulai di luar thumb diabaikan (tidak menggeser slider, tidak memilih segmen, tidak bocor ke elemen lain).
    Saat lensa digeser, gulir halaman dikunci. */
