@@ -19,7 +19,7 @@ public/                folder yang dipublikasikan
 
 ## Keputusan desain
 - Gaya iOS: judul bulan besar, daftar terkelompok dengan monogram kategori, font sistem (SF di perangkat Apple).
-- Kartu saldo bergradasi abu (hitam di tema terang, putih di gelap) dengan kilau halus; hanya warna token. Kartu ini diam saat pindah bulan, hanya angkanya yang berhitung naik/turun.
+- Kartu saldo bergradasi abu gelap di kedua tema (tema gelap sengaja diredupkan agar tidak jadi satu-satunya elemen terang) dengan kilau halus; hanya warna token. Kartu ini diam saat pindah bulan, hanya angkanya yang berhitung naik/turun.
 - Pindah bulan: judul bulan bergeser, daftar di bawah kartu ikut bergeser, kartu saldo tetap. Gerak memakai 3 durasi (`--d1/--d2/--d3`) dan 2 kurva (`--ease`, `--spring`); `D` di `app.js` harus sama dengan `--d3`.
 - Dock berupa kapsul kaca (blur) dengan penanda tab yang bergeser, plus tombol + terpisah di sisi jempol. Tombol + memakai kaca bening yang sama dengan tab bar (tanpa isi warna). Ukuran mengikuti Phone/Files iOS 26 (diukur dari screenshot, 402pt): tab bar tinggi 56 dengan thumb 48 (inset 4), tombol + 56 bulat, jarak 8, margin samping 19, jarak ke tepi bawah 19. Kapsul navigasi bulan 88×40 (area sentuh 44), kolom cari tinggi 40.
 - Nominal berupa kolom teks dengan keyboard angka bawaan (diformat Rp saat mengetik); font input minimal 16px dan `touch-action:manipulation` agar iOS tidak zoom.
@@ -57,3 +57,4 @@ Dibuat oleh Joel G. Thompson.
 ## Mata uang
 - Ringkasan → Mata uang: IDR (bawaan), USD, EUR, SGD, MYR, JPY. Disimpan di `localStorage` kunci `catat.cur`.
 - Hanya mengubah simbol tampilan, tanpa konversi kurs; nominal tetap bilangan bulat (belum ada sen). Pemisah ribuan mengikuti mata uang, bukan bahasa.
+- v34: uang diformat lewat `Intl.NumberFormat` (style currency, locale per mata uang; euro tampil `7.000 €`). Simpan di sheet: abu jelas saat nonaktif, tanpa ikon centang (kunci Enter/centang keyboard sudah menyimpan), dan menempel di bawah sheet agar tidak terpotong keyboard. Ringkasan: tanpa total ganda, selalu ada breakdown per kategori. Tombol + disembunyikan di Pengaturan. Ringkas: catatan kecil mata uang dihapus; Batal di dialog reset dibuat tenang (tanpa isi/outline).

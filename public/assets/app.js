@@ -31,7 +31,10 @@ let _nf=null,_nl='';
 /* Mata uang: hanya simbol tampilan (tanpa konversi kurs); nominal tetap bilangan bulat. Disimpan di `catat.cur`. */
 const CURS={IDR:['Rp','\u00A0'],USD:['$',''],EUR:['€',''],SGD:['S$',''],MYR:['RM','\u00A0'],JPY:['¥','']};
 let CUR=(()=>{const c=ls('catat.cur');return CURS[c]?c:'IDR'})();
-const rp=n=>(n<0?'−':'')+CURS[CUR][0]+CURS[CUR][1]+fmt.format(Math.abs(n));
+/* format uang mengikuti locale mata uang (posisi simbol + pemisah ribuan), bukan simbol di depan angka berpemisah locale lain */
+const _cf={};
+const rp=n=>{const k=CUR,l=CURLOC[k]||'id-ID';const f=_cf[k]??=new Intl.NumberFormat(l,{style:'currency',currency:k,currencyDisplay:'narrowSymbol',minimumFractionDigits:0,maximumFractionDigits:0});
+  return (n<0?'−':'')+f.formatToParts(Math.abs(n)).map(x=>x.type==='currency'?CURS[k][0]:x.value).join('').replace(/\s/g,'\u00A0')};
 /* pemisah ribuan mengikuti mata uang (bukan bahasa): bahasa hanya menerjemahkan teks */
 const CURLOC={IDR:'id-ID',USD:'en-US',EUR:'de-DE',SGD:'en-SG',MYR:'ms-MY',JPY:'ja-JP'};
 const fmt={format:n=>{const l=CURLOC[CUR]||'id-ID';if(_nl!==l){_nf=new Intl.NumberFormat(l);_nl=l}return _nf.format(n)}};
@@ -190,9 +193,9 @@ function renderSum(){
     const tot=sum(m,type),by={};
     m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
-    const head=[h('small',{class:'mut'},title),h('p',{class:'sumtot'},rp(tot))];
+    const head=[h('small',{class:'mut'},title)];
     if(!rows.length)continue;
-    box.append(h('div',{class:'card p16 mt sumcard'},...head,...(rows.length<2?[]:rows).map(([c,v])=>{
+    box.append(h('div',{class:'card p16 mt sumcard'},...head,...rows.map(([c,v])=>{
       const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,p]);
       return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
@@ -201,7 +204,7 @@ function renderSum(){
   const bg=bdGet();
   if(!bg.length){bEdit=false;bArm=null}
   box.append(h('div',{class:'dh'},h('h2',{class:'day'},tr('Anggaran')),bg.length?h('button',{type:'button',class:'txt',onclick:()=>{bEdit=!bEdit;bArm=null;renderSum()}},bEdit?tr('Selesai'):tr('Atur')):null));
-  if(!bg.length)box.append(h('div',{class:'card'},h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),tr('Tambah anggaran'))));
+  if(!bg.length)box.append(h('div',{class:'card'},h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},tr('Tambah anggaran'),chevR())));
   else if(bEdit){
     /* mode atur: ketuk − untuk menghapus, seret ≡ untuk mengubah urutan */
     const list=h('div',{class:'card sl'},...bg.map((b,i)=>erow({l:'bud',k:b.id,label:b.name,sub:b.cats.map(cn).join(' · '),armed:bArm===b.id,onMinus:()=>{bArm=bArm===b.id?null:b.id;renderSum()},onDel:()=>delBud(b,i)})));
@@ -216,7 +219,7 @@ function renderSum(){
         h('small',{class:left<0?'over':''},LANG==='en'?(left<0?`Over by ${rp(-left)} of ${rp(b.amount)}`:`${rp(left)} left of ${rp(b.amount)}`):(left<0?`Lebih ${rp(-left)} dari ${rp(b.amount)}`:`Sisa ${rp(left)} dari ${rp(b.amount)}`)),
         h('div',{class:'track'},fill)),
       chevR());
-  }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),tr('Tambah anggaran'))));
+  }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},tr('Tambah anggaran'),chevR())));
 
   bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
