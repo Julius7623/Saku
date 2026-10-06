@@ -1,5 +1,5 @@
 /* Service worker: precache + stale-while-revalidate, jalan offline. Tambah file baru ke daftar A dan naikkan V. */
-const V='catat-v22',A=['./','index.html','assets/style.css','assets/app.js','assets/theme.js','assets/icon.svg','manifest.webmanifest'];
+const V='catat-v23',A=['./','index.html','assets/style.css','assets/app.js','assets/theme.js','assets/icon.svg','manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(A.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{

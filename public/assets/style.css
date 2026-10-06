@@ -3,9 +3,9 @@
 --fill:rgba(120,120,128,.12);--fill2:rgba(120,120,128,.22);
 --hero:linear-gradient(150deg,#363636 0%,#111 64%);--hero-tx:#FAFAFA;--sheen:rgba(255,255,255,.16);
 --sh:0 14px 32px -18px rgba(0,0,0,.55);
---g-bg:rgba(255,255,255,.44);--g-sp:rgba(255,255,255,.28);--g-hi:rgba(255,255,255,.95);--g-hi2:rgba(255,255,255,.5);--g-edge:rgba(255,255,255,.7);--g-glow:rgba(255,255,255,.35);--g-rim:rgba(0,0,0,.08);--g-sh:rgba(0,0,0,.3);
---tint:rgba(17,17,17,.84);--pill:rgba(120,120,128,.2);--thumb:#FFF;--lens-c:rgba(255,255,255,.4);--card-g:rgba(255,255,255,.74);
---rim-base:rgba(255,255,255,.55);--rim-spec:rgba(255,255,255,1);--pill-hi:rgba(255,255,255,.55);--pill-rim:rgba(0,0,0,.06);--lens-ring:rgba(0,0,0,.07);--g-blur:blur(12px) saturate(1.8);
+--g-bg:rgba(255,255,255,.72);--g-sp:rgba(255,255,255,.28);--g-hi:rgba(255,255,255,.95);--g-hi2:rgba(255,255,255,.5);--g-edge:rgba(255,255,255,.7);--g-glow:rgba(0,0,0,.035);--g-rim:rgba(0,0,0,.2);--g-sh:rgba(0,0,0,.14);
+--tint:rgba(17,17,17,.84);--pill:rgba(120,120,128,.11);--pill-in:rgba(0,0,0,.08);--thumb:#FFF;--lens-c:rgba(255,255,255,.55);--card-g:rgba(255,255,255,.74);
+--rim-base:rgba(255,255,255,.55);--rim-spec:rgba(255,255,255,1);--pill-hi:rgba(255,255,255,0);--pill-rim:rgba(0,0,0,.05);--lens-ring:rgba(0,0,0,.14);--g-blur:blur(12px) saturate(1.8);
 /* gerak: 3 durasi saja (tekan, pudar, pindah) dan 2 kurva (halus, melenting). --d3 harus sama dengan D di app.js */
 --d1:.15s;--d2:.25s;--d3:.5s;--ease:cubic-bezier(.32,.72,0,1);--spring:cubic-bezier(.34,1.45,.5,1);
 --dock-b:max(calc(env(safe-area-inset-bottom,0px) - 15px),10px);--r-lg:28px;--r-sheet:36px;--r-md:24px;--r-sm:16px;--red:#D70015;color-scheme:light}
@@ -143,7 +143,7 @@ background:linear-gradient(to bottom right,var(--rim-spec),transparent 34%,trans
 /* Slider kaca (tab bar & Pengeluaran/Pemasukan): pil gelap saat diam; saat disentuh jadi lensa bening yang lebih besar */
 .tabs[data-t=sum],.shh .seg[data-v=in]{--k:1}
 .seg3[data-v="1"]{--k:1}.seg3[data-v="2"]{--k:2}
-.tabs::before,.seg::before,.seg3::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 0 0 .5px var(--pill-rim),inset 0 1px 0 var(--pill-hi);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
+.tabs::before,.seg::before,.seg3::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 0 0 .5px var(--pill-rim),inset 0 1px 0 var(--pill-hi),inset 0 3px 6px -3px var(--pill-in,transparent);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.drive::before,.seg.drive::before,.seg3.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .seg::before,.seg3::before{background:var(--thumb);box-shadow:0 0 0 .5px rgba(128,128,128,.14),0 2px 6px -1px rgba(0,0,0,.2),0 1px 1px rgba(0,0,0,.06)}
 .tabs.lens::before,.seg.lens::before,.seg3.lens::before{--sx:1.06;--sy:1.26;background:var(--lens-c);-webkit-backdrop-filter:saturate(1.6);backdrop-filter:saturate(1.6);box-shadow:0 0 0 .5px var(--lens-ring),inset 0 0 0 .5px var(--g-hi2),inset 0 1.5px 1px -.5px var(--g-hi),inset 0 -1.5px 1px -.5px var(--g-hi2),inset 0 0 14px var(--g-glow),0 8px 18px -10px var(--g-sh)}
