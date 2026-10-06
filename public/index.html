@@ -46,6 +46,11 @@
 
   <section id="sum" hidden>
     <div id="cats"></div>
+    <h2 class="day">Kategori</h2>
+    <div class="card">
+      <button id="ct-open" type="button" class="set" aria-haspopup="dialog"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7l9 9-7 7-9-9zM8.5 8.5h.01"/></svg></span>Kelola kategori<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <p class="mut foot">Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.</p>
     <h2 class="day">Cadangan data</h2>
     <div class="card">
       <button id="ex" class="set"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></span>Simpan cadangan<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
@@ -66,7 +71,7 @@
     <div class="card">
       <button id="rs" type="button" class="set rd"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></span>Reset catatan keuangan</button>
     </div>
-    <p class="mut foot">Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan tidak ikut terhapus.</p>
+    <p class="mut foot">Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.</p>
   </section>
 </main>
 
@@ -131,6 +136,27 @@
     </div>
     <p id="berr" class="err" role="alert"></p>
     <button id="bd-ok" type="button" class="sv" disabled><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Simpan</button>
+  </div>
+</dialog>
+
+<dialog id="catd" aria-labelledby="ct" tabindex="-1">
+  <div class="sh">
+    <div class="pkh">
+      <h2 id="ct" class="bt">Kategori</h2>
+      <button id="cat-ok" type="button" class="txt">Selesai</button>
+    </div>
+    <p class="mut tc">Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.</p>
+    <div>
+      <p class="mut lbl">Pengeluaran</p>
+      <div id="cl-out" class="elist"></div>
+      <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-out" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori pengeluaran baru" aria-label="Nama kategori pengeluaran baru"><button id="cb-out" type="button" class="ad" disabled>Tambah</button></label></div>
+    </div>
+    <div>
+      <p class="mut lbl">Pemasukan</p>
+      <div id="cl-in" class="elist"></div>
+      <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-in" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori pemasukan baru" aria-label="Nama kategori pemasukan baru"><button id="cb-in" type="button" class="ad" disabled>Tambah</button></label></div>
+    </div>
+    <p id="cerr" class="err" role="alert"></p>
   </div>
 </dialog>
 
