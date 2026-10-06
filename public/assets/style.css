@@ -75,14 +75,8 @@ h1>span.sr{grid-area:auto}
 .row>div{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:10px 12px;border-radius:var(--r-sm);background:rgba(128,128,128,.18)}
 .row>div>div{min-width:0}
 #inc,#out{display:block;font-size:clamp(13px,3.8vw,16px);font-weight:600;overflow-wrap:anywhere}
-#inc.sm,#out.sm{font-size:clamp(11px,3.2vw,13px);white-space:nowrap}
+#inc.sm,#out.sm{font-size:clamp(10px,2.9vw,13px);white-space:nowrap}
 .big.sm{font-size:clamp(24px,7.4vw,32px);white-space:nowrap}
-
-/* Keep the balance breakdown readable on the narrowest phones. */
-@media(max-width:360px){
-.row{flex-direction:column;gap:8px}
-.row>div{min-height:52px}
-}
 
 .nudge{display:flex;align-items:center;gap:2px;margin-top:14px;padding:4px 4px 4px 16px;border-radius:var(--r-md);background:var(--sf);border:1px solid var(--bd);font-size:15px}
 .nudge span{flex:1}
@@ -101,7 +95,7 @@ main,#home,#sum{position:relative}
 .tx:last-child::after{display:none}
 .tx:active:not(:disabled),.set:active:not(:disabled){transform:none;background:var(--fill)}
 .mono{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--fill);color:var(--t2);font-weight:700}
-.tx>span:nth-child(2){flex:1;min-width:0;display:grid}
+.tx>span:first-child{flex:1;min-width:0;display:grid}
 .tx>span:last-child{white-space:nowrap}
 .tx b{font-weight:600}
 .tx small{color:var(--t2);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -118,7 +112,7 @@ main,#home,#sum{position:relative}
 .br{padding:10px 0 4px;font-size:15px}
 .br>div:first-child{display:flex;justify-content:space-between;gap:8px}
 .track{height:10px;margin-top:8px;border-radius:99px;background:var(--fill);overflow:hidden}
-.fill{width:100%;height:100%;border-radius:99px;background:var(--ac);transform:translateX(-100%);transition:transform calc(var(--d3) + .2s) var(--ease) calc(var(--i,0)*70ms + .15s)}
+.fill{width:0;height:100%;border-radius:99px;background:var(--ac);transition:width calc(var(--d3) + .2s) var(--ease) calc(var(--i,0)*70ms + .15s)}
 #cats{overflow-y:clip}
 
 /* Geser bulan: salinan panel lama (ghost) keluar, panel baru masuk */
@@ -213,7 +207,6 @@ dialog.show::backdrop{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:b
 .fr>.i{width:20px;height:20px;color:var(--t2)}
 .fr input{flex:1;height:48px;padding:0;font-size:17px}
 .fr input:focus-visible{outline:none}
-.fr:has(input:focus-visible){outline:2px solid var(--ac);outline-offset:-2px}
 .fr.dt{cursor:pointer}
 #dl{flex:1;min-width:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fr.dt .chev{width:16px;height:16px;margin-left:auto}
@@ -341,11 +334,17 @@ html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:ba
 .seg3.two[data-v="1"]{--k:1}
 .credit{margin:28px 0 8px;text-align:center;font-size:13px;color:var(--t2)}
 .credit::before{content:'';display:block;width:28px;height:1px;margin:0 auto 14px;background:var(--bd)}
-/* Hover hanya untuk penunjuk presisi (desktop); sentuh tidak terpengaruh */
-@media(hover:hover) and (pointer:fine){
-.tx:hover,.set:hover{background:var(--fill)}
-.chip:hover:not([aria-pressed=true]),.alt:hover,.mo:hover:not([aria-pressed=true]):not(:disabled){background-color:var(--fill2)}
-.pri:hover,.sv:hover:not(:disabled),#toast button:hover{opacity:.85}
-.txt:hover{opacity:.6}
-.tab:hover{color:var(--tx)}
-}
+
+/* v31: 3 tab, pengaturan dipisah dari ringkasan */
+.tabs{grid-template-columns:repeat(3,1fr)}
+.tabs::before{width:calc((100% - 8px)/3)!important}
+.tabs[data-t=cfg]{--k:2}
+.cfgT{display:none}
+body[data-tab=cfg] .cfgT{display:block}
+body[data-tab=cfg] #mon,body[data-tab=cfg] .nav2{display:none}
+.set.sel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;-webkit-appearance:none;appearance:none}
+.set.sel .val{margin-left:auto;color:var(--t2);font-weight:400}
+.set.sel .chev{margin-left:8px}
+.set.sel:has(select:focus-visible){outline:2px solid var(--tx);outline-offset:-2px}
+.tx::after{left:16px}
+.hero.solo .big{margin-bottom:0}

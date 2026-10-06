@@ -20,7 +20,7 @@ const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&ymd(parse(s))===s;
 const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.setItem(k,v)}catch{}};
 
 /* Bahasa: Indonesia (id) atau Inggris (en). Dipilih pengguna di Ringkasan; bawaannya mengikuti bahasa perangkat. */
-const EN={'Mata uang':'Currency','Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.':'Only changes the displayed symbol; amounts are not converted.',"KasKu: pencatat keuangan pribadi": "KasKu: personal finance tracker", "Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.": "Log daily income and expenses quickly. Your data stays on your device.", "KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.": "KasKu needs JavaScript. Enable JavaScript in your browser, then reload the page.", "Pilih bulan dan tahun": "Choose month and year", "Pindah bulan": "Change month", "Bulan sebelumnya": "Previous month", "Bulan berikutnya": "Next month", "Sisa uang bulan ini": "Money left this month", "Pemasukan": "Income", "Pengeluaran": "Expenses", "Sudah akhir bulan. Simpan cadangan datamu?": "It’s the end of the month. Back up your data?", "Cadangkan": "Back up", "Nanti": "Later", "Cari catatan atau nominal": "Search entries or amounts", "Cari catatan": "Search entries", "Kategori": "Categories", "Kelola kategori": "Manage categories", "Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.": "Add, delete, and reorder your income and expense categories. Existing entries stay unchanged.", "Cadangan data": "Data backup", "Simpan cadangan": "Save backup", "Pulihkan cadangan": "Restore backup", "Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.": "Your data lives only on this device. Save a backup regularly so you don’t lose it.", "Tampilan": "Appearance", "Otomatis": "Auto", "Terang": "Light", "Gelap": "Dark", "Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.": "Auto follows your device’s light or dark setting.", "Bahasa": "Language", "Pilih bahasa tampilan aplikasi.": "Choose the app’s display language.", "Reset": "Reset", "Reset catatan keuangan": "Reset financial records", "Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.": "Deletes all entries and budgets from this device. Appearance and category settings are kept.", "Dibuat oleh": "Made by", "Menu utama": "Main menu", "Beranda": "Home", "Ringkasan": "Summary", "Tambah catatan": "Add entry", "Batal": "Cancel", "Jenis catatan": "Entry type", "Hapus": "Delete", "Catatan baru": "New entry", "Nominal dalam rupiah": "Amount in rupiah", "Keterangan (opsional)": "Note (optional)", "Keterangan": "Note", "Tanggal": "Date", "Simpan": "Save", "Pilih tahun": "Choose year", "Tahun sebelumnya": "Previous year", "Tahun berikutnya": "Next year", "Bulan": "Month", "Bulan ini": "This month", "Nama anggaran": "Budget name", "Nominal per bulan": "Amount per month", "Anggaran per bulan dalam rupiah": "Monthly budget in rupiah", "Dihitung dari kategori": "Counted from categories", "Kategori pengeluaran yang dihitung": "Expense categories counted", "Selesai": "Done", "Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.": "Tap − to delete, drag ≡ to reorder.", "Kategori baru": "New category", "Nama kategori pengeluaran baru": "New expense category name", "Tambah": "Add", "Nama kategori pemasukan baru": "New income category name", "Reset catatan keuangan?": "Reset financial records?", "Hapus semua": "Delete all", "Simpan cadangan dulu": "Back up first", "Hari ini": "Today", "Kemarin": "Yesterday", "Tidak ada hasil": "No results", "Pencarian mencakup semua bulan.": "Search covers all months.", "Belum ada catatan bulan ini": "No entries this month", "Belum ada catatan": "No entries yet", "Semua catatan tersimpan di perangkatmu.": "All entries are stored on your device.", "Tambah catatan pertama": "Add your first entry", "Belum ada data bulan ini.": "No data this month.", "Anggaran": "Budgets", "Atur": "Edit", "Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.": "No budgets yet. Create your own, e.g. “Eating out” or “Fun”.", "Tambah anggaran": "Add budget", "Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.": "Drag ≡ to reorder. Tap − then Delete to remove a budget.", "Dihitung dari pengeluaran di kategori yang dipilih, per bulan.": "Calculated from expenses in the selected categories, per month.", "Catatan dihapus": "Entry deleted", "Kembalikan": "Undo", "Gagal menghapus. Coba lagi.": "Couldn’t delete. Try again.", "Gagal mengembalikan catatan. Coba lagi.": "Couldn’t restore the entry. Try again.", "Pilih tanggal": "Pick a date", "Ubah catatan": "Edit entry", "Tanggal tidak boleh melewati hari ini.": "The date can’t be after today.", "Tanggalnya belum benar. Pilih tanggal lagi.": "That date isn’t valid. Pick another.", "Gagal menyimpan. Coba lagi.": "Couldn’t save. Try again.", "Ubah anggaran": "Edit budget", "Anggaran baru": "New budget", "Lengkapi nama, nominal, dan minimal satu kategori.": "Fill in a name, amount, and at least one category.", "Cadangan tersimpan": "Backup saved", "Gagal mereset. Coba lagi.": "Couldn’t reset. Try again.", "Semua catatan dihapus.": "All entries deleted.", "Gagal mengembalikan. Coba lagi.": "Couldn’t restore. Try again.", "Kembali ke pilihan bulan": "Back to months", "12 tahun sebelumnya": "Previous 12 years", "12 tahun berikutnya": "Next 12 years", "Tahun": "Year", ", ada catatan": ", has entries", "Cadangan disimpan sebagai berkas .json.": "Backup saved as a .json file.", "Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.": "This file isn’t a KasKu backup. Choose the .json file from “Save backup”."};
+const EN={'Pengaturan':'Settings','Mata uang':'Currency','Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.':'Only changes the displayed symbol; amounts are not converted.',"KasKu: pencatat keuangan pribadi": "KasKu: personal finance tracker", "Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.": "Log daily income and expenses quickly. Your data stays on your device.", "KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.": "KasKu needs JavaScript. Enable JavaScript in your browser, then reload the page.", "Pilih bulan dan tahun": "Choose month and year", "Pindah bulan": "Change month", "Bulan sebelumnya": "Previous month", "Bulan berikutnya": "Next month", "Sisa uang bulan ini": "Money left this month", "Pemasukan": "Income", "Pengeluaran": "Expenses", "Sudah akhir bulan. Simpan cadangan datamu?": "It’s the end of the month. Back up your data?", "Cadangkan": "Back up", "Nanti": "Later", "Cari catatan atau nominal": "Search entries or amounts", "Cari catatan": "Search entries", "Kategori": "Categories", "Kelola kategori": "Manage categories", "Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.": "Add, delete, and reorder your income and expense categories. Existing entries stay unchanged.", "Cadangan data": "Data backup", "Simpan cadangan": "Save backup", "Pulihkan cadangan": "Restore backup", "Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.": "Your data lives only on this device. Save a backup regularly so you don’t lose it.", "Tampilan": "Appearance", "Otomatis": "Auto", "Terang": "Light", "Gelap": "Dark", "Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.": "Auto follows your device’s light or dark setting.", "Bahasa": "Language", "Pilih bahasa tampilan aplikasi.": "Choose the app’s display language.", "Reset": "Reset", "Reset catatan keuangan": "Reset financial records", "Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.": "Deletes all entries and budgets from this device. Appearance and category settings are kept.", "Dibuat oleh": "Made by", "Menu utama": "Main menu", "Beranda": "Home", "Ringkasan": "Summary", "Tambah catatan": "Add entry", "Batal": "Cancel", "Jenis catatan": "Entry type", "Hapus": "Delete", "Catatan baru": "New entry", "Nominal dalam rupiah": "Amount in rupiah", "Keterangan (opsional)": "Note (optional)", "Keterangan": "Note", "Tanggal": "Date", "Simpan": "Save", "Pilih tahun": "Choose year", "Tahun sebelumnya": "Previous year", "Tahun berikutnya": "Next year", "Bulan": "Month", "Bulan ini": "This month", "Nama anggaran": "Budget name", "Nominal per bulan": "Amount per month", "Anggaran per bulan dalam rupiah": "Monthly budget in rupiah", "Dihitung dari kategori": "Counted from categories", "Kategori pengeluaran yang dihitung": "Expense categories counted", "Selesai": "Done", "Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.": "Tap − to delete, drag ≡ to reorder.", "Kategori baru": "New category", "Nama kategori pengeluaran baru": "New expense category name", "Tambah": "Add", "Nama kategori pemasukan baru": "New income category name", "Reset catatan keuangan?": "Reset financial records?", "Hapus semua": "Delete all", "Simpan cadangan dulu": "Back up first", "Hari ini": "Today", "Kemarin": "Yesterday", "Tidak ada hasil": "No results", "Pencarian mencakup semua bulan.": "Search covers all months.", "Belum ada catatan bulan ini": "No entries this month", "Belum ada catatan": "No entries yet", "Semua catatan tersimpan di perangkatmu.": "All entries are stored on your device.", "Tambah catatan pertama": "Add your first entry", "Belum ada data bulan ini.": "No data this month.", "Anggaran": "Budgets", "Atur": "Edit", "Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.": "No budgets yet. Create your own, e.g. “Eating out” or “Fun”.", "Tambah anggaran": "Add budget", "Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.": "Drag ≡ to reorder. Tap − then Delete to remove a budget.", "Dihitung dari pengeluaran di kategori yang dipilih, per bulan.": "Calculated from expenses in the selected categories, per month.", "Catatan dihapus": "Entry deleted", "Kembalikan": "Undo", "Gagal menghapus. Coba lagi.": "Couldn’t delete. Try again.", "Gagal mengembalikan catatan. Coba lagi.": "Couldn’t restore the entry. Try again.", "Pilih tanggal": "Pick a date", "Ubah catatan": "Edit entry", "Tanggal tidak boleh melewati hari ini.": "The date can’t be after today.", "Tanggalnya belum benar. Pilih tanggal lagi.": "That date isn’t valid. Pick another.", "Gagal menyimpan. Coba lagi.": "Couldn’t save. Try again.", "Ubah anggaran": "Edit budget", "Anggaran baru": "New budget", "Lengkapi nama, nominal, dan minimal satu kategori.": "Fill in a name, amount, and at least one category.", "Cadangan tersimpan": "Backup saved", "Gagal mereset. Coba lagi.": "Couldn’t reset. Try again.", "Semua catatan dihapus.": "All entries deleted.", "Gagal mengembalikan. Coba lagi.": "Couldn’t restore. Try again.", "Kembali ke pilihan bulan": "Back to months", "12 tahun sebelumnya": "Previous 12 years", "12 tahun berikutnya": "Next 12 years", "Tahun": "Year", ", ada catatan": ", has entries", "Cadangan disimpan sebagai berkas .json.": "Backup saved as a .json file.", "Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.": "This file isn’t a KasKu backup. Choose the .json file from “Save backup”."};
 const CN={'Makan':'Food','Transportasi':'Transport','Transport':'Transport','Hiburan':'Entertainment','Lainnya':'Other','Uang jajan':'Allowance','Gaji':'Salary','Bonus':'Bonus','Belanja':'Shopping','Tagihan':'Bills','Kesehatan':'Health','Hadiah':'Gift'};
 const getLang=()=>{const s=ls('catat.lang');return s==='en'||s==='id'?s:(/^(id|in)\b/i.test(navigator.language||'')?'id':'en')};
 let LANG=getLang();
@@ -112,7 +112,7 @@ function setMon(txt,anim){
 }
 /* Geser bulan ala halaman: hanya daftar (Beranda) atau rincian (Ringkasan) yang bergeser. Judul bulan bergeser sendiri; kartu saldo diam dan angkanya berhitung. */
 const pane=()=>tab==='home'?$('#list'):$('#cats');
-const blank=()=>tab==='home'?!!$('#list .empty'):!$('#cats .br');
+const blank=()=>tab==='home'?!!$('#list .empty'):!$('#cats .sumcard');
 const EZ='cubic-bezier(.32,.72,0,1)';
 function clearSlide(){$$('.ghost').forEach(g=>g.remove());pane().getAnimations().forEach(a=>a.cancel())}
 function slidePrep(){
@@ -139,25 +139,27 @@ function render(){
   const mv=ym!==lastYm&&!!lastYm&&!rm();
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
-  $('#next').disabled=ym>=today().slice(0,7);{const mn=parse(ym+'-01').toLocaleDateString(LOC(),{month:'long'});$('#balL').textContent=ym===today().slice(0,7)?(LANG==='en'?'Money left this month':'Sisa uang bulan ini'):(LANG==='en'?'Money left in '+mn:'Sisa uang bulan '+mn)}$('#tabs').dataset.t=tab;
-  $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';
+  $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;
+  $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
-  tab==='home'?renderHome():renderSum();
+  tab==='home'?renderHome():tab==='sum'?renderSum():renderCfg();
   enter();fx=false;
 }
 const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:e=>openSheet(t,e.currentTarget)},
-  h('span',{class:'mono','aria-hidden':'true'},[...cn(t.cat)][0].toUpperCase()),
   h('span',{},h('b',{},cn(t.cat)),t.note?h('small',{},t.note):null),
   h('span',{class:t.type==='in'?'plus':'minus'},(t.type==='in'?'+':'−')+rp(t.amount)));
 const qv=()=>$('#q').value.trim().toLowerCase();
 const hit=(t,q)=>t.cat.toLowerCase().includes(q)||cn(t.cat).toLowerCase().includes(q)||t.note.toLowerCase().includes(q)||String(t.amount).includes(q.replace(/\D/g,'')||'\0');
 function renderHome(){
   const m0=inMonth(),inc=sum(m0,'in'),out=sum(m0,'out'),q=qv(),m=q?all.filter(t=>hit(t,q)):m0;
-  $('#sq').hidden=!all.length;
-  count($('#bal'),inc-out,rp,fx);
+  $('#sq').hidden=all.length<8&&!q;
+  const noInc=inc===0,now=ym===today().slice(0,7),mn=parse(ym+'-01').toLocaleDateString(LOC(),{month:'long'}),en=LANG==='en',main=noInc&&out>0?out:inc-out;
+  $('#balL').textContent=noInc&&out>0?(en?(now?'Spent this month':'Spent in '+mn):(now?'Pengeluaran bulan ini':'Pengeluaran bulan '+mn)):(now?(en?'Money left this month':'Sisa uang bulan ini'):(en?'Money left in '+mn:'Sisa uang bulan '+mn));
+  $('#home .hero .row').style.display=noInc?'none':'';$('#home .hero').classList.toggle('solo',noInc);
+  count($('#bal'),main,rp,fx);
   count($('#inc'),inc,v=>(v?'+':'')+rp(v),fx);
   count($('#out'),out,v=>(v?'−':'')+rp(v),fx);
-  $('#bal').classList.toggle('sm',Math.abs(inc-out)>=1e8);$('#inc').classList.toggle('sm',inc>=1e8);$('#out').classList.toggle('sm',out>=1e8);
+  $('#bal').classList.toggle('sm',Math.abs(main)>=1e8);$('#inc').classList.toggle('sm',inc>=1e8);$('#out').classList.toggle('sm',out>=1e8);
   $('#nudge').hidden=!(new Date().getDate()>=25&&all.length&&ls('catat.bk')!==today().slice(0,7));
   const list=$('#list');list.replaceChildren();
   if(q&&!m.length){list.append(h('div',{class:'empty'},h('p',{},tr('Tidak ada hasil')),h('p',{class:'mut'},tr('Pencarian mencakup semua bulan.'))));return}
@@ -173,7 +175,7 @@ function renderHome(){
 function enter(){
   if(!fx||rm())return;
   const seq=[];
-  for(const e of $(tab==='home'?'#home':'#sum').children){
+  for(const e of $('#'+tab).children){
     if(e.hidden||e.classList.contains('ghost'))continue;
     e.id==='list'||e.id==='cats'?seq.push(...e.children):seq.push(e);
   }
@@ -181,6 +183,7 @@ function enter(){
   void document.body.offsetWidth;
   seq.forEach(e=>e.classList.add('rise'));
 }
+function renderCfg(){$('#rs').disabled=!(all.length||bdGet().length)}
 function renderSum(){
   const m=inMonth(),box=$('#cats'),bars=[];box.replaceChildren();
   for(const[type,title]of[['out',tr('Pengeluaran')],['in',tr('Pemasukan')]]){
@@ -188,16 +191,17 @@ function renderSum(){
     m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
     const head=[h('small',{class:'mut'},title),h('p',{class:'sumtot'},rp(tot))];
-    if(!rows.length){box.append(h('div',{class:'card p16 mt'},...head,h('p',{class:'mut'},tr('Belum ada data bulan ini.'))));continue}
-    box.append(h('div',{class:'card p16 mt'},...head,...rows.map(([c,v])=>{
+    if(!rows.length)continue;
+    box.append(h('div',{class:'card p16 mt sumcard'},...head,...(rows.length<2?[]:rows).map(([c,v])=>{
       const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,p]);
       return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
     })));
   }
+  if(!box.children.length)box.append(h('div',{class:'card p16 mt'},h('p',{class:'mut'},tr('Belum ada data bulan ini.'))));
   const bg=bdGet();
   if(!bg.length){bEdit=false;bArm=null}
   box.append(h('div',{class:'dh'},h('h2',{class:'day'},tr('Anggaran')),bg.length?h('button',{type:'button',class:'txt',onclick:()=>{bEdit=!bEdit;bArm=null;renderSum()}},bEdit?tr('Selesai'):tr('Atur')):null));
-  if(!bg.length)box.append(h('div',{class:'card p16 bde'},h('p',{class:'mut'},tr('Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.')),h('button',{type:'button',class:'alt mt',onclick:e=>openBud(null,e.currentTarget)},tr('Tambah anggaran'))));
+  if(!bg.length)box.append(h('div',{class:'card'},h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),tr('Tambah anggaran'))));
   else if(bEdit){
     /* mode atur: ketuk − untuk menghapus, seret ≡ untuk mengubah urutan */
     const list=h('div',{class:'card sl'},...bg.map((b,i)=>erow({l:'bud',k:b.id,label:b.name,sub:b.cats.map(cn).join(' · '),armed:bArm===b.id,onMinus:()=>{bArm=bArm===b.id?null:b.id;renderSum()},onDel:()=>delBud(b,i)})));
@@ -206,15 +210,15 @@ function renderSum(){
   }
   else box.append(h('div',{class:'card'},...bg.map(b=>{
     const v=m.reduce((q,t)=>t.type==='out'&&b.cats.includes(t.cat)?q+t.amount:q,0),left=b.amount-v,fill=h('div',{class:'fill'});
-    fill.style.transform=`translateX(${Math.min(100,Math.round(v/b.amount*100))-100}%)`;
+    fill.style.width=Math.min(100,Math.round(v/b.amount*100))+'%';
     return h('button',{type:'button',class:'set bd',onclick:e=>openBud(b,e.currentTarget)},
       h('span',{class:'bw'},h('b',{},b.name),h('small',{},b.cats.map(cn).join(' · ')),
         h('small',{class:left<0?'over':''},LANG==='en'?(left<0?`Over by ${rp(-left)} of ${rp(b.amount)}`:`${rp(left)} left of ${rp(b.amount)}`):(left<0?`Lebih ${rp(-left)} dari ${rp(b.amount)}`:`Sisa ${rp(left)} dari ${rp(b.amount)}`)),
         h('div',{class:'track'},fill)),
       chevR());
-  }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),tr('Tambah anggaran'))),h('p',{class:'mut foot'},tr('Dihitung dari pengeluaran di kategori yang dipilih, per bulan.')));
-  $('#rs').disabled=!(all.length||bg.length);
-  bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.transform=`translateX(${p-100}%)`));else{f.style.transition='none';f.style.transform=`translateX(${p-100}%)`}});
+  }),h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},h('span',{class:'ic','aria-hidden':'true'},ico('M12 5v14M5 12h14')),tr('Tambah anggaran'))));
+
+  bars.forEach(([f,p],i)=>{f.style.setProperty('--i',i);if(fx)requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.width=p+'%'));else{f.style.transition='none';f.style.width=p+'%'}});
 }
 function jump(month){const n=month>ym?1:-1,was=blank();dx=n;const x=slidePrep();fx=false;ym=month;render();
   /* kosong ke kosong: tidak perlu geser, isinya sama saja */
@@ -264,7 +268,7 @@ function openSheet(t,src){
   $('.chip[aria-pressed=true]')?.scrollIntoView({inline:'center',block:'nearest'});
   requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.classList.add('show');if(!t)$('#amt').focus({preventScroll:true});paint()}));
 }
-function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>{if(!sheet.open)return;sheet.close();const a=document.activeElement,s=sheet._src;/* dialog mengembalikan fokus ke #kb (pembantu keyboard iOS); arahkan ke pemicu */if(s&&s.isConnected&&(!a||a===document.body||a.id==='kb'))s.focus({preventScroll:true})},rm()?0:CLOSE)}
+function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
 async function save(){
   if(!f.amt)return;
   const t=clean({id:ed?ed.id:newId(),type:f.type,amount:+f.amt,cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
@@ -582,7 +586,9 @@ async function importJSON(file){
 
 /* Event */
 $('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
-$$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;dx=b.dataset.t==='sum'?1:-1;fx=true;tab=b.dataset.t;render()});
+const TABS=['home','sum','cfg'];
+const goTab=t=>{dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=true;tab=t;render()};
+$$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;goTab(b.dataset.t)});
 $('#add').onclick=e=>openSheet(null,e.currentTarget);
 $('#q').addEventListener('input',()=>render());
 $('#bam').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);e.target.value=d?fmt.format(+d):'';bdValid()});
@@ -662,7 +668,6 @@ $('#note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault()
 $('#amt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}});
 $('#ok').onclick=save;$('#sh-del').onclick=del;$('#cl').onclick=closeSheet;
 sheet.addEventListener('click',e=>{if(e.target===sheet)closeSheet()});
-sheet.addEventListener('cancel',e=>{e.preventDefault();closeSheet()});/* Esc: animasi keluar + fokus kembali, seperti dialog lain */
 sheet.addEventListener('close',()=>sheet.classList.remove('show'));
 $('#ex').onclick=exportJSON;$('#nb').onclick=exportJSON;
 $('#im').onclick=()=>$('#file').click();
@@ -753,11 +758,13 @@ function liquid(root,els,cur,pick,N=2){
   ['pointerup','pointercancel'].forEach(t=>root.addEventListener(t,end));
   return()=>nc;
 }
-const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>tab==='sum'?1:0,i=>{dx=i?1:-1;fx=true;tab=i?'sum':'home';render()});
+const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>TABS.indexOf(tab),i=>goTab(TABS[i]),3);
 const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>setType(i?'in':'out'));
 /* Tampilan: Otomatis / Terang / Gelap. Disimpan di perangkat; theme.js menerapkannya sebelum render pertama. */
-const THEMES=['auto','light','dark'],tbtn=[...$$('#theme button')];
+const THEMES=['auto','light','dark'];
 const curTheme=()=>{const t=ls('catat.theme');return t==='light'||t==='dark'?t:'auto'};
+/* teks nilai di baris pengaturan mengikuti pilihan select (dan bahasanya) */
+const syncSel=()=>['theme','lang','cur'].forEach(k=>{$('#'+k+'V').textContent=$('#'+k).selectedOptions[0]?.textContent||''});
 let thT=0;
 /* Ubah tampilan (tema / bahasa) semulus mungkin: crossfade seluruh halaman lewat View Transition (satu kurva untuk semua elemen, termasuk gradien kartu).
    Cadangan: transisi warna CSS di semua elemen selama sebentar. Lewati saat render pertama dan saat Reduce Motion. */
@@ -769,18 +776,10 @@ function morph(fn,first){
 }
 function applyTheme(t,save,first){
   const r=document.documentElement;
-  morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t},first);
+  morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;syncSel()},first);
   if(save)ls('catat.theme',t);
-  document.querySelectorAll('meta[name=theme-color]').forEach((m,i)=>m.content=t==='auto'?(i?'#0E0E0E':'#FAFAFA'):t==='dark'?'#0E0E0E':'#FAFAFA');
-  $('#theme').dataset.v=String(THEMES.indexOf(t));
-  tbtn.forEach(b=>{const on=b.dataset.theme===t;b.setAttribute('aria-checked',String(on));b.tabIndex=on?0:-1});
 }
-const setTheme=i=>applyTheme(THEMES[i],true);
-const themeNC=liquid($('#theme'),tbtn,()=>THEMES.indexOf(curTheme()),setTheme,3);
-tbtn.forEach((b,i)=>{
-  b.onclick=()=>{if(themeNC()||curTheme()===THEMES[i])return;setTheme(i)};
-  b.onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();const j=(i+d+3)%3;setTheme(j);tbtn[j].focus()};
-});
+$('#theme').onchange=e=>applyTheme(e.target.value,true);
 matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{if(curTheme()==='auto')applyTheme('auto')});
 applyTheme(curTheme(),false,true);
 
@@ -806,27 +805,19 @@ function i18nStatic(){
   document.title=tr('KasKu: pencatat keuangan pribadi');
   $('meta[name=description]')?.setAttribute('content',tr('Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.'));
 }
-const LANGS=['id','en'],lbtn=[...$$('#lang button')];
 function applyLang(l,save,first){
   if(save)ls('catat.lang',l);
-  $('#lang').dataset.v=String(LANGS.indexOf(l));
-  lbtn.forEach(b=>{const on=b.dataset.lang===l;b.setAttribute('aria-checked',String(on));b.tabIndex=on?0:-1});
+  $('#lang').value=l;
   if(!first&&l===LANG)return;
-  morph(()=>{LANG=l;i18nStatic();if(!first){lastYm=ym;render()}},first);
+  morph(()=>{LANG=l;i18nStatic();syncSel();if(!first){lastYm=ym;render()}},first);
 }
-const setLang=i=>applyLang(LANGS[i],true);
-const langNC=liquid($('#lang'),lbtn,()=>LANGS.indexOf(LANG),setLang,2);
-lbtn.forEach((b,i)=>{
-  b.onclick=()=>{if(langNC()||LANG===LANGS[i])return;setLang(i)};
-  b.onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();const k=(i+d+2)%2;setLang(k);lbtn[k].focus()};
-});
+$('#lang').onchange=e=>applyLang(e.target.value,true);
 applyLang(LANG,false,true);
 
-/* Mata uang: deretan chip di Ringkasan */
+/* Mata uang: pilihan di Pengaturan */
 function curText(){$('#amtbox .cur').textContent=CURS[CUR][0];$('#bam').previousElementSibling.textContent=CURS[CUR][0]}
-function curChips(){$('#cur').replaceChildren(...Object.keys(CURS).map(c=>{
-  const b=h('button',{type:'button',class:'chip','aria-pressed':String(c===CUR),onclick:()=>applyCur(c,true)},c+' · '+CURS[c][0]);
-  return b}))}
+function curChips(){const sel=$('#cur');if(!sel.options.length)sel.replaceChildren(...Object.keys(CURS).map(c=>h('option',{value:c},c+' · '+CURS[c][0])));sel.value=CUR;syncSel()}
+$('#cur').onchange=e=>applyCur(e.target.value,true);
 function applyCur(c,save,first){
   if(save)ls('catat.cur',c);
   if(!first&&c===CUR)return;
