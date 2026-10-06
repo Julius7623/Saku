@@ -8,7 +8,7 @@
 --rim-base:rgba(255,255,255,.55);--rim-spec:rgba(255,255,255,1);--pill-hi:rgba(255,255,255,.55);--pill-rim:rgba(0,0,0,.06);--lens-ring:rgba(0,0,0,.07);--g-blur:blur(12px) saturate(1.8);
 /* gerak: 3 durasi saja (tekan, pudar, pindah) dan 2 kurva (halus, melenting). --d3 harus sama dengan D di app.js */
 --d1:.15s;--d2:.25s;--d3:.5s;--ease:cubic-bezier(.32,.72,0,1);--spring:cubic-bezier(.34,1.45,.5,1);
---dock-b:max(calc(env(safe-area-inset-bottom,0px) - 12px),10px);--r-lg:28px;--r-sheet:36px;--r-md:24px;--r-sm:16px;--red:#D70015;color-scheme:light}
+--dock-b:max(calc(env(safe-area-inset-bottom,0px) - 15px),10px);--r-lg:28px;--r-sheet:36px;--r-md:24px;--r-sm:16px;--red:#D70015;color-scheme:light}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0E0E0E;--sf:#161616;--bd:#262626;--tx:#F2F2F2;--t2:#9A9A9A;--ac:#F2F2F2;--on:#0E0E0E;
 --fill:rgba(120,120,128,.24);--fill2:rgba(120,120,128,.36);
 --hero:linear-gradient(150deg,#FFF 0%,#D2D2D2 100%);--red:#FF6961;--hero-tx:#0E0E0E;--sheen:rgba(255,255,255,.5);--sh:0 14px 32px -18px #000;
@@ -28,7 +28,7 @@
 html.lock{overflow:hidden;overscroll-behavior:none}
 html.lock body{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 html{background:var(--bg);touch-action:manipulation;-webkit-text-size-adjust:100%;overflow-x:clip}
-body{font:17px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;letter-spacing:-.011em;font-variant-numeric:tabular-nums;color:var(--tx);background:var(--bg);max-width:480px;min-height:100dvh;margin:auto;overflow-x:clip;padding:env(safe-area-inset-top) 16px calc(96px + var(--dock-b))}
+body{font:17px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;letter-spacing:-.011em;font-variant-numeric:tabular-nums;color:var(--tx);background:var(--bg);max-width:480px;min-height:100dvh;margin:auto;overflow-x:clip;padding:env(safe-area-inset-top) 16px calc(88px + var(--dock-b))}
 .big,.sumtot,.eico,.sv,.amtbox{font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
 button,input{font:inherit;letter-spacing:inherit;color:inherit}
 button{min-height:48px;min-width:48px;border:0;border-radius:999px;background:none;cursor:pointer;transition:transform var(--d3) var(--spring),opacity var(--d2),background-color var(--d2)}
@@ -59,10 +59,11 @@ h1>span.sr{grid-area:auto}
 #monT>.go{animation:monin var(--d3) var(--ease) .14s both}
 #monT>.old{animation:monout .2s cubic-bezier(.4,0,.6,1) both;pointer-events:none}
 /* Tombol dua arah ala Files: satu kapsul kaca berisi dua panah, panah yang tak bisa dipakai meredup */
-.nav2{flex:none;display:grid;grid-template-columns:1fr 1fr;width:104px;height:44px;border-radius:999px}
-.nav2 button{position:relative;display:grid;place-items:center;min-width:0;min-height:44px;height:44px;padding:0;border-radius:999px}
+.nav2{flex:none;display:grid;grid-template-columns:1fr 1fr;width:88px;height:40px;border-radius:999px}
+.nav2 button{position:relative;display:grid;place-items:center;min-width:0;min-height:40px;height:40px;padding:0;border-radius:999px}
 .nav2 button:disabled{opacity:.38}
-.nav2 .i{width:22px;height:22px;stroke-width:2.6}
+.nav2 button::after{content:'';position:absolute;inset:-2px 0}
+.nav2 .i{width:20px;height:20px;stroke-width:2.6}
 
 /* Kartu saldo: gradasi abu + kilau halus (diam, tidak ikut bergeser) */
 .hero{position:relative;overflow:hidden;padding:22px 20px 18px;border-radius:var(--r-lg);background:var(--hero);color:var(--hero-tx);box-shadow:var(--sh)}
@@ -125,21 +126,19 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 .glass::after{content:'';position:absolute;inset:0;z-index:2;border-radius:inherit;padding:1px;pointer-events:none;
 background:linear-gradient(to bottom right,var(--rim-spec),transparent 34%,transparent 66%,var(--rim-spec)),linear-gradient(180deg,var(--rim-base),transparent 45%,transparent 55%,var(--rim-base));
 -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask-composite:exclude}
-.tabs.glass::after{inset:-1px}
 
 /* Dock: kapsul kaca + tombol + terpisah di sisi jempol */
-.dock{position:fixed;left:0;right:0;bottom:0;width:min(100%,480px);margin:auto;display:flex;gap:10px;padding:0 16px var(--dock-b);pointer-events:none}
+.dock{position:fixed;left:0;right:0;bottom:0;width:min(100%,480px);margin:auto;display:flex;gap:8px;padding:0 19px var(--dock-b);pointer-events:none}
 .dock::before{content:'';position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;z-index:-1;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 72%,transparent));-webkit-mask-image:linear-gradient(transparent,#000 70%);mask-image:linear-gradient(transparent,#000 70%)}
 .dock>*{pointer-events:auto}
-.tabs{flex:1;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:999px;touch-action:pan-y;--k:0;transition:transform var(--d3) var(--spring)}
-.tabs.glass{border:1px solid transparent}
-.tab{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:54px;border-radius:999px;font-size:11px;font-weight:600;color:var(--t2);transition:transform var(--d3) var(--spring),color var(--d2)}
+.tabs{flex:1;display:grid;grid-template-columns:1fr 1fr;height:56px;padding:4px;border-radius:999px;touch-action:pan-y;--k:0;transition:transform var(--d3) var(--spring)}
+.tab{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:48px;border-radius:999px;font-size:11px;font-weight:600;color:var(--t2);transition:transform var(--d3) var(--spring),color var(--d2)}
 .tab[aria-current=true]{color:var(--tx)}
 .tab .i{transition:transform var(--d3) var(--spring)}
 .tab[aria-current=true] .i{transform:translateY(-1px) scale(1.1)}
-.fab{flex:none;display:grid;place-items:center;width:64px;height:64px;padding:0;border-radius:50%;color:var(--on)}
+.fab{flex:none;display:grid;place-items:center;width:56px;height:56px;padding:0;border-radius:50%;color:var(--on)}
 .fab.glass{background-color:var(--tint);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.18),0 0 0 .5px var(--g-rim),0 14px 28px -10px var(--g-sh)}
-.fab .i{width:28px;height:28px;stroke-width:2.4;transition:transform var(--d3) var(--spring)}
+.fab .i{width:26px;height:26px;stroke-width:2.4;transition:transform var(--d3) var(--spring)}
 .fab:active .i{transform:rotate(90deg)}
 
 /* Slider kaca (tab bar & Pengeluaran/Pemasukan): pil gelap saat diam; saat disentuh jadi lensa bening yang lebih besar */
@@ -216,7 +215,7 @@ dialog.show::backdrop{opacity:1}
 .kb{position:fixed;left:0;bottom:0;width:1px;height:1px;min-height:0;padding:0;opacity:0;pointer-events:none;font-size:16px}
 
 /* Snackbar */
-#toast{position:fixed;left:0;right:0;bottom:calc(var(--dock-b) + 76px);width:calc(100% - 32px);max-width:448px;min-height:52px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 4px 4px 18px;border-radius:999px;background-color:var(--tint);color:var(--on);box-shadow:var(--sh);opacity:0;visibility:hidden;transform:translateY(18px) scale(.94);transition:opacity var(--d2),transform var(--d3) var(--spring),visibility var(--d2)}
+#toast{position:fixed;left:0;right:0;bottom:calc(var(--dock-b) + 68px);width:calc(100% - 32px);max-width:448px;min-height:52px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 4px 4px 18px;border-radius:999px;background-color:var(--tint);color:var(--on);box-shadow:var(--sh);opacity:0;visibility:hidden;transform:translateY(18px) scale(.94);transition:opacity var(--d2),transform var(--d3) var(--spring),visibility var(--d2)}
 #toast.show{opacity:1;visibility:visible;transform:none}
 #toast button{min-height:44px;padding:0 16px;font-weight:600;background:rgba(128,128,128,.28)}
 
@@ -239,7 +238,8 @@ dialog.show::backdrop{opacity:1}
 @media(max-width:360px){.seg3 button .i{display:none}}
 
 /* Pencarian & Anggaran */
-#sq{margin-top:14px;border-radius:999px}
+#sq{min-height:40px;margin-top:14px;border-radius:999px}
+#sq input{height:40px}
 #sq input{-webkit-appearance:none;appearance:none}
 .bt{grid-column:2;font-size:20px;font-weight:700;letter-spacing:-.02em;text-align:center}
 #bd-del{grid-column:3;justify-self:end}
