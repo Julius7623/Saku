@@ -751,3 +751,12 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 .ir b{display:block;font-size:17px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
 .ir p{margin:4px 0 0;font-size:15px;line-height:1.45;color:var(--t2);overflow-wrap:anywhere}
 .ifoot{margin:0 4px;font-size:14px;line-height:1.4;color:var(--t2);text-align:center}
+
+/* v72 · Cara pakai / Syarat: isi dialog bisa digulir. Kartu ber-overflow:hidden di dalam grid ikut diperas ke tinggi dialog (isi terpotong, tidak ada yang bisa digulir), jadi isi dibuat blok biasa. Tautan kecil bergaris bawah di bawah daftar Beranda. */
+#infb{display:block}
+#infb .il{overflow:visible}
+#infb .ifoot{margin:16px 4px 0}
+.legal{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;margin:24px 0 8px;font-size:14px;color:var(--t2)}
+.legal button{min-height:44px;min-width:0;padding:0 10px;border-radius:12px;font-size:14px;color:var(--t2);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.legal button:hover,.legal button:active:not(:disabled){color:var(--tx)}
+.legal button:focus-visible{outline-offset:-2px}

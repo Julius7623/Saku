@@ -11,6 +11,9 @@ const MAX=9999999999,NOTE=60,CAT=20,CATV=30;
 /* nominal sah: positif, paling kecil satu satuan terkecil (0,01), maksimal MAX, paling banyak 2 desimal */
 const okAmt=a=>Number.isFinite(a)&&a>=.01&&a<=MAX&&Math.round(a*100)/100===a;
 const r2=n=>Math.round((n+Number.EPSILON)*100)/100;
+/* nilai asli: {c: mata uang, a: nominal} saat catatan/anggaran terakhir diketik. Konversi selalu dihitung dari nilai asli (bukan dari hasil konversi sebelumnya) dan kembali ke mata uang asli memulihkan nominal persis, jadi bolak-balik tidak menggeser angka. */
+const cleanO=o=>o&&typeof o==='object'&&typeof o.c==='string'&&Object.hasOwn(CURS,o.c)&&okAmt(o.a)?{c:o.c,a:o.a}:null;
+const oFor=(prev,a)=>prev&&prev.amount===a&&prev.o?prev.o:{c:CUR,a};
 /* Durasi gerak (ms). D = --d3 di CSS; CLOSE = waktu sheet menutup; NUM = hitung angka */
 const D=500,D2=250,CLOSE=260,NUM=650;/* D2 = --d2 */
 const RM=matchMedia('(prefers-reduced-motion:reduce)'),rm=()=>RM.matches;
@@ -98,6 +101,7 @@ async function fxRates(){
 }
 /* satu satuan terkecil mata uang tujuan jadi batas bawah supaya catatan kecil tidak jadi 0 */
 const convAmt=(a,from,to,r)=>{const p=10**CURD[to];return Math.min(MAX,Math.max(1/p,Math.round(a/r[from]*r[to]*p)/p))};
+const convTx=(x,from,to,r)=>{const o=cleanO(x.o)||{c:from,a:x.amount};return{...x,amount:o.c===to?o.a:convAmt(o.a,o.c,to,r),o}};
 const fxDay=r=>{const s=r.d||ymd(new Date(r.t));return validDate(s)?parse(s).toLocaleDateString(LOC(),{day:'numeric',month:'short'}):''};
 function fxLine(from,to,r){const x=r[to]/r[from],up=x>=1,v=up?x:1/x,n=new Intl.NumberFormat(LOC(),{maximumFractionDigits:v>=100?0:v>=1?2:4}).format(v);return up?`1 ${from} = ${n} ${to}`:`1 ${to} = ${n} ${from}`}
 const newId=()=>{const r=new Uint32Array(1);crypto.getRandomValues(r);return Date.now().toString(36)+r[0].toString(36).slice(0,5)};
@@ -127,7 +131,8 @@ function clean(t){
   if(!okAmt(amount))return null;
   if(typeof note!=='string'||note.length>NOTE)return null;
   if(typeof date!=='string'||!validDate(date))return null;
-  return{id,type,amount,cat,note:note.trim(),date};
+  const o=cleanO(t.o);
+  return o?{id,type,amount,cat,note:note.trim(),date,o}:{id,type,amount,cat,note:note.trim(),date};
 }
 
 /* IndexedDB */
@@ -345,7 +350,7 @@ function openSheet(t,src){
 function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
 async function save(){
   if(!f.amt)return;
-  const t=clean({id:ed?ed.id:newId(),type:f.type,amount:r2(+f.amt),cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
+  const t=clean({id:ed?ed.id:newId(),type:f.type,amount:r2(+f.amt),o:oFor(ed,r2(+f.amt)),cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
   if(!t||t.date>today()){$('#err').textContent=t?tr('Tanggal tidak boleh melewati hari ini.'):tr('Tanggalnya belum benar. Pilih tanggal lagi.');return}
   $('#ok').disabled=true;
   try{await dbPut(t)}catch{$('#ok').disabled=false;$('#err').textContent=tr('Gagal menyimpan. Coba lagi.');return}
@@ -376,7 +381,8 @@ const cleanBud=b=>{
   if(typeof id!=='string'||!/^[\w-]{1,40}$/.test(id)||!name||name.length>30)return null;
   if(!okAmt(amount))return null;
   if(!Array.isArray(cats)||!cats.length||cats.some(c=>typeof c!=='string'||!c.trim()||c.length>CATV))return null;
-  return{id,name,amount,cats:[...new Set(cats)]};
+  const o=cleanO(b.o),cs=[...new Set(cats)];
+  return o?{id,name,amount,cats:cs,o}:{id,name,amount,cats:cs};
 };
 const bdGet=()=>{let a=[];try{const j=JSON.parse(ls('catat.bud2')||'[]');if(Array.isArray(j))a=j.map(cleanBud).filter(Boolean)}catch{}return a};
 const bdSave=a=>ls('catat.bud2',JSON.stringify(a));
@@ -413,7 +419,7 @@ async function closeBud(then){
 function saveBud(del){
   let a=bdGet();
   if(del){const nm=be.name;a=a.filter(x=>x.id!==be.id);bdSave(a);closeBud(()=>{render();toast(LANG==='en'?`Budget ${nm} deleted.`:`Anggaran ${nm} dihapus.`)});return}
-  const name=$('#bnm').value.trim().slice(0,30),nb=cleanBud({id:be?be.id:newId(),name,amount:r2(+parseIn($('#bam').value)),cats:bList().filter(c=>bs.has(c))});
+  const name=$('#bnm').value.trim().slice(0,30),nb=cleanBud({id:be?be.id:newId(),name,amount:r2(+parseIn($('#bam').value)),o:oFor(be,r2(+parseIn($('#bam').value))),cats:bList().filter(c=>bs.has(c))});
   if(!nb){$('#berr').textContent=tr('Lengkapi nama, nominal, dan minimal satu kategori.');return}
   const i=a.findIndex(x=>x.id===nb.id);i<0?a.push(nb):a[i]=nb;
   bdSave(a);closeBud(()=>{render();toast(LANG==='en'?`Budget ${name} saved.`:`Anggaran ${name} disimpan.`)});
@@ -566,7 +572,7 @@ const INFO={
     [['Datamu tetap di perangkat','Your data stays on your device'],['Catatan, anggaran, dan pengaturan disimpan di perangkatmu (IndexedDB dan localStorage). Tidak ada akun, tidak ada server penyimpan data, dan tidak ada analitik atau pelacak. Pembuat tidak bisa melihat datamu.','Entries, budgets, and settings are stored on your device (IndexedDB and localStorage). There are no accounts, no data-storing servers, and no analytics or trackers. The creator cannot see your data.']],
     [['Permintaan jaringan','Network requests'],['Satu-satunya data dari internet adalah kurs mata uang dari api.frankfurter.dev, saat kamu mengganti mata uang atau memulihkan cadangan beda mata uang. Permintaan itu tidak berisi catatanmu, tetapi seperti semua permintaan web, penyedia kurs dan penyedia hosting situs ini dapat melihat alamat IP dan informasi teknis standar.','The only data fetched from the internet is currency rates from api.frankfurter.dev, when you change currency or restore a backup in another currency. That request carries none of your entries, but like any web request, the rate provider and this site’s host can see your IP address and standard technical details.']],
     [['Tanggung jawab atas data','Responsibility for your data'],['Menghapus data browser, memakai mode privat, mereset, atau berganti perangkat bisa menghilangkan data. Pembuat tidak bisa memulihkannya. Simpan cadangan secara berkala.','Clearing browser data, using private mode, resetting, or switching devices can erase your data. The creator cannot recover it. Back up regularly.']],
-    [['Kurs dan konversi','Rates and conversion'],['Kurs bersifat indikatif (kurs referensi ECB lewat Frankfurter, diperbarui tiap hari kerja) dan bisa berbeda dari kurs bank atau tempat penukaran uang. Hasil konversi dibulatkan, jadi konversi bolak-balik bisa selisih kecil.','Rates are indicative (ECB reference rates via Frankfurter, updated each business day) and may differ from bank or exchange-office rates. Results are rounded, so converting back and forth can differ slightly.']],
+    [['Kurs dan konversi','Rates and conversion'],['Kurs bersifat indikatif (kurs referensi ECB lewat Frankfurter, diperbarui tiap hari kerja) dan bisa berbeda dari kurs bank atau tempat penukaran uang. Hasil konversi dibulatkan ke satuan terkecil, tetapi nominal asli tiap catatan disimpan, jadi kembali ke mata uang awal memulihkan angka semula.','Rates are indicative (ECB reference rates via Frankfurter, updated each business day) and may differ from bank or exchange-office rates. Results are rounded to the smallest unit, but each entry keeps its original amount, so returning to the original currency restores the original figure.']],
     [['Bukan nasihat','Not advice'],['KasKu tidak memberi nasihat keuangan, pajak, hukum, atau akuntansi. Keputusan keuangan sepenuhnya tanggung jawabmu.','KasKu does not give financial, tax, legal, or accounting advice. Financial decisions are entirely your responsibility.']],
     [['Tanpa jaminan','No warranty'],['KasKu disediakan apa adanya, tanpa jaminan bebas galat, selalu tersedia, atau cocok untuk tujuan tertentu.','KasKu is provided as is, with no guarantee that it is error-free, always available, or fit for a particular purpose.']],
     [['Batas tanggung jawab','Limitation of liability'],['Sejauh diizinkan hukum, pembuat tidak bertanggung jawab atas kerugian atau kehilangan data akibat pemakaian KasKu.','To the extent permitted by law, the creator is not liable for any loss or data loss resulting from the use of KasKu.']],
@@ -593,7 +599,7 @@ async function closeInfo(){
   if(!inf.open||iBusy)return;iBusy=true;
   setOrigin(inf);inf.classList.remove('show');await sleep(CLOSE);if(inf.open)inf.close();iBusy=false;
 }
-$('#hw-open').onclick=e=>openInfo('howto',e.currentTarget);$('#tc-open').onclick=e=>openInfo('terms',e.currentTarget);$('#inf-ok').onclick=()=>closeInfo();
+for(const[q,k]of[['#hw-open','howto'],['#tc-open','terms'],['#hw2','howto'],['#tc2','terms']])$(q).onclick=e=>openInfo(k,e.currentTarget);$('#inf-ok').onclick=()=>closeInfo();
 inf.addEventListener('click',e=>{if(e.target===inf)closeInfo()});
 inf.addEventListener('cancel',e=>{e.preventDefault();closeInfo()});
 inf.addEventListener('close',()=>inf.classList.remove('show'));
@@ -724,7 +730,7 @@ async function importJSON(file){
     /* cadangan dari mata uang lain dikonversi ke mata uang sekarang */
     const fc=typeof j.cur==='string'&&CURS[j.cur]&&j.cur!==CUR?j.cur:null;let rt=null;
     if(fc){rt=await fxRates();if(!rt){toast(tr('Kurs belum tersimpan. Hubungkan ke internet dulu.'));return}}
-    const cv=x=>rt&&x&&typeof x==='object'&&typeof x.amount==='number'?{...x,amount:convAmt(x.amount,fc,CUR,rt.r)}:x;
+    const cv=x=>rt&&x&&typeof x==='object'&&typeof x.amount==='number'?convTx(x,fc,CUR,rt.r):x;
     const list=j.tx.map(x=>clean(cv(x)));if(list.includes(null))throw 0;
     await dbBulk(list);
     if(j.bud){
@@ -1054,7 +1060,7 @@ async function changeCur(c){
     if(navigator.onLine!==false)toast(tr('Mengambil kurs…'));
     const rt=await fxRates();
     if(!rt){toast(tr('Kurs belum tersimpan. Hubungkan ke internet dulu.'));resetCurSel();return}
-    const snap={cur:from,tx:all,bud:buds},tx=all.map(t=>({...t,amount:convAmt(t.amount,from,c,rt.r)})),nb=buds.map(b=>({...b,amount:convAmt(b.amount,from,c,rt.r)}));
+    const snap={cur:from,tx:all,bud:buds},tx=all.map(t=>convTx(t,from,c,rt.r)),nb=buds.map(b=>convTx(b,from,c,rt.r));
     try{await dbBulk(tx)}catch{toast(tr('Gagal mengonversi. Coba lagi.'));resetCurSel();return}
     all=tx;bdSave(nb);applyCur(c,true);
     const ln=fxLine(from,c,rt.r),dy=fxDay(rt);

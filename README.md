@@ -93,7 +93,7 @@ Dibuat oleh Joel G. Thompson.
 ## v69 · konversi kurs
 - Ganti mata uang (Ringkasan → Mata uang) otomatis mengonversi semua catatan dan anggaran. Kurs diambil dari Frankfurter (`api.frankfurter.dev`, kurs referensi ECB, tanpa kunci API, diperbarui tiap hari kerja sekitar 16.00 CET) setiap mata uang diganti, lalu disimpan di `localStorage` kunci `catat.fx` (`{t, d, r}`, basis USD). Tanpa internet atau saat permintaan gagal/timeout (7 detik), dipakai kurs tersimpan terakhir. Kalau belum pernah ada kurs tersimpan dan sedang offline, mata uang tidak diganti dan muncul pesan.
 - Kalau belum ada catatan atau anggaran, mata uang langsung diganti (kurs tetap diambil di latar supaya siap offline).
-- Hasil konversi dibulatkan ke satuan terkecil mata uang tujuan (IDR/JPY bulat, lainnya 2 desimal; minimal satu satuan terkecil). Konversi bolak-balik bisa selisih kecil karena pembulatan dan perubahan kurs. Snackbar Kembalikan memulihkan nilai persis seperti sebelum konversi (selama snackbar tampil).
+- Hasil konversi dibulatkan ke satuan terkecil mata uang tujuan (IDR/JPY bulat, lainnya 2 desimal; minimal satu satuan terkecil). Lihat v71 untuk nilai asli. Snackbar Kembalikan memulihkan nilai persis seperti sebelum konversi (selama snackbar tampil).
 - Nominal kini boleh berdesimal untuk USD/EUR/SGD/MYR (`CURD` di `app.js`); `inputmode="decimal"`. Ketik titik atau koma sebagai pemisah desimal; tampilannya mengikuti locale mata uang. `parseIn()` mengubah teks ketikan jadi string kanonik, `fmtIn()` memformatnya kembali. Validasi nominal lewat `okAmt()` (maks 2 desimal). Data lama (bilangan bulat) tetap valid tanpa migrasi.
 - Cadangan menyimpan `cur`. Memulihkan cadangan dari mata uang lain mengonversi isinya ke mata uang sekarang (butuh kurs); cadangan lama tanpa `cur` diimpor apa adanya.
 - CSP: `connect-src 'self' https://api.frankfurter.dev` di `_headers` dan `render.yaml` (harus sama). Tidak ada permintaan jaringan lain.
@@ -104,4 +104,12 @@ Dibuat oleh Joel G. Thompson.
 - Isi ada di objek `INFO` di `app.js`; setiap teks berupa `[Indonesia, English]` dan dirender ulang dengan `paintInfo()` sesuai bahasa. Tambah atau ubah butir: edit array `i` (judul, isi). Bukan lewat kamus `EN`.
 - Tampilan: kartu daftar bernomor (`.il`/`.ir`, blok v70 di akhir `style.css`), hanya token yang sudah ada, teks sekunder minimal 14px.
 - Teks Syarat & ketentuan adalah templat umum yang mengikuti perilaku aplikasi (data lokal, satu permintaan jaringan ke `api.frankfurter.dev`, tanpa analitik). Belum ada klausul hukum yang berlaku, kontak, atau kebijakan privasi terpisah: tinjau dan lengkapi sebelum rilis, dan ubah tanggal "Terakhir diperbarui" bila isinya berubah.
+
+## v71 · konversi bolak-balik tidak menggeser angka
+- Bug v69/v70: konversi berantai lewat pembulatan sen (Rp1.000.000 → USD → IDR jadi Rp1.000.024). Sekarang tiap catatan dan anggaran menyimpan nilai asli `o:{c,a}` (mata uang + nominal saat terakhir diketik). `convTx()` selalu menghitung dari nilai asli: kembali ke mata uang asli memulihkan nominal persis; ke mata uang lain hanya satu kali pembulatan dari nilai asli (tanpa akumulasi).
+- `o` diisi saat menyimpan catatan/anggaran (dipertahankan bila nominal tidak diubah saat edit), ikut cadangan, dan dicek `cleanO()`. Data tanpa `o` dianggap asli di mata uang saat konversi pertama. Catatan yang sudah telanjur bergeser (mis. 1.000.024) tidak bisa dipulihkan otomatis: edit nominalnya sekali.
+
+## v72
+- Dialog Cara pakai / Syarat & ketentuan tidak bisa digulir: `.card` (overflow:hidden) di dalam `.cbody` yang berupa grid diperas ke tinggi dialog sehingga isi terpotong. `#infb` kini `display:block`. Hati-hati: jangan taruh kartu ber-overflow:hidden langsung di grid/flex yang tingginya dibatasi.
+- Tautan kecil bergaris bawah "Cara pakai · Syarat & ketentuan" di bawah daftar Beranda (`.legal`, `#hw2`/`#tc2`); baris di Pengaturan tetap ada. Keduanya memanggil `openInfo()`.
 
