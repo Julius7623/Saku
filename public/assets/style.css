@@ -767,3 +767,18 @@ dialog:not(.show)::backdrop{transition-duration:var(--d-out);transition-timing-f
 #monT>.old{animation-timing-function:var(--ease-in)}
 .tx:active:not(:disabled),.set:active:not(:disabled){transition-duration:0s}
 .ghost{backface-visibility:hidden}
+
+/* v78 · ikon tombol hidup. Satu pola: tekan = respons cepat (--d1), lepas = pegas (--spring), sama seperti matahari/bulan. */
+#cfgb .i,.gi .i,.set .ic .i,.set .chev,.fr.dt .chev,#py-prev .i,#py-next .i{transition:transform var(--d3) var(--spring)}
+#cfgb:active .i,.gi:active .i,.set:active .ic .i,.set:active .chev,.fr.dt:active .chev,#py-prev:active .i,#py-next:active .i{transition-duration:var(--d1)}
+#cfgb:active .i{transform:rotate(45deg) scale(.92)}
+#cfgb[aria-pressed=true] .i{transform:rotate(90deg)}
+.gi:not(.gd):active .i{transform:rotate(90deg) scale(.9)}
+.gd:active .i{transform:rotate(-12deg) scale(.9)}
+.set:active .ic .i{transform:scale(.86)}
+#ex:active .ic .i{transform:translateY(2px)}
+#im:active .ic .i{transform:translateY(-2px)}
+.set.rd:active .ic .i{transform:rotate(-12deg) scale(.9)}
+.set:not(.sel):active .chev,.fr.dt:active .chev{transform:translateX(3px)}
+#py-prev:active .i{transform:translateX(-3px)}
+#py-next:active .i{transform:translateX(3px)}

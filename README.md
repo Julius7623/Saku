@@ -33,6 +33,7 @@ public/           folder yang dipublikasikan
 ## Gerak
 - Durasi: `--d1 .15s` (tekan), `--d2 .25s` (pudar), `--d3 .5s` (pindah). `D`/`D2` di `app.js` harus sama dengan `--d3`/`--d2`.
 - Kurva: masuk `--ease` / `--spring`, keluar `--ease-in` dengan `--d-out` (.26s). `CLOSE` di `app.js` harus sama dengan `--d-out`.
+- Ikon tombol: tekan cepat (`--d1`), lepas memantul (`--spring`), seperti matahari/bulan. Aturannya ada di akhir `style.css` (blok v78).
 - Hanya `transform`/`opacity`, tanpa animasi yang berjalan terus-menerus. Mati total saat reduced-motion.
 
 ## Aksesibilitas & keamanan
@@ -45,6 +46,7 @@ String baru ditulis dalam Indonesia, lalu tambahkan padanannya di kamus `EN` (`a
 ## Riwayat versi
 | Versi | Perubahan |
 |---|---|
+| v78 | Ikon tombol ikut bergerak: gear berputar saat membuka/menutup Pengaturan, X berputar, ikon baris menyusut, panah cadangan turun/naik, chevron bergeser |
 | v77 | Gerak seragam: kurva keluar sendiri, dialog tidak terpotong saat menutup, pindah tab memudar keluar (`tabOut()`), versi cache disamakan |
 | v73 | Hanya Rupiah, tanpa jaringan. Cara pakai dan Syarat & ketentuan (dialog `#inf`, isi di `INFO`). `sw.js` ditulis ulang |
 | v56 | Rapikan halaman: angka muat satu baris, nama kategori dipotong titik-titik, area sentuh 44, `theme-color` ikut tema |
