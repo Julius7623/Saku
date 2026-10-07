@@ -101,16 +101,18 @@ const NS='http://www.w3.org/2000/svg';
 function chev(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M6 9l6 6 6-6');s.append(p);return s}
 function chevR(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i chev');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M9 6l6 6-6 6');s.append(p);return s}
 function ico(d){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d',d);s.append(p);return s}
+/* kapsul kaca dua baris: bulan (tebal) di atas, tahun (kecil) di bawah */
+function monEl(txt,cls){const i=txt.lastIndexOf(' '),e=h('span',{class:cls},h('b',{},i>0?txt.slice(0,i):txt),i>0?h('small',{},txt.slice(i+1)):null);e.dataset.t=txt;return e}
 function setMon(txt,anim){
   const m=$('#monT'),cur=m.querySelector('.cur');
   $('#monlive').textContent=txt;
-  if(!cur){m.replaceChildren(h('span',{class:'cur'},txt));return}
-  if(cur.textContent===txt)return;
+  if(!cur){m.replaceChildren(monEl(txt,'cur'));return}
+  if(cur.dataset.t===txt)return;
   m.querySelectorAll('.old').forEach(e=>e.remove());
-  if(!anim){cur.firstChild.nodeValue=txt;return}
+  if(!anim){cur.replaceWith(monEl(txt,'cur'));return}
   m.style.setProperty('--d',dx);
   cur.className='old';cur.setAttribute('aria-hidden','true');
-  m.append(h('span',{class:'cur go'},txt));
+  m.append(monEl(txt,'cur go'));
   setTimeout(()=>cur.remove(),300);
 }
 /* Geser bulan ala halaman: hanya daftar (Beranda) atau rincian (Ringkasan) yang bergeser. Judul bulan bergeser sendiri; kartu saldo diam dan angkanya berhitung. */

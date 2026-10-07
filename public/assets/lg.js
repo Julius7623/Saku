@@ -82,7 +82,7 @@ const go=()=>{
   const tabs=document.querySelector('.tabs');
   if(tabs)attach(tabs,{bezel:22,shift:15,blur:1.6});
   document.querySelectorAll('.tabs,.seg,.seg3').forEach(lens);
-  document.querySelectorAll('.fab,#cat-ed').forEach(e=>attach(e,{bezel:18,shift:16,blur:1.4}));
+  document.querySelectorAll('.fab,#cat-ed,#mon').forEach(e=>attach(e,{bezel:18,shift:16,blur:1.4}));
   const t=document.querySelector('#toast');if(t)attach(t,{bezel:20,shift:14,blur:1.6});
 };
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',go):go();

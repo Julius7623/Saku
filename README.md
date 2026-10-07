@@ -69,3 +69,8 @@ Dibuat oleh Joel G. Thompson.
 - Spring geser: `tv=(tv+(tk-ck)*.115)*.72` (overshoot ±14%, settle ~0,5 detik).
 - Safari/iOS: belum ada refraksi (batasan `backdrop-filter:url()`), tampilan tetap seperti v43.
 
+
+## v45
+- Bulan dan tahun (`#mon`) jadi kapsul kaca dua baris: bulan tebal di atas, tahun kecil di bawah (`monEl()` di `app.js`). Memakai kaca dan refraksi yang sama dengan tombol + (`lg.js`). Lebar minimum 136px agar tidak melompat saat pindah bulan.
+- Form catatan dan anggaran: header dan tombol Simpan tetap; hanya isi (`.shb`) yang bergulir. Sebelumnya Simpan `sticky` dan menimpa kartu tanggal saat keyboard terbuka.
+- Kembali dari Pengaturan: thumb tab bar tumbuh dari `scale .9×.74` sambil memudar bersamaan (tanpa jeda 0,2 detik dan fade cepat seperti sebelumnya).

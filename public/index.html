@@ -27,7 +27,7 @@
     <button id="prev" type="button" aria-label="Bulan sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
     <button id="next" type="button" aria-label="Bulan berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
-  <h1><span id="cfgT" class="cfgT">Pengaturan</span><span id="mon"><span id="monT"></span></span><span id="monlive" class="sr" aria-live="polite"></span></h1>
+  <h1><span id="cfgT" class="cfgT">Pengaturan</span><span id="mon" class="glass"><span id="monT"></span></span><span id="monlive" class="sr" aria-live="polite"></span></h1>
   <button id="cfgb" type="button" class="cfgb glass" aria-label="Pengaturan" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   
 </header>
@@ -98,13 +98,15 @@
       <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
-    <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
+    <div class="shb">
+      <div id="amtbox" class="amtbox"><span class="cur" aria-hidden="true">Rp</span><input id="amt" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Nominal"><span id="ruler" class="ruler" aria-hidden="true"></span></div>
     <div id="chips" class="chips"></div>
     <div class="group">
       <label class="fr"><input id="note" maxlength="60" enterkeyhint="done" placeholder="Keterangan (opsional)" aria-label="Keterangan"></label>
       <label class="fr dt"><span id="dl"></span><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input id="date" type="date" aria-label="Tanggal"></label>
     </div>
     <p id="err" class="err" role="alert"></p>
+    </div>
     <button id="ok" type="button" class="sv">Simpan</button>
   </div>
 </dialog>
@@ -132,7 +134,8 @@
       <h2 id="bt" class="bt"></h2>
       <button id="bd-del" type="button" class="txt" hidden>Hapus</button>
     </div>
-    <div class="group">
+    <div class="shb">
+      <div class="group">
       <label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h8"/></svg><input id="bnm" maxlength="30" autocomplete="off" enterkeyhint="next" placeholder="Nama anggaran" aria-label="Nama anggaran"></label>
       <label class="fr"><span class="mut">Rp</span><input id="bam" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="Nominal per bulan" aria-label="Anggaran per bulan"></label>
     </div>
@@ -141,6 +144,7 @@
       <div id="bcats" class="chips wrap" role="group" aria-label="Kategori pengeluaran yang dihitung"></div>
     </div>
     <p id="berr" class="err" role="alert"></p>
+    </div>
     <button id="bd-ok" type="button" class="sv" disabled>Simpan</button>
   </div>
 </dialog>
