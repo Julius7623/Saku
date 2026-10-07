@@ -568,3 +568,46 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 .pmenu button:focus-visible{outline:none;background:var(--fill)}
 .pmenu button:active{background:var(--fill2)}
 @media(hover:hover){.pmenu button:hover{background:var(--fill)}}
+
+/* v49 · dialog reset tanpa ring fokus; form anggaran ringkas saat keyboard terbuka */
+#rst :focus,#rst :focus-visible,#rst button:focus-visible{outline:none!important;box-shadow:none}
+#bud .sh{gap:14px}
+#bud .shb{gap:16px}
+#bud.kbo .sh{gap:10px}
+#bud.kbo .shb{gap:10px}
+#bud.kbo .lbl{display:none}
+#bud.kbo .chip{min-height:34px;padding:0 14px;font-size:14px}
+#bud.kbo .chips.wrap{gap:6px}
+#bud.kbo .fr{min-height:46px}
+#bud.kbo .sv{min-height:46px}
+
+/* v50 · lebih tenang: satu garis tipis, aksi sekunder redup, chip datar, kredit halus */
+.fr+.fr::before,.er+.er::before{background:rgba(128,128,128,.16)}
+#cl,#pk-cl,#bd-cl{color:var(--t2);font-weight:500}
+#rst .sv{background:var(--fill);color:var(--tx);box-shadow:none}
+#rst .sv:hover{background:var(--fill2)}
+.chip,.mo{box-shadow:none}
+.chip[aria-pressed=true],.mo[aria-pressed=true]{box-shadow:none}
+.credit{margin:24px 0 4px;font-size:13px;opacity:.5}
+.credit::before{display:none}
+
+/* v51 · konsistensi: penanda aktif = kaca, chip pemilih opak, menu lebih pekat, radius sama */
+.cfgb[aria-pressed=true]{color:var(--tx);background-color:color-mix(in srgb,var(--tx) 16%,var(--g-bg))!important}
+#pick .mo:not([aria-pressed=true]):not(:disabled),#pick .alt{background:color-mix(in srgb,var(--tx) 10%,var(--sf))}
+#pick .mo:disabled{background:color-mix(in srgb,var(--tx) 5%,var(--sf))}
+#pick .mo:hover:not([aria-pressed=true]):not(:disabled),#pick .alt:hover{background:color-mix(in srgb,var(--tx) 15%,var(--sf))}
+.pmenu.glass{background-color:color-mix(in srgb,var(--sf) 86%,transparent);background-image:none;-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6)}
+#pick,#rst{border-radius:var(--r-sheet)}
+
+/* v52 · Edit = teks biasa (tanpa kapsul); saat aktif berubah jadi centang sebagai konfirmasi */
+#cat-ed.edb{width:52px;height:44px;padding:0 4px;justify-items:start;background:none;box-shadow:none;font-weight:600;color:var(--tx);transition:color .25s,transform var(--d3) var(--spring)}
+#cat-ed.edb::after{display:none}
+#cat-ed.edb[aria-pressed=true]{width:52px;background:none;color:var(--tx)}
+#cat-ed.edb:active{transform:scale(.94)}
+#cat-ed .ck{width:22px;height:22px}
+
+/* v53 · "Edit" anggaran = sama dengan Categories: teks biasa, centang saat aktif */
+.dh .edc{display:grid;place-items:center;justify-items:end;min-width:44px;font-weight:600;color:var(--tx)}
+.dh .edc .ck{width:22px;height:22px;stroke-width:3;animation:ckin .45s cubic-bezier(.3,1.6,.45,1)}
+@keyframes ckin{from{opacity:0;filter:blur(4px);transform:scale(.4) rotate(-20deg)}to{opacity:1;filter:none;transform:none}}
+@media(prefers-reduced-motion:reduce){.dh .edc .ck{animation:none}}

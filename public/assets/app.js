@@ -99,6 +99,7 @@ function count(el,to,f,snap){
 const NS='http://www.w3.org/2000/svg';
 /* panah ▾ kecil ikut bergeser bersama teks bulan */
 function chev(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M6 9l6 6 6-6');s.append(p);return s}
+function okIc(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i ck');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M5 12.5l4.5 4.5L19 7.5');s.append(p);return s}
 function chevR(){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i chev');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d','M9 6l6 6-6 6');s.append(p);return s}
 function ico(d){const s=document.createElementNS(NS,'svg'),p=document.createElementNS(NS,'path');s.setAttribute('class','i');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');p.setAttribute('d',d);s.append(p);return s}
 /* kapsul kaca dua baris: bulan (tebal) di atas, tahun (kecil) di bawah */
@@ -205,7 +206,7 @@ function renderSum(){
   if(!box.children.length)box.append(h('div',{class:'card p16 mt'},h('p',{class:'mut'},tr('Belum ada data bulan ini.'))));
   const bg=bdGet();
   if(!bg.length){bEdit=false;bArm=null}
-  box.append(h('div',{class:'dh'},h('h2',{class:'day'},tr('Anggaran')),bg.length?h('button',{type:'button',class:'txt',onclick:()=>{bEdit=!bEdit;bArm=null;renderSum()}},bEdit?tr('Selesai'):tr('Atur')):null));
+  box.append(h('div',{class:'dh'},h('h2',{class:'day'},tr('Anggaran')),bg.length?h('button',{type:'button',class:'txt edc','aria-pressed':String(bEdit),'aria-label':tr(bEdit?'Selesai':'Edit'),onclick:()=>{bEdit=!bEdit;bArm=null;renderSum()}},bEdit?okIc():tr('Edit')):null));
   if(!bg.length)box.append(h('div',{class:'card'},h('button',{type:'button',class:'set',onclick:e=>openBud(null,e.currentTarget)},tr('Tambah anggaran'),chevR())));
   else if(bEdit){
     /* mode atur: ketuk − untuk menghapus, seret ≡ untuk mengubah urutan */
@@ -688,6 +689,7 @@ function place(){
   const sheet=[catd,bud,$('#sheet')].find(d=>d.open);if(!sheet)return;
   const v=window.visualViewport||{height:innerHeight,offsetTop:0},kb=Math.max(0,innerHeight-v.height-v.offsetTop),open=kb>80,acc=open&&IOS?56:0;
   const gap=open?10:(parseFloat(getComputedStyle(sab).paddingBottom)||0)+12;
+  sheet.classList.toggle('kbo',open);
   sheet.style.bottom='auto';
   sheet.style.maxHeight=Math.max(240,v.height-acc-gap-12)+'px';
   sheet.style.top=Math.max(8,v.offsetTop+v.height-acc-gap-sheet.offsetHeight)+'px';setOrigin(sheet);
