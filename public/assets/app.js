@@ -144,7 +144,7 @@ function render(){
   const mv=ym!==lastYm&&!!lastYm&&!rm();
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
-  $('#next').disabled=ym>=today().slice(0,7);$('#tabs').dataset.t=tab;if(tab!=='cfg')$('#tabs').dataset.p=tab;
+  $('#tabs').dataset.t=tab;if(tab!=='cfg')$('#tabs').dataset.p=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():tab==='sum'?renderSum():renderCfg();
@@ -537,7 +537,7 @@ function openPick(){
   if(pkd.open||sheet.open)return;
   py=+ym.slice(0,4);pv='m';pp=pageStart(py);
   pHas=new Set(all.map(t=>t.date.slice(0,7)));pHasY=new Set([...pHas].map(v=>+v.slice(0,4)));
-  pkd._src=$('#mon');paintPick();modal(pkd);setOrigin(pkd);
+  pkd._src=$('#mon');{const rr=$('#mon').getBoundingClientRect();pkd.style.bottom='auto';pkd.style.top=Math.round(rr.bottom+10)+'px'}paintPick();modal(pkd);setOrigin(pkd);
   $('.mo[aria-pressed=true]')?.focus({preventScroll:true});
   requestAnimationFrame(()=>requestAnimationFrame(()=>pkd.classList.add('show')));
 }
@@ -614,7 +614,9 @@ async function importJSON(file){
 }
 
 /* Event */
-$('#prev').onclick=()=>shift(-1);$('#next').onclick=()=>shift(1);
+$('#mon').onclick=()=>{if(tab!=='cfg')openPick()};
+/* tombol tema: ketuk = Gelap → Terang → Otomatis, ikon berganti */
+$('#thb').onclick=()=>{const o=['dark','light','auto'];applyTheme(o[(o.indexOf(curTheme())+1)%3],true)};
 const TABS=['home','sum','cfg'];
 const goTab=t=>{dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=true;tab=t;render()};
 let backTab='home';
@@ -799,7 +801,7 @@ const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>set
 const THEMES=['auto','light','dark'];
 const curTheme=()=>{const t=ls('catat.theme');return t==='light'||t==='dark'?t:'auto'};
 /* teks nilai di baris pengaturan mengikuti pilihan select (dan bahasanya) */
-const syncSel=()=>['theme','lang','cur'].forEach(k=>{$('#'+k+'V').textContent=$('#'+k).selectedOptions[0]?.textContent||''});
+const syncSel=()=>{['theme','lang','cur'].forEach(k=>{$('#'+k+'V').textContent=$('#'+k).selectedOptions[0]?.textContent||''});const b=$('#thb');if(b)b.setAttribute('aria-label',tr('Tampilan')+': '+($('#theme').selectedOptions[0]?.textContent||''))};
 let thT=0;
 /* Ubah tampilan (tema / bahasa) semulus mungkin: crossfade seluruh halaman lewat View Transition (satu kurva untuk semua elemen, termasuk gradien kartu).
    Cadangan: transisi warna CSS di semua elemen selama sebentar. Lewati saat render pertama dan saat Reduce Motion. */
@@ -811,7 +813,7 @@ function morph(fn,first){
 }
 function applyTheme(t,save,first){
   const r=document.documentElement;
-  morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;syncSel()},first);
+  morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;$('#thb').dataset.th=t;syncSel()},first);
   if(save)ls('catat.theme',t);
 }
 $('#theme').onchange=e=>applyTheme(e.target.value,true);

@@ -60,7 +60,7 @@ function attach(el,o){
   if(o.prop)el.style.setProperty(o.prop,val);else{el.style.backdropFilter=val;el.style.webkitBackdropFilter=val}
   let lw=0,lh=0;
   const upd=()=>{
-    const w=Math.round(o.w?o.w(el):el.offsetWidth),h=Math.round(o.h?o.h(el):el.offsetHeight);
+    const q=o.q||1,w=Math.ceil(Math.round(o.w?o.w(el):el.offsetWidth)/q)*q,h=Math.round(o.h?o.h(el):el.offsetHeight);
     if(w<8||h<8||(w===lw&&h===lh))return;lw=w;lh=h;
     const r=Math.min(o.r??999,w/2,h/2),B=Math.min(o.bezel??14,w/2,h/2),S=o.shift??9;
     for(const [e,v] of [[f,{x:0,y:0,width:w,height:h}],[fl,{x:0,y:0,width:w,height:h}],[im,{x:0,y:0,width:w,height:h}]])for(const k in v)e.setAttribute(k,v[k]);
@@ -80,7 +80,8 @@ function lens(r){
 window.LG={attach,lens};
 const go=()=>{
   const tabs=document.querySelector('.tabs');
-  if(tabs)attach(tabs,{bezel:22,shift:15,blur:1.6});
+  if(tabs)attach(tabs,{bezel:22,shift:15,blur:1.6,q:6});/* q: bulatkan lebar ke atas supaya peta tidak dibuat ulang tiap frame saat bar melebar/menyempit */
+  const pk=document.querySelector('#pick');if(pk)attach(pk,{r:36,bezel:30,shift:18,blur:12,sat:1.9});
   document.querySelectorAll('.tabs,.seg,.seg3').forEach(lens);
   document.querySelectorAll('.fab,#cat-ed,#mon').forEach(e=>attach(e,{bezel:18,shift:16,blur:1.4}));
   const t=document.querySelector('#toast');if(t)attach(t,{bezel:20,shift:14,blur:1.6});

@@ -74,3 +74,8 @@ Dibuat oleh Joel G. Thompson.
 - Bulan dan tahun (`#mon`) jadi kapsul kaca dua baris: bulan tebal di atas, tahun kecil di bawah (`monEl()` di `app.js`). Memakai kaca dan refraksi yang sama dengan tombol + (`lg.js`). Lebar minimum 136px agar tidak melompat saat pindah bulan.
 - Form catatan dan anggaran: header dan tombol Simpan tetap; hanya isi (`.shb`) yang bergulir. Sebelumnya Simpan `sticky` dan menimpa kartu tanggal saat keyboard terbuka.
 - Kembali dari Pengaturan: thumb tab bar tumbuh dari `scale .9×.74` sambil memudar bersamaan (tanpa jeda 0,2 detik dan fade cepat seperti sebelumnya).
+
+## v46
+- Panah bulan kiri/kanan dihapus. Ganti bulan/tahun: ketuk kapsul bulan (`#mon`, sekarang tombol) → kartu kaca mengambang tepat di bawahnya (picker `#pick`, dengan refraksi `lg.js`), atau geser daftar seperti sebelumnya.
+- Pojok kiri atas: tombol tema (`#thb`). Setiap ketukan berganti Gelap → Terang → Otomatis, ikon bulan/matahari/setengah lingkaran. Sinkron dengan Pengaturan → Tampilan. Disembunyikan di halaman Pengaturan.
+- Transisi Pengaturan ⇄ Ringkasan: lebar tombol + tidak lagi overshoot (bar tidak bergoyang dan tidak saling menimpa); thumb hanya tumbuh vertikal sehingga tepinya selalu sejajar bar; peta refraksi tab bar dibulatkan (`q`) agar tidak dibuat ulang tiap frame.

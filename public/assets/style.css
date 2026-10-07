@@ -337,7 +337,7 @@ html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:ba
 
 /* v31: 3 tab, pengaturan dipisah dari ringkasan */
 .tabs[data-t=cfg]::before{opacity:0}
-.top{display:grid;grid-template-columns:88px minmax(0,1fr) 88px;align-items:center;gap:8px}
+.top{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px}
 .top h1{display:grid;justify-items:center;margin:0;padding:0;overflow:visible;font-size:clamp(16px,4.8vw,19px);letter-spacing:-.02em;text-align:center}
 #mon{display:grid;justify-items:center;min-width:0;max-width:100%;user-select:none;-webkit-user-select:none}
 #monT{justify-items:center}
@@ -351,7 +351,7 @@ html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:ba
 .cfgT{display:none}
 body[data-tab=cfg] .cfgT{display:block}
 body[data-tab=cfg] #mon{display:none}
-body[data-tab=cfg] .nav2{visibility:hidden}
+body[data-tab=cfg] .thb{visibility:hidden}
 .set.sel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;-webkit-appearance:none;appearance:none}
 .set.sel .val{margin-left:auto;color:var(--t2);font-weight:400}
 .set.sel .chev{margin-left:8px}
@@ -443,7 +443,7 @@ body[data-tab=cfg] .fab{display:none}
 }
 /* layar sempit (<=360px): header dan nominal tidak sesak */
 @media(max-width:360px){
-.top{grid-template-columns:72px minmax(0,1fr) 72px;gap:4px}
+.top{grid-template-columns:44px minmax(0,1fr) 44px;gap:4px}
 .nav2{width:72px}
 .amtbox{font-size:44px}
 .sh{padding:16px;--shp:16px}
@@ -526,3 +526,19 @@ html.lg .tabs.lens::before,html.lg .seg.lens::before,html.lg .seg3.lens::before{
 #monT>span{flex-direction:column;justify-content:center;gap:0;line-height:1.15}
 #monT b{font-size:17px;font-weight:700;letter-spacing:-.02em}
 #monT small{font-size:14px;font-weight:600;letter-spacing:0;color:var(--t2)}
+/* ===== v46 ===== */
+/* Transisi Pengaturan ⇄ Ringkasan: tanpa overshoot lebar (bar tidak bergoyang, + tidak menimpa bar); thumb hanya tumbuh vertikal sehingga tepinya selalu sejajar bar */
+.fab{transition:width .5s var(--ease),min-width .5s var(--ease),margin .5s var(--ease),opacity .3s,transform .5s var(--ease),visibility 0s}
+body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--ease),margin .42s var(--ease),opacity .2s .1s,transform .42s var(--ease),visibility 0s .42s}
+.tabs::before{transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
+.tabs[data-t=cfg]::before{opacity:0;scale:1 .72;transition:translate .2s var(--ease),scale .3s var(--ease),opacity .16s var(--ease),background-color .3s,box-shadow .3s}
+/* Tombol tema (kiri atas): tiga ikon bertumpuk, yang aktif muncul dengan putaran lembut */
+.thb{justify-self:start}
+.thb .i{grid-area:1/1;opacity:0;transform:rotate(-70deg) scale(.4);filter:blur(3px);transition:opacity var(--d2),transform var(--d3) var(--spring),filter var(--d2)}
+.thb[data-th=dark] .ti-d,.thb[data-th=light] .ti-l,.thb[data-th=auto] .ti-a{opacity:1;transform:none;filter:none}
+@media(prefers-reduced-motion:reduce){.thb .i{transition-duration:.01s}}
+/* Picker bulan/tahun: kartu kaca mengambang di bawah kapsul bulan */
+#pick{width:min(calc(100% - 24px),340px)}
+@media(prefers-reduced-transparency:no-preference){
+#pick{background-color:var(--g-bg);background-image:radial-gradient(90% 70% at 25% 0%,var(--g-sp),transparent 65%);-webkit-backdrop-filter:blur(26px) saturate(1.9);backdrop-filter:blur(26px) saturate(1.9)}
+}
