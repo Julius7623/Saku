@@ -14,10 +14,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KasKu">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=48">
 <script src="assets/theme.js"></script>
-<script src="assets/app.js" defer></script>
-<script src="assets/lg.js" defer></script>
+<script src="assets/app.js?v=48" defer></script>
+<script src="assets/lg.js?v=48" defer></script>
 </head>
 <body>
 <noscript><p class="mut foot">KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.</p></noscript>
@@ -91,7 +91,7 @@
   <div class="sh">
     <div class="shh">
       <button id="cl" type="button" class="txt">Batal</button>
-      <div class="seg" data-v="out" role="group" aria-label="Jenis catatan"><button type="button" data-type="out">Pengeluaran</button><button type="button" data-type="in">Pemasukan</button></div>
+      <div class="seg glass" data-v="out" role="group" aria-label="Jenis catatan"><button type="button" data-type="out">Pengeluaran</button><button type="button" data-type="in">Pemasukan</button></div>
       <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
@@ -114,7 +114,7 @@
       <button id="pk-cl" type="button" class="txt">Batal</button>
       <h2 id="pt" class="sr">Pilih bulan dan tahun</h2>
       <button id="py" type="button" class="ybtn" aria-expanded="false" aria-label="Pilih tahun"><span id="pyt"></span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-      <div class="yr">
+      <div class="yr glass">
         <button id="py-prev" type="button" aria-label="Tahun sebelumnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
         <button id="py-next" type="button" aria-label="Tahun berikutnya"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       </div>
@@ -154,7 +154,7 @@
       <button id="cat-ok" type="button" class="txt">Tutup</button>
     </div>
     <div class="cbody">
-    <div class="ctog" role="group" aria-label="Jenis kategori"><button type="button" data-ct="out" aria-pressed="true">Pengeluaran</button><button type="button" data-ct="in" aria-pressed="false">Pemasukan</button></div>
+    <div class="ctog glass" role="group" aria-label="Jenis kategori"><button type="button" data-ct="out" aria-pressed="true">Pengeluaran</button><button type="button" data-ct="in" aria-pressed="false">Pemasukan</button></div>
     <div data-ct="out" class="cd">
       <div id="cl-out" class="elist"></div>
       <div class="group mt8"><label class="fr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input id="ca-out" maxlength="20" autocomplete="off" enterkeyhint="done" placeholder="Kategori baru" aria-label="Nama kategori pengeluaran baru"><button id="cb-out" type="button" class="ad" disabled>Tambah</button></label></div>

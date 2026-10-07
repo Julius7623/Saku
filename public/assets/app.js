@@ -439,7 +439,7 @@ function addCat(t){
   CK[t].lastElementChild?.scrollIntoView({block:'nearest'});
 }
 function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ct===t)));cArm=null;if(catd.open)place()}
-$$('.ctog button').forEach(b=>b.onclick=()=>setCt(b.dataset.ct));
+$$('.ctog button').forEach(b=>b.onclick=()=>{if(ctNC())return;setCt(b.dataset.ct)});
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
   catd._src=src;cArm=null;setEd(false);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
@@ -799,6 +799,7 @@ function liquid(root,els,cur,pick,N=2,off=()=>false){
 }
 const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>Math.min(1,TABS.indexOf(tab)),i=>goTab(TABS[i]),2,()=>tab==='cfg');
 const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>setType(i?'in':'out'));
+const ctNC=liquid($('.ctog'),[...$$('.ctog button')],()=>catd.dataset.ct==='in'?1:0,i=>setCt(i?'in':'out'));
 /* Menu pilihan Tampilan / Bahasa / Mata uang: menu kaca buatan sendiri. Popup <select> bawaan iOS menganimasikan snapshot elemen transparan sehingga berkedip hitam.
    <select> tetap dipakai sebagai penyimpan nilai (disembunyikan); memilih menyetel nilainya lalu memicu 'change'. */
 let pm=null;

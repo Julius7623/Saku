@@ -82,8 +82,8 @@ const go=()=>{
   const tabs=document.querySelector('.tabs');
   if(tabs)attach(tabs,{bezel:22,shift:15,blur:1.6,q:6});/* q: bulatkan lebar ke atas supaya peta tidak dibuat ulang tiap frame saat bar melebar/menyempit */
   const pk=document.querySelector('#pick');if(pk)attach(pk,{r:36,bezel:30,shift:18,blur:12,sat:1.9});
-  document.querySelectorAll('.tabs,.seg,.seg3').forEach(lens);
-  document.querySelectorAll('.fab,#cat-ed,#mon').forEach(e=>attach(e,{bezel:18,shift:16,blur:1.4}));
+  document.querySelectorAll('.tabs,.seg,.seg3,.ctog').forEach(lens);
+  document.querySelectorAll('.fab,#cat-ed,#mon,.yr').forEach(e=>attach(e,{bezel:18,shift:16,blur:1.4}));
   const t=document.querySelector('#toast');if(t)attach(t,{bezel:20,shift:14,blur:1.6});
 };
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',go):go();
