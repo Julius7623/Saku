@@ -560,7 +560,7 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 /* v47 · menu pilihan (Tampilan/Bahasa/Mata uang): kaca kecil di bawah baris; <select> asli hanya penyimpan nilai */
 .set.sel select{display:none}
 .set.sel.open{background:var(--fill)}
-.pscrim{position:fixed;inset:0;z-index:70;background:transparent;-webkit-tap-highlight-color:transparent}
+.pscrim{position:fixed;inset:7px 0;z-index:70;background:transparent;-webkit-tap-highlight-color:transparent}
 .pmenu.glass{position:fixed;z-index:71;display:grid;gap:2px;min-width:200px;padding:6px;border-radius:24px;transform-origin:top right}
 .pmenu button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 18px 0 12px;border-radius:18px;font-size:17px;font-weight:500;text-align:left;color:var(--tx);-webkit-tap-highlight-color:transparent}
 .pmenu button .i{flex:none;width:18px;height:18px;stroke-width:2.6;opacity:0}
@@ -801,11 +801,11 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 /* v80: tombol header (bulan, pil bulan, pengaturan) dinaikkan 3px agar pas dengan outline desain; tinggi total header tetap 72px, dock dan toast tidak diubah */
 
 /* v81 · bilah atas/bawah Safari transparan (meta theme-color dihapus, jadi bilah ikut isi halaman) dan blur latar dipindah dari dialog::backdrop ke satu lapisan tetap html::before yang melebar sampai di bawah kedua bilah. Lapisan ini memakai durasi & kurva yang sama dengan dialog (masuk --d3/--ease, keluar --d-out/--ease-in), jadi atas, bawah, dan halaman memudar/memblur serempak, dan jernih sepenuhnya saat tidak ada dialog. */
-@supports selector(:has(*)){
-  #scrim{position:fixed;inset:0;z-index:60;pointer-events:none;background-color:rgba(0,0,0,0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:background-color var(--d-out) var(--ease-in),-webkit-backdrop-filter var(--d-out) var(--ease-in),backdrop-filter var(--d-out) var(--ease-in)}
-  html:has(dialog.show) #scrim{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color var(--d3) var(--ease),-webkit-backdrop-filter var(--d3) var(--ease),backdrop-filter var(--d3) var(--ease)}
-  dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:none}
-}
-@media(prefers-reduced-transparency:reduce){#scrim,html:has(dialog.show) #scrim{-webkit-backdrop-filter:none;backdrop-filter:none}}
+#scrim{display:none;position:fixed;inset:0;z-index:60;pointer-events:none;background-color:rgba(0,0,0,0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:background-color var(--d-out) var(--ease-in),-webkit-backdrop-filter var(--d-out) var(--ease-in),backdrop-filter var(--d-out) var(--ease-in)}
+html.dim #scrim{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color var(--d3) var(--ease),-webkit-backdrop-filter var(--d3) var(--ease),backdrop-filter var(--d3) var(--ease)}
+dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:none}
+@media(prefers-reduced-transparency:reduce){#scrim,html.dim #scrim{-webkit-backdrop-filter:none;backdrop-filter:none}}
 
 /* v84 · lapisan peredup/blur sekarang elemen asli (#scrim), bukan pseudo-element html::before / dialog::backdrop. Safari iOS membaca warna bilah atas/bawah dari elemen fixed di tepi layar; pseudo-element tidak dihitung, jadi bilah dulu tetap terang. Strip v83 dibuang (menimbulkan garis saat ganti tema). */
+
+/* v85 · #scrim display:none saat diam (elemen fixed transparan di tepi dibaca Safari sebagai hitam); strip warna tepi dibuat oleh app.js. */
