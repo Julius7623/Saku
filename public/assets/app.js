@@ -995,7 +995,7 @@ addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb
   const mo=new MutationObserver(all);T.forEach(e=>e&&mo.observe(e,{childList:true,characterData:true,subtree:true}));
   let fr=0;new ResizeObserver(()=>{cancelAnimationFrame(fr);fr=requestAnimationFrame(all)}).observe($('.hero'));all()}
 
-/* v85 · bilah atas/bawah Safari ikut isi halaman (jernih penuh) dan meredup + blur serempak dengan dialog.
+/* v86 · bilah atas/bawah Safari ikut isi halaman (jernih penuh) dan meredup + blur serempak dengan dialog.
    Cara kerja (sama seperti MyTinyTools): Safari iOS 26 mengambil warna bilah dari elemen fixed di tepi layar.
    - Saat diam: dua strip opak 6px (warna latar halaman) di tepi atas & bawah, z-index -1, sehingga bilah = warna halaman.
    - #scrim TIDAK dipakai saat diam (display:none). Dulu #scrim transparan (rgba 0,0,0,0) di tepi terbaca Safari sebagai HITAM.
@@ -1008,13 +1008,14 @@ addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb
   let es=[],k=0,raf=0,on=false,hide=0,tt=[];
   const base=()=>{const m=getComputedStyle(R).backgroundColor.match(/[\d.]+/g)||[250,250,250];return m.slice(0,3).map(Number)};
   /* strip dibuat ulang tiap paint: Safari hanya membaca ulang warna bilah saat ada elemen baru */
-  const edges=c=>{const z=k>0||on?60:-1;es.forEach(e=>e.remove());
+  const edges=c=>{const z=k>0||on?65:40;es.forEach(e=>e.remove());
     es=['top','bottom'].map(s=>{const e=document.createElement('i');e.setAttribute('aria-hidden','true');
-      e.style.cssText='position:fixed;left:0;right:0;'+s+':0;height:6px;pointer-events:none;background:'+c+';z-index:'+z;document.body.append(e);return e})};
+      e.style.cssText='position:fixed;left:0;right:0;'+s+':0;height:6px;pointer-events:none;background:'+c+';z-index:'+z;R.append(e);return e})};
   const paint=p=>{const b=base(),f=1-DIM*p,c='rgb('+b.map(v=>Math.round(v*f)).join(',')+')';
     let m=document.querySelector('meta[name=theme-color]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}
     m.content=c;edges(c)};
-  const settle=()=>{tt.forEach(clearTimeout);paint(k);tt=[450,900].map(ms=>setTimeout(()=>paint(k),ms))};
+  /* settle: cat ulang tiap frame selama 1 dtk (strip baru tiap frame = Safari membaca ulang warna bilah), jadi ganti tema tidak meninggalkan bilah dengan warna lama */
+  let sr=0;const settle=()=>{tt.forEach(clearTimeout);cancelAnimationFrame(sr);const t1=performance.now(),tk=()=>{paint(k);if(performance.now()-t1<1000)sr=requestAnimationFrame(tk)};tk();tt=[1200,2000].map(ms=>setTimeout(()=>paint(k),ms))};
   const go=to=>{
     cancelAnimationFrame(raf);clearTimeout(hide);const from=k,dur=to?D:CLOSE,ease=to?inE:outE;
     if(to&&sc){sc.style.display='block';void sc.offsetWidth}
