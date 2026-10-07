@@ -8,6 +8,9 @@ const DEF={out:['Makan','Transportasi','Hiburan','Lainnya'],in:['Uang jajan','Ga
 const OLD={out:['Makan','Transportasi','Belanja','Tagihan','Hiburan','Kesehatan','Lainnya'],in:['Gaji','Bonus','Hadiah','Lainnya']};
 const CATS={out:[...DEF.out],in:[...DEF.in]};
 const MAX=9999999999,NOTE=60,CAT=20,CATV=30;
+/* nominal sah: positif, paling kecil satu satuan terkecil (0,01), maksimal MAX, paling banyak 2 desimal */
+const okAmt=a=>Number.isFinite(a)&&a>=.01&&a<=MAX&&Math.round(a*100)/100===a;
+const r2=n=>Math.round((n+Number.EPSILON)*100)/100;
 /* Durasi gerak (ms). D = --d3 di CSS; CLOSE = waktu sheet menutup; NUM = hitung angka */
 const D=500,D2=250,CLOSE=260,NUM=650;/* D2 = --d2 */
 const RM=matchMedia('(prefers-reduced-motion:reduce)'),rm=()=>RM.matches;
@@ -20,7 +23,7 @@ const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&ymd(parse(s))===s;
 const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.setItem(k,v)}catch{}};
 
 /* Bahasa: Indonesia (id) atau Inggris (en). Dipilih pengguna di Ringkasan; bawaannya mengikuti bahasa perangkat. */
-const EN={'Pengaturan':'Settings','Mata uang':'Currency','Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.':'Only changes the displayed symbol; amounts are not converted.',"KasKu: pencatat keuangan pribadi": "KasKu: personal finance tracker", "Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.": "Log daily income and expenses quickly. Your data stays on your device.", "KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.": "KasKu needs JavaScript. Enable JavaScript in your browser, then reload the page.", "Pilih bulan dan tahun": "Choose month and year", "Pindah bulan": "Change month", "Bulan sebelumnya": "Previous month", "Bulan berikutnya": "Next month", "Sisa uang bulan ini": "Money left this month", "Pemasukan": "Income", "Pengeluaran": "Expenses", "Sudah akhir bulan. Simpan cadangan datamu?": "It’s the end of the month. Back up your data?", "Cadangkan": "Back up", "Nanti": "Later", "Cari catatan atau nominal": "Search entries or amounts", "Cari catatan": "Search entries", "Kategori": "Categories", "Kelola kategori": "Manage categories", "Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.": "Add, delete, and reorder your income and expense categories. Existing entries stay unchanged.", "Cadangan data": "Data backup", "Simpan cadangan": "Save backup", "Pulihkan cadangan": "Restore backup", "Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.": "Your data lives only on this device. Save a backup regularly so you don’t lose it.", "Tampilan": "Appearance", "Otomatis": "Auto", "Terang": "Light", "Gelap": "Dark", "Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.": "Auto follows your device’s light or dark setting.", "Bahasa": "Language", "Pilih bahasa tampilan aplikasi.": "Choose the app’s display language.", "Reset": "Reset", "Reset catatan keuangan": "Reset financial records", "Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.": "Deletes all entries and budgets from this device. Appearance and category settings are kept.", "Dibuat oleh": "Made by", "Menu utama": "Main menu", "Beranda": "Home", "Ringkasan": "Summary", "Tambah catatan": "Add entry", "Batal": "Cancel", "Jenis catatan": "Entry type", "Hapus": "Delete", "Catatan baru": "New entry", "Nominal dalam rupiah": "Amount in rupiah", "Keterangan (opsional)": "Note (optional)", "Keterangan": "Note", "Tanggal": "Date", "Simpan": "Save", "Pilih tahun": "Choose year", "Tahun sebelumnya": "Previous year", "Tahun berikutnya": "Next year", "Bulan": "Month", "Bulan ini": "This month", "Nama anggaran": "Budget name", "Nominal per bulan": "Amount per month", "Anggaran per bulan dalam rupiah": "Monthly budget in rupiah", "Dihitung dari kategori": "Counted from categories", "Kategori pengeluaran yang dihitung": "Expense categories counted", "Selesai": "Done", "Tutup": "Close", "Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.": "Tap − to delete, drag ≡ to reorder.", "Kategori baru": "New category", "Nama kategori pengeluaran baru": "New expense category name", "Tambah": "Add", "Nama kategori pemasukan baru": "New income category name", "Reset catatan keuangan?": "Reset financial records?", "Hapus semua": "Delete all", "Ketuk lagi untuk menghapus": "Tap again to delete", "Simpan cadangan dulu": "Back up first", "Hari ini": "Today", "Kemarin": "Yesterday", "Tidak ada hasil": "No results", "Pencarian mencakup semua bulan.": "Search covers all months.", "Belum ada catatan bulan ini": "No entries this month", "Belum ada catatan": "No entries yet", "Semua catatan tersimpan di perangkatmu.": "All entries are stored on your device.", "Tambah catatan pertama": "Add your first entry", "Belum ada data bulan ini.": "No data this month.", "Anggaran": "Budgets", "Atur": "Edit", "Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.": "No budgets yet. Create your own, e.g. “Eating out” or “Fun”.", "Tambah anggaran": "Add budget", "Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.": "Drag ≡ to reorder. Tap − then Delete to remove a budget.", "Dihitung dari pengeluaran di kategori yang dipilih, per bulan.": "Calculated from expenses in the selected categories, per month.", "Catatan dihapus": "Entry deleted", "Kembalikan": "Undo", "Gagal menghapus. Coba lagi.": "Couldn’t delete. Try again.", "Gagal mengembalikan catatan. Coba lagi.": "Couldn’t restore the entry. Try again.", "Pilih tanggal": "Pick a date", "Ubah catatan": "Edit entry", "Tanggal tidak boleh melewati hari ini.": "The date can’t be after today.", "Tanggalnya belum benar. Pilih tanggal lagi.": "That date isn’t valid. Pick another.", "Gagal menyimpan. Coba lagi.": "Couldn’t save. Try again.", "Ubah anggaran": "Edit budget", "Anggaran baru": "New budget", "Lengkapi nama, nominal, dan minimal satu kategori.": "Fill in a name, amount, and at least one category.", "Cadangan tersimpan": "Backup saved", "Gagal mereset. Coba lagi.": "Couldn’t reset. Try again.", "Semua catatan dihapus.": "All entries deleted.", "Gagal mengembalikan. Coba lagi.": "Couldn’t restore. Try again.", "Kembali ke pilihan bulan": "Back to months", "12 tahun sebelumnya": "Previous 12 years", "12 tahun berikutnya": "Next 12 years", "Tahun": "Year", ", ada catatan": ", has entries", "Cadangan disimpan sebagai berkas .json.": "Backup saved as a .json file.", "Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.": "This file isn’t a KasKu backup. Choose the .json file from “Save backup”."};
+const EN={'Mengambil kurs…':'Fetching rate…','Kurs belum tersimpan. Hubungkan ke internet dulu.':'No saved rate yet. Connect to the internet first.','Gagal mengonversi. Coba lagi.':'Couldn’t convert. Try again.','Pengaturan':'Settings','Mata uang':'Currency','Hanya mengubah simbol yang ditampilkan; nominal tidak dikonversi.':'Only changes the displayed symbol; amounts are not converted.',"KasKu: pencatat keuangan pribadi": "KasKu: personal finance tracker", "Catat pemasukan dan pengeluaran harian dengan cepat. Data hanya tersimpan di perangkatmu.": "Log daily income and expenses quickly. Your data stays on your device.", "KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.": "KasKu needs JavaScript. Enable JavaScript in your browser, then reload the page.", "Pilih bulan dan tahun": "Choose month and year", "Pindah bulan": "Change month", "Bulan sebelumnya": "Previous month", "Bulan berikutnya": "Next month", "Sisa uang bulan ini": "Money left this month", "Pemasukan": "Income", "Pengeluaran": "Expenses", "Sudah akhir bulan. Simpan cadangan datamu?": "It’s the end of the month. Back up your data?", "Cadangkan": "Back up", "Nanti": "Later", "Cari catatan atau nominal": "Search entries or amounts", "Cari catatan": "Search entries", "Kategori": "Categories", "Kelola kategori": "Manage categories", "Tambah, hapus, dan urutkan sendiri pilihan kategori pemasukan dan pengeluaran. Catatan lama tidak berubah.": "Add, delete, and reorder your income and expense categories. Existing entries stay unchanged.", "Cadangan data": "Data backup", "Simpan cadangan": "Save backup", "Pulihkan cadangan": "Restore backup", "Datamu hanya tersimpan di perangkat ini. Simpan cadangan secara berkala agar tidak hilang.": "Your data lives only on this device. Save a backup regularly so you don’t lose it.", "Tampilan": "Appearance", "Otomatis": "Auto", "Terang": "Light", "Gelap": "Dark", "Otomatis mengikuti pengaturan terang atau gelap di perangkatmu.": "Auto follows your device’s light or dark setting.", "Bahasa": "Language", "Pilih bahasa tampilan aplikasi.": "Choose the app’s display language.", "Reset": "Reset", "Reset catatan keuangan": "Reset financial records", "Menghapus semua catatan dan anggaran dari perangkat ini. Pengaturan tampilan dan kategori tidak ikut terhapus.": "Deletes all entries and budgets from this device. Appearance and category settings are kept.", "Dibuat oleh": "Made by", "Menu utama": "Main menu", "Beranda": "Home", "Ringkasan": "Summary", "Tambah catatan": "Add entry", "Batal": "Cancel", "Jenis catatan": "Entry type", "Hapus": "Delete", "Catatan baru": "New entry", "Nominal dalam rupiah": "Amount in rupiah", "Keterangan (opsional)": "Note (optional)", "Keterangan": "Note", "Tanggal": "Date", "Simpan": "Save", "Pilih tahun": "Choose year", "Tahun sebelumnya": "Previous year", "Tahun berikutnya": "Next year", "Bulan": "Month", "Bulan ini": "This month", "Nama anggaran": "Budget name", "Nominal per bulan": "Amount per month", "Anggaran per bulan dalam rupiah": "Monthly budget in rupiah", "Dihitung dari kategori": "Counted from categories", "Kategori pengeluaran yang dihitung": "Expense categories counted", "Selesai": "Done", "Tutup": "Close", "Ketuk − untuk menghapus, seret ≡ untuk mengubah urutan.": "Tap − to delete, drag ≡ to reorder.", "Kategori baru": "New category", "Nama kategori pengeluaran baru": "New expense category name", "Tambah": "Add", "Nama kategori pemasukan baru": "New income category name", "Reset catatan keuangan?": "Reset financial records?", "Hapus semua": "Delete all", "Ketuk lagi untuk menghapus": "Tap again to delete", "Simpan cadangan dulu": "Back up first", "Hari ini": "Today", "Kemarin": "Yesterday", "Tidak ada hasil": "No results", "Pencarian mencakup semua bulan.": "Search covers all months.", "Belum ada catatan bulan ini": "No entries this month", "Belum ada catatan": "No entries yet", "Semua catatan tersimpan di perangkatmu.": "All entries are stored on your device.", "Tambah catatan pertama": "Add your first entry", "Belum ada data bulan ini.": "No data this month.", "Anggaran": "Budgets", "Atur": "Edit", "Belum ada anggaran. Buat sendiri, misalnya “Makan di luar” atau “Hiburan”.": "No budgets yet. Create your own, e.g. “Eating out” or “Fun”.", "Tambah anggaran": "Add budget", "Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.": "Drag ≡ to reorder. Tap − then Delete to remove a budget.", "Dihitung dari pengeluaran di kategori yang dipilih, per bulan.": "Calculated from expenses in the selected categories, per month.", "Catatan dihapus": "Entry deleted", "Kembalikan": "Undo", "Gagal menghapus. Coba lagi.": "Couldn’t delete. Try again.", "Gagal mengembalikan catatan. Coba lagi.": "Couldn’t restore the entry. Try again.", "Pilih tanggal": "Pick a date", "Ubah catatan": "Edit entry", "Tanggal tidak boleh melewati hari ini.": "The date can’t be after today.", "Tanggalnya belum benar. Pilih tanggal lagi.": "That date isn’t valid. Pick another.", "Gagal menyimpan. Coba lagi.": "Couldn’t save. Try again.", "Ubah anggaran": "Edit budget", "Anggaran baru": "New budget", "Lengkapi nama, nominal, dan minimal satu kategori.": "Fill in a name, amount, and at least one category.", "Cadangan tersimpan": "Backup saved", "Gagal mereset. Coba lagi.": "Couldn’t reset. Try again.", "Semua catatan dihapus.": "All entries deleted.", "Gagal mengembalikan. Coba lagi.": "Couldn’t restore. Try again.", "Kembali ke pilihan bulan": "Back to months", "12 tahun sebelumnya": "Previous 12 years", "12 tahun berikutnya": "Next 12 years", "Tahun": "Year", ", ada catatan": ", has entries", "Cadangan disimpan sebagai berkas .json.": "Backup saved as a .json file.", "Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.": "This file isn’t a KasKu backup. Choose the .json file from “Save backup”."};
 const CN={'Makan':'Food','Transportasi':'Transport','Transport':'Transport','Hiburan':'Entertainment','Lainnya':'Other','Uang jajan':'Allowance','Gaji':'Salary','Bonus':'Bonus','Belanja':'Shopping','Tagihan':'Bills','Kesehatan':'Health','Hadiah':'Gift'};
 const getLang=()=>{const s=ls('catat.lang');return s==='en'||s==='id'?s:(/^(id|in)\b/i.test(navigator.language||'')?'id':'en')};
 let LANG=getLang();
@@ -28,19 +31,78 @@ const tr=s=>LANG==='en'?(EN[s]??s):s;
 const cn=c=>LANG==='en'?(CN[c]??c):c;
 const LOC=()=>LANG==='en'?'en-US':'id-ID';
 let _nf=null,_nl='';
-/* Mata uang: hanya simbol tampilan (tanpa konversi kurs); nominal tetap bilangan bulat. Disimpan di `catat.cur`. */
+/* Mata uang: disimpan di `catat.cur`. Mengganti mata uang mengonversi semua nominal dengan kurs terbaru (changeCur). Jumlah desimal per mata uang di CURD. */
 const CURS={IDR:['Rp','\u00A0'],USD:['$',''],EUR:['€',''],SGD:['S$',''],MYR:['RM','\u00A0'],JPY:['¥','']};
+const CURD={IDR:0,USD:2,EUR:2,SGD:2,MYR:2,JPY:0};
+const dec=()=>CURD[CUR];
 let CUR=(()=>{const c=ls('catat.cur');return CURS[c]?c:'IDR'})();
 /* format uang mengikuti locale mata uang (posisi simbol + pemisah ribuan), bukan simbol di depan angka berpemisah locale lain */
 const _cf={};
-const rp=n=>{const k=CUR,l=CURLOC[k]||'id-ID';const f=_cf[k]??=new Intl.NumberFormat(l,{style:'currency',currency:k,currencyDisplay:'narrowSymbol',minimumFractionDigits:0,maximumFractionDigits:0});
+const rp=n=>{const k=CUR,l=CURLOC[k]||'id-ID';const f=_cf[k]??=new Intl.NumberFormat(l,{style:'currency',currency:k,currencyDisplay:'narrowSymbol',minimumFractionDigits:CURD[k],maximumFractionDigits:CURD[k]});
   return (n<0?'−':'')+f.formatToParts(Math.abs(n)).map(x=>x.type==='currency'?CURS[k][0]:x.value).join('').replace(/\s/g,'\u00A0')};
 /* pemisah ribuan mengikuti mata uang (bukan bahasa): bahasa hanya menerjemahkan teks */
 const CURLOC={IDR:'id-ID',USD:'en-US',EUR:'de-DE',SGD:'en-SG',MYR:'ms-MY',JPY:'ja-JP'};
 const fmt={format:n=>{const l=CURLOC[CUR]||'id-ID';if(_nl!==l){_nf=new Intl.NumberFormat(l);_nl=l}return _nf.format(n)}};
+/* Input nominal: teks yang diketik ⇄ string kanonik ("1234.5", "12." = titik desimal menunggu angka). Hanya mata uang berdesimal (CURD>0) yang menerima desimal. */
+const dsepOf=l=>new Intl.NumberFormat(l).formatToParts(1.1).find(x=>x.type==='decimal')?.value||'.';
+function fmtIn(a){
+  if(!a)return '';
+  const[i,fr]=a.split('.'),ip=i?fmt.format(+i):'0';
+  return fr===undefined?ip:ip+dsepOf(CURLOC[CUR]||'id-ID')+fr;
+}
+function parseIn(raw){
+  const d=dec(),ds=dsepOf(CURLOC[CUR]||'id-ID'),dg=x=>x.replace(/\D/g,'');
+  let ip,fr,k=d?raw.indexOf(ds):-1,m;
+  if(k>=0){ip=dg(raw.slice(0,k));fr=dg(raw.slice(k+1)).slice(0,d)}
+  else if(d&&/[.,]$/.test(raw)){ip=dg(raw);fr=''}/* pemisah yang baru diketik = titik desimal */
+  else if(d&&(m=raw.match(/^\D*(\d+)[.,](\d{1,2})\D*$/))){ip=m[1];fr=m[2].slice(0,d)}/* tempel "12.5" */
+  else{ip=dg(raw);fr=undefined}
+  ip=ip.replace(/^0+/,'').slice(0,10);
+  if(!ip&&fr===undefined)return '';
+  return (ip||'0')+(fr===undefined?'':'.'+fr);
+}
+
+/* Kurs: Frankfurter (kurs referensi ECB, tanpa kunci API, CORS terbuka) diambil setiap mata uang diganti, lalu disimpan di `catat.fx`.
+   Tanpa internet dipakai kurs tersimpan terakhir. Semua kurs berbasis USD: {USD:1, IDR:…}. Host harus ada di connect-src (_headers & render.yaml). */
+const FXU=['https://api.frankfurter.dev/v1/latest?base=USD&symbols=IDR,EUR,SGD,MYR,JPY','https://api.frankfurter.dev/v2/rates?base=USD&quotes=IDR,EUR,SGD,MYR,JPY'];
+function fxPick(m,d,t){
+  const r={USD:1};
+  for(const c of Object.keys(CURS)){if(c==='USD')continue;const v=+m[c];if(!(v>0&&Number.isFinite(v)))return null;r[c]=v}
+  return{t,d:typeof d==='string'&&validDate(d.slice(0,10))?d.slice(0,10):'',r};
+}
+function fxParse(j){/* v1: {date,rates:{IDR:…}}; v2: [{date,quote,rate}] */
+  const m={};
+  if(Array.isArray(j))j.forEach(x=>{if(x&&typeof x.quote==='string')m[x.quote]=x.rate});
+  else if(j&&j.rates&&typeof j.rates==='object')Object.assign(m,j.rates);
+  return fxPick(m,Array.isArray(j)?j[0]?.date:j?.date,Date.now());
+}
+function fxGet(){try{const j=JSON.parse(ls('catat.fx')||'null');if(j&&typeof j==='object'&&Number.isFinite(j.t)&&j.r&&typeof j.r==='object')return fxPick(j.r,j.d,j.t)}catch{}return null}
+async function fxFetch(ms=7000){
+  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),ms);
+  try{
+    for(const u of FXU){
+      try{
+        const res=await fetch(u,{signal:ac.signal,cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer'});
+        if(!res.ok)continue;
+        const v=fxParse(await res.json());
+        if(v){ls('catat.fx',JSON.stringify(v));return v}
+      }catch{if(ac.signal.aborted)break}
+    }
+  }finally{clearTimeout(tm)}
+  return null;
+}
+/* kurs terbaru bila online; kalau gagal atau offline, kurs tersimpan. fresh = baru diambil */
+async function fxRates(){
+  if(navigator.onLine!==false){const v=await fxFetch();if(v)return{...v,fresh:true}}
+  const c=fxGet();return c?{...c,fresh:false}:null;
+}
+/* satu satuan terkecil mata uang tujuan jadi batas bawah supaya catatan kecil tidak jadi 0 */
+const convAmt=(a,from,to,r)=>{const p=10**CURD[to];return Math.min(MAX,Math.max(1/p,Math.round(a/r[from]*r[to]*p)/p))};
+const fxDay=r=>{const s=r.d||ymd(new Date(r.t));return validDate(s)?parse(s).toLocaleDateString(LOC(),{day:'numeric',month:'short'}):''};
+function fxLine(from,to,r){const x=r[to]/r[from],up=x>=1,v=up?x:1/x,n=new Intl.NumberFormat(LOC(),{maximumFractionDigits:v>=100?0:v>=1?2:4}).format(v);return up?`1 ${from} = ${n} ${to}`:`1 ${to} = ${n} ${from}`}
 const newId=()=>{const r=new Uint32Array(1);crypto.getRandomValues(r);return Date.now().toString(36)+r[0].toString(36).slice(0,5)};
 const cmp=(a,b)=>a.date===b.date?(a.id<b.id?1:-1):(a.date<b.date?1:-1);
-const sum=(m,ty)=>m.reduce((s,t)=>t.type===ty?s+t.amount:s,0);
+const sum=(m,ty)=>r2(m.reduce((s,t)=>t.type===ty?s+t.amount:s,0));
 const yday=()=>{const d=new Date();d.setDate(d.getDate()-1);return ymd(d)};
 const dayLabel=s=>s===today()?tr('Hari ini'):s===yday()?tr('Kemarin'):parse(s).toLocaleDateString(LOC(),{weekday:'short',day:'numeric',month:'short'});
 /* Buat elemen tanpa innerHTML: teks selalu lewat text node (aman dari XSS). */
@@ -62,7 +124,7 @@ function clean(t){
   if(typeof id!=='string'||!/^[\w-]{1,40}$/.test(id))return null;
   if(type!=='in'&&type!=='out')return null;
   if(typeof cat!=='string'||!cat.trim()||cat.length>CATV)return null;
-  if(!Number.isInteger(amount)||amount<1||amount>MAX)return null;
+  if(!okAmt(amount))return null;
   if(typeof note!=='string'||note.length>NOTE)return null;
   if(typeof date!=='string'||!validDate(date))return null;
   return{id,type,amount,cat,note:note.trim(),date};
@@ -78,7 +140,7 @@ const dbDel=id=>write(s=>s.delete(id));
 const dbBulk=l=>write(s=>l.forEach(t=>s.put(t)));
 
 /* State */
-let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},enterId=null,undo=null,undoAll=null,tt,fx=true,dx=0,lastYm='',bEdit=false,bArm=null;
+let all=[],ym=today().slice(0,7),tab='home',ed=null,f={},enterId=null,undo=null,undoAll=null,undoCv=null,tt,fx=true,dx=0,lastYm='',bEdit=false,bArm=null;
 const inMonth=()=>all.filter(t=>t.date.startsWith(ym));
 
 /* Angka berhitung naik/turun ke nilai baru; kalau dipotong di tengah, lanjut dari angka yang sedang tampil */
@@ -89,7 +151,7 @@ function count(el,to,f,snap){
   const t0=performance.now();
   (function step(t){
     const p=Math.min(1,(t-t0)/NUM);
-    s.cur=p<1?Math.round(from+(to-from)*(1-(1-p)**4)):to;
+    s.cur=p<1?r2(from+(to-from)*(1-(1-p)**4)):to;
     el.textContent=f(s.cur);
     if(p<1&&id===s.id)requestAnimationFrame(step);
   })(t0);
@@ -159,7 +221,7 @@ const hit=(t,q)=>t.cat.toLowerCase().includes(q)||cn(t.cat).toLowerCase().includ
 function renderHome(){
   const m0=inMonth(),inc=sum(m0,'in'),out=sum(m0,'out'),q=qv(),m=q?all.filter(t=>hit(t,q)):m0;
   $('#sq').hidden=all.length<8&&!q;
-  const noInc=inc===0,now=ym===today().slice(0,7),mn=parse(ym+'-01').toLocaleDateString(LOC(),{month:'long'}),en=LANG==='en',main=noInc&&out>0?out:inc-out;
+  const noInc=inc===0,now=ym===today().slice(0,7),mn=parse(ym+'-01').toLocaleDateString(LOC(),{month:'long'}),en=LANG==='en',main=noInc&&out>0?out:r2(inc-out);
   $('#balL').textContent=noInc&&out>0?(en?(now?'Spent this month':'Spent in '+mn):(now?'Pengeluaran bulan ini':'Pengeluaran bulan '+mn)):(now?(en?'Money left this month':'Sisa uang bulan ini'):(en?'Money left in '+mn:'Sisa uang bulan '+mn));
   $('#home .hero .row').style.display=noInc?'none':'';$('#home .hero').classList.toggle('solo',noInc);
   count($('#bal'),main,rp,fx);
@@ -189,12 +251,16 @@ function enter(){
   void document.body.offsetWidth;
   seq.forEach(e=>e.classList.add('rise'));
 }
-function renderCfg(){$('#rs').disabled=!(all.length||bdGet().length)}
+function renderCfg(){
+  $('#rs').disabled=!(all.length||bdGet().length);
+  const r=fxGet(),en=LANG==='en';
+  $('#fxn').textContent=(en?'Changing the currency converts all amounts at the latest rate. Offline, the last saved rate is used.':'Mengganti mata uang mengonversi semua nominal dengan kurs terbaru. Tanpa internet, kurs tersimpan terakhir yang dipakai.')+(r?(en?` Saved rate: ${fxDay(r)} (ECB via Frankfurter).`:` Kurs tersimpan: ${fxDay(r)} (ECB via Frankfurter).`):'');
+}
 function renderSum(){
   const m=inMonth(),box=$('#cats'),bars=[];box.replaceChildren();
   for(const[type,title]of[['out',tr('Pengeluaran')],['in',tr('Pemasukan')]]){
     const tot=sum(m,type),by={};
-    m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
+    m.forEach(t=>{if(t.type===type)by[t.cat]=r2((by[t.cat]||0)+t.amount)});
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
     const head=[h('small',{class:'mut'},title)];
     if(!rows.length)continue;
@@ -215,7 +281,7 @@ function renderSum(){
     box.append(list,h('p',{class:'mut foot'},tr('Seret ≡ untuk mengubah urutan. Ketuk − lalu Hapus untuk menghapus anggaran.')));
   }
   else box.append(h('div',{class:'card'},...bg.map(b=>{
-    const v=m.reduce((q,t)=>t.type==='out'&&b.cats.includes(t.cat)?q+t.amount:q,0),left=b.amount-v,fill=h('div',{class:'fill'});
+    const v=r2(m.reduce((q,t)=>t.type==='out'&&b.cats.includes(t.cat)?q+t.amount:q,0)),left=r2(b.amount-v),fill=h('div',{class:'fill'});
     fill.style.width=Math.min(100,Math.round(v/b.amount*100))+'%';
     return h('button',{type:'button',class:'set bd',onclick:e=>openBud(b,e.currentTarget)},
       h('span',{class:'bw'},h('b',{},b.name),h('small',{},b.cats.map(cn).join(' · ')),
@@ -239,11 +305,12 @@ function reveal(month){
 
 /* Snackbar */
 function toast(msg,act,fn){
+  if(fn!==revertCur)undoCv=null;
   clearTimeout(tt);const t=$('#toast');t.replaceChildren(h('span',{},msg));
   if(act)t.append(h('button',{type:'button',onclick:fn},act));
   t.classList.add('show');tt=setTimeout(hideToast,act?6000:3500);
 }
-function hideToast(){$('#toast').classList.remove('show');undo=null;undoAll=null}
+function hideToast(){$('#toast').classList.remove('show');undo=null;undoAll=null;undoCv=null}
 
 /* Bottom sheet input */
 const sheet=$('#sheet');
@@ -258,7 +325,7 @@ const dateText=v=>{if(!validDate(v))return tr('Pilih tanggal');const d=parse(v),
 function seeChip(){const c=$('#chips'),b=c.querySelector('[aria-pressed=true]');if(!b||c.scrollWidth<=c.clientWidth+1)return;const cr=c.getBoundingClientRect(),br=b.getBoundingClientRect(),m=24;let d=0;if(br.left<cr.left+m)d=br.left-cr.left-m;else if(br.right>cr.right-m)d=br.right-cr.right+m;if(d)c.scrollBy({left:d,behavior:rm()?'auto':'smooth'})}
 function chips(){$('#chips').replaceChildren(...catsFor(f.type,f.cat).map(c=>h('button',{type:'button',class:'chip','data-c':c,onclick:()=>{f.cat=c;paint();seeChip();keep()}},cn(c))))}
 function paint(){
-  const a=$('#amt'),bx=$('#amtbox');a.value=f.amt?fmt.format(+f.amt):'';bx.classList.toggle('has',!!f.amt);
+  const a=$('#amt'),bx=$('#amtbox');a.value=fmtIn(f.amt);bx.classList.toggle('has',!!f.amt);
   $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===f.type)));
   $$('#chips .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c===f.cat)));
   $('.seg').dataset.v=f.type;bx.style.fontSize=Math.min(52,Math.floor(560/Math.max(a.value.length+3,6)))+'px';const rl=$('#ruler');rl.textContent=a.value||'0';a.style.width=rl.offsetWidth+3+'px';$('#dl').textContent=dateText($('#date').value);
@@ -278,7 +345,7 @@ function openSheet(t,src){
 function closeSheet(){setOrigin(sheet);sheet.classList.remove('show');setTimeout(()=>sheet.open&&sheet.close(),rm()?0:CLOSE)}
 async function save(){
   if(!f.amt)return;
-  const t=clean({id:ed?ed.id:newId(),type:f.type,amount:+f.amt,cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
+  const t=clean({id:ed?ed.id:newId(),type:f.type,amount:r2(+f.amt),cat:f.cat,note:$('#note').value.trim(),date:$('#date').value});
   if(!t||t.date>today()){$('#err').textContent=t?tr('Tanggal tidak boleh melewati hari ini.'):tr('Tanggalnya belum benar. Pilih tanggal lagi.');return}
   $('#ok').disabled=true;
   try{await dbPut(t)}catch{$('#ok').disabled=false;$('#err').textContent=tr('Gagal menyimpan. Coba lagi.');return}
@@ -307,7 +374,7 @@ const cleanBud=b=>{
   if(!b||typeof b!=='object')return null;
   const{id,amount,cats}=b,name=typeof b.name==='string'?b.name.trim():'';
   if(typeof id!=='string'||!/^[\w-]{1,40}$/.test(id)||!name||name.length>30)return null;
-  if(!Number.isInteger(amount)||amount<1||amount>MAX)return null;
+  if(!okAmt(amount))return null;
   if(!Array.isArray(cats)||!cats.length||cats.some(c=>typeof c!=='string'||!c.trim()||c.length>CATV))return null;
   return{id,name,amount,cats:[...new Set(cats)]};
 };
@@ -320,7 +387,7 @@ function bdMigrate(){
   try{const old=oldBud(JSON.parse(o)),a=bdGet(),ids=new Set(a.map(x=>x.id));old.forEach(x=>ids.has(x.id)||a.push(x));if(old.length)bdSave(a)}catch{}
   try{localStorage.removeItem('catat.bud')}catch{}
 }
-function bdValid(){$('#bd-ok').disabled=!($('#bnm').value.trim()&&+$('#bam').value.replace(/\D/g,'')>0&&bs.size)}
+function bdValid(){$('#bd-ok').disabled=!($('#bnm').value.trim()&&+parseIn($('#bam').value)>0&&bs.size)}
 /* kategori pengeluaran yang ditawarkan + kategori lama milik anggaran yang sedang diubah */
 const bList=()=>[...CATS.out,...(be?be.cats.filter(c=>!CATS.out.includes(c)):[])];
 function bdChips(){
@@ -334,7 +401,7 @@ function openBud(b,src){
   if(bud.open||catd.open||sheet.open||pkd.open||rst.open)return;
   bud._src=src;be=b||null;bs=new Set(b?b.cats:[]);
   $('#bt').textContent=b?tr('Ubah anggaran'):tr('Anggaran baru');
-  $('#bnm').value=b?b.name:'';$('#bam').value=b?fmt.format(b.amount):'';$('#bd-del').hidden=!b;$('#berr').textContent='';
+  $('#bnm').value=b?b.name:'';$('#bam').value=fmtIn(b?String(b.amount):'');$('#bd-del').hidden=!b;$('#berr').textContent='';
   bdChips();bdValid();
   modal(bud);place();b?bud.focus({preventScroll:true}):$('#bnm').focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>bud.classList.add('show')));
@@ -346,7 +413,7 @@ async function closeBud(then){
 function saveBud(del){
   let a=bdGet();
   if(del){const nm=be.name;a=a.filter(x=>x.id!==be.id);bdSave(a);closeBud(()=>{render();toast(LANG==='en'?`Budget ${nm} deleted.`:`Anggaran ${nm} dihapus.`)});return}
-  const name=$('#bnm').value.trim().slice(0,30),nb=cleanBud({id:be?be.id:newId(),name,amount:+$('#bam').value.replace(/\D/g,'').slice(0,10),cats:bList().filter(c=>bs.has(c))});
+  const name=$('#bnm').value.trim().slice(0,30),nb=cleanBud({id:be?be.id:newId(),name,amount:r2(+parseIn($('#bam').value)),cats:bList().filter(c=>bs.has(c))});
   if(!nb){$('#berr').textContent=tr('Lengkapi nama, nominal, dan minimal satu kategori.');return}
   const i=a.findIndex(x=>x.id===nb.id);i<0?a.push(nb):a[i]=nb;
   bdSave(a);closeBud(()=>{render();toast(LANG==='en'?`Budget ${name} saved.`:`Anggaran ${name} disimpan.`)});
@@ -592,7 +659,7 @@ function swipe(el){
 
 /* Cadangan JSON */
 function exportJSON(){
-  const data=JSON.stringify({app:'catat',v:1,exported:new Date().toISOString(),tx:all,bud:bdGet(),cats:{out:CATS.out,in:CATS.in}},null,1);
+  const data=JSON.stringify({app:'catat',v:1,cur:CUR,exported:new Date().toISOString(),tx:all,bud:bdGet(),cats:{out:CATS.out,in:CATS.in}},null,1);
   const a=h('a',{href:URL.createObjectURL(new Blob([data],{type:'application/json'})),download:`kasku-${today()}.json`});
   document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
   ls('catat.bk',today().slice(0,7));$('#nudge').hidden=true;toast(tr('Cadangan disimpan sebagai berkas .json.'));
@@ -602,15 +669,19 @@ async function importJSON(file){
     if(file.size>5e6)throw 0;
     const j=JSON.parse(await file.text());
     if(!j||j.app!=='catat'||j.v!==1||!Array.isArray(j.tx)||j.tx.length>1e5)throw 0;
-    const list=j.tx.map(clean);if(list.includes(null))throw 0;
+    /* cadangan dari mata uang lain dikonversi ke mata uang sekarang */
+    const fc=typeof j.cur==='string'&&CURS[j.cur]&&j.cur!==CUR?j.cur:null;let rt=null;
+    if(fc){rt=await fxRates();if(!rt){toast(tr('Kurs belum tersimpan. Hubungkan ke internet dulu.'));return}}
+    const cv=x=>rt&&x&&typeof x==='object'&&typeof x.amount==='number'?{...x,amount:convAmt(x.amount,fc,CUR,rt.r)}:x;
+    const list=j.tx.map(x=>clean(cv(x)));if(list.includes(null))throw 0;
     await dbBulk(list);
     if(j.bud){
-      const L=Array.isArray(j.bud)?j.bud.map(cleanBud).filter(Boolean):oldBud(j.bud),cur=bdGet(),ids=new Set(cur.map(x=>x.id));
+      const L=Array.isArray(j.bud)?j.bud.map(x=>cleanBud(cv(x))).filter(Boolean):oldBud(j.bud),cur=bdGet(),ids=new Set(cur.map(x=>x.id));
       L.forEach(x=>ids.has(x.id)||cur.push(x));bdSave(cur);
     }
     if(j.cats&&typeof j.cats==='object'){for(const t of['out','in'])for(const c of catList(j.cats[t]))if(!CATS[t].some(y=>catSame(y,c)))CATS[t].push(c);catSave()}
     const m=new Map(all.map(t=>[t.id,t]));list.forEach(t=>m.set(t.id,t));all=[...m.values()];
-    render();toast(LANG==='en'?`${list.length} ${list.length===1?'entry':'entries'} restored.`:`${list.length} catatan dipulihkan.`);
+    render();toast((LANG==='en'?`${list.length} ${list.length===1?'entry':'entries'} restored.`:`${list.length} catatan dipulihkan.`)+(fc?(LANG==='en'?` Converted from ${fc}.`:` Dikonversi dari ${fc}.`):''));
   }catch{toast(tr('Berkas ini bukan cadangan KasKu. Pilih berkas .json dari “Simpan cadangan”.'))}
 }
 
@@ -626,7 +697,7 @@ $('#cfgb').onclick=()=>{if(tabNC())return;if(tab==='cfg')goTab(backTab);else{bac
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;goTab(b.dataset.t)});
 $('#add').onclick=e=>openSheet(null,e.currentTarget);
 $('#q').addEventListener('input',()=>render());
-$('#bam').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);e.target.value=d?fmt.format(+d):'';bdValid()});
+$('#bam').addEventListener('input',e=>{e.target.value=fmtIn(parseIn(e.target.value));bdValid()});
 $('#bam').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(!$('#bd-ok').disabled)saveBud()}});
 $('#bnm').addEventListener('input',bdValid);
 $('#bnm').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#bam').focus()}});
@@ -655,7 +726,7 @@ swipe($('#list'));swipe($('#cats'));
 function setType(t){f.type=t;if(!CATS[t].includes(f.cat))f.cat=CATS[t][0];chips();paint();$('#chips').scrollLeft=0;seeChip();keep()}
 $$('.seg button').forEach(b=>b.onclick=()=>{if(segNC()||f.type===b.dataset.type)return;setType(b.dataset.type)});
 /* Nominal: kolom teks biasa + keyboard angka bawaan; diformat Rp saat mengetik */
-$('#amt').addEventListener('input',e=>{f.amt=e.target.value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);paint()});
+$('#amt').addEventListener('input',e=>{f.amt=parseIn(e.target.value);paint()});
 /* Kunci gulir latar saat jendela terbuka: body dibekukan di posisinya (iOS tidak mengunci gulir di balik <dialog>), dikembalikan saat tutup */
 let lockY=0,locks=0;
 const lockOn=()=>{if(locks++)return;lockY=scrollY;document.documentElement.classList.add('lock');document.body.style.top=-lockY+'px'};
@@ -916,9 +987,34 @@ $('#lang').onchange=e=>applyLang(e.target.value,true);
 applyLang(LANG,false,true);
 
 /* Mata uang: pilihan di Pengaturan */
-function curText(){$('#amtbox .cur').textContent=CURS[CUR][0];$('#bam').previousElementSibling.textContent=CURS[CUR][0]}
+function curText(){$('#amtbox .cur').textContent=CURS[CUR][0];$('#bam').previousElementSibling.textContent=CURS[CUR][0];const m=dec()?'decimal':'numeric';$('#amt').inputMode=m;$('#bam').inputMode=m}
 function curChips(){const sel=$('#cur');if(!sel.options.length)sel.replaceChildren(...Object.keys(CURS).map(c=>h('option',{value:c},c+' · '+CURS[c][0])));sel.value=CUR;syncSel()}
-$('#cur').onchange=e=>applyCur(e.target.value,true);
+$('#cur').onchange=e=>changeCur(e.target.value);
+/* Ganti mata uang = konversi semua catatan dan anggaran dengan kurs terbaru (online) atau kurs tersimpan (offline). Sukses bisa dikembalikan lewat snackbar; konversi bolak-balik bisa selisih kecil karena pembulatan ke satuan terkecil. */
+let cvBusy=false;
+function resetCurSel(){$('#cur').value=CUR;syncSel()}
+async function changeCur(c){
+  if(cvBusy||!CURS[c]||c===CUR){resetCurSel();return}
+  cvBusy=true;
+  try{
+    const from=CUR,buds=bdGet();
+    if(!all.length&&!buds.length){applyCur(c,true);fxRates().catch(()=>{});return}/* tidak ada nominal: cukup ganti, kurs diambil di latar agar siap offline */
+    if(navigator.onLine!==false)toast(tr('Mengambil kurs…'));
+    const rt=await fxRates();
+    if(!rt){toast(tr('Kurs belum tersimpan. Hubungkan ke internet dulu.'));resetCurSel();return}
+    const snap={cur:from,tx:all,bud:buds},tx=all.map(t=>({...t,amount:convAmt(t.amount,from,c,rt.r)})),nb=buds.map(b=>({...b,amount:convAmt(b.amount,from,c,rt.r)}));
+    try{await dbBulk(tx)}catch{toast(tr('Gagal mengonversi. Coba lagi.'));resetCurSel();return}
+    all=tx;bdSave(nb);applyCur(c,true);
+    const ln=fxLine(from,c,rt.r),dy=fxDay(rt);
+    toast(LANG==='en'?(rt.fresh?`Converted to ${c}. ${ln} (rate ${dy}).`:`Converted to ${c} with the offline rate (${dy}). ${ln}.`):(rt.fresh?`Dikonversi ke ${c}. ${ln} (kurs ${dy}).`:`Dikonversi ke ${c} dengan kurs offline (${dy}). ${ln}.`),tr('Kembalikan'),revertCur);
+    undoCv=snap;
+  }finally{cvBusy=false}
+}
+async function revertCur(){
+  const s=undoCv;if(!s)return;undoCv=null;
+  try{await dbBulk(s.tx)}catch{toast(tr('Gagal mengembalikan. Coba lagi.'));return}
+  all=s.tx;bdSave(s.bud);hideToast();applyCur(s.cur,true);
+}
 function applyCur(c,save,first){
   if(save)ls('catat.cur',c);
   if(!first&&c===CUR)return;

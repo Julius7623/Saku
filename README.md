@@ -58,7 +58,7 @@ Dibuat oleh Joel G. Thompson.
 
 ## Mata uang
 - Ringkasan → Mata uang: IDR (bawaan), USD, EUR, SGD, MYR, JPY. Disimpan di `localStorage` kunci `catat.cur`.
-- Hanya mengubah simbol tampilan, tanpa konversi kurs; nominal tetap bilangan bulat (belum ada sen). Pemisah ribuan mengikuti mata uang, bukan bahasa.
+- Mengganti mata uang mengonversi semua catatan dan anggaran dengan kurs terbaru (lihat v69). Pemisah ribuan mengikuti mata uang, bukan bahasa.
 - v34: uang diformat lewat `Intl.NumberFormat` (style currency, locale per mata uang; euro tampil `7.000 €`). Simpan di sheet: abu jelas saat nonaktif, tanpa ikon centang (kunci Enter/centang keyboard sudah menyimpan), dan menempel di bawah sheet agar tidak terpotong keyboard. Ringkasan: tanpa total ganda, selalu ada breakdown per kategori. Tombol + disembunyikan di Pengaturan. Ringkas: catatan kecil mata uang dihapus; Batal di dialog reset dibuat tenang (tanpa isi/outline).
 - v35: tombol Pengaturan pindah ke pojok kiri atas (tab bar tinggal Beranda & Ringkasan). Judul bulan di tengah, tidak bisa diketuk; ganti bulan lewat panah kiri/kanan. Kategori di sheet Tambah catatan jadi satu baris yang digeser ke samping.
 - v36: urutan header meniru Files: panah bulan di kiri, tombol Pengaturan (ikon gerigi) bulat di kanan.
@@ -89,3 +89,12 @@ Dibuat oleh Joel G. Thompson.
 - Tombol tema (`#thb`) hanya dua kondisi: Gelap ⇄ Terang. Pengguna baru (belum memilih) mengikuti tema sistem dan ikon menampilkan tema yang sedang aktif; ketukan pertama membalik tema itu lalu tersimpan di `catat.theme`. Pengaturan → Tampilan tetap punya opsi Otomatis untuk kembali mengikuti sistem.
 - Pengaturan → Tampilan/Bahasa/Mata uang memakai menu kaca buatan sendiri (`openMenu()` di `app.js`), bukan popup `<select>` bawaan iOS yang berkedip hitam saat dibuka. `<select>` tetap jadi penyimpan nilai (disembunyikan).
 - Cincin fokus (`:focus-visible`) hanya tampil setelah Tab/panah ditekan (`html.kb`, diatur `app.js`); fokus otomatis (mis. Batal di dialog reset) tidak lagi menampilkan outline hitam.
+
+## v69 · konversi kurs
+- Ganti mata uang (Ringkasan → Mata uang) otomatis mengonversi semua catatan dan anggaran. Kurs diambil dari Frankfurter (`api.frankfurter.dev`, kurs referensi ECB, tanpa kunci API, diperbarui tiap hari kerja sekitar 16.00 CET) setiap mata uang diganti, lalu disimpan di `localStorage` kunci `catat.fx` (`{t, d, r}`, basis USD). Tanpa internet atau saat permintaan gagal/timeout (7 detik), dipakai kurs tersimpan terakhir. Kalau belum pernah ada kurs tersimpan dan sedang offline, mata uang tidak diganti dan muncul pesan.
+- Kalau belum ada catatan atau anggaran, mata uang langsung diganti (kurs tetap diambil di latar supaya siap offline).
+- Hasil konversi dibulatkan ke satuan terkecil mata uang tujuan (IDR/JPY bulat, lainnya 2 desimal; minimal satu satuan terkecil). Konversi bolak-balik bisa selisih kecil karena pembulatan dan perubahan kurs. Snackbar Kembalikan memulihkan nilai persis seperti sebelum konversi (selama snackbar tampil).
+- Nominal kini boleh berdesimal untuk USD/EUR/SGD/MYR (`CURD` di `app.js`); `inputmode="decimal"`. Ketik titik atau koma sebagai pemisah desimal; tampilannya mengikuti locale mata uang. `parseIn()` mengubah teks ketikan jadi string kanonik, `fmtIn()` memformatnya kembali. Validasi nominal lewat `okAmt()` (maks 2 desimal). Data lama (bilangan bulat) tetap valid tanpa migrasi.
+- Cadangan menyimpan `cur`. Memulihkan cadangan dari mata uang lain mengonversi isinya ke mata uang sekarang (butuh kurs); cadangan lama tanpa `cur` diimpor apa adanya.
+- CSP: `connect-src 'self' https://api.frankfurter.dev` di `_headers` dan `render.yaml` (harus sama). Tidak ada permintaan jaringan lain.
+- `sw.js` ditulis ulang (berkas di zip v68 kosong): precache semua berkas, halaman jaringan-dulu, aset cache-dulu, hanya satu origin. Naikkan `V` setiap rilis.
