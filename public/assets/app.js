@@ -933,7 +933,6 @@ function applyTheme(t,save,first){
   {const b=$('#thb');if(b)b.dataset.th=effTheme(t)}
   morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;$('#thb').dataset.th=effTheme(t);syncSel()},first);
   if(save)ls('catat.theme',t);
-  const tc=effTheme(t)==='dark'?'#0E0E0E':'#FAFAFA';document.querySelectorAll('meta[name=theme-color]').forEach(m=>m.setAttribute('content',tc));
 }
 $('#theme').onchange=e=>applyTheme(e.target.value,true);
 matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{if(curTheme()==='auto')applyTheme('auto')});
