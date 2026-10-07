@@ -867,9 +867,10 @@ const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>set
 const ctNC=liquid($('.ctog'),[...$$('.ctog button')],()=>catd.dataset.ct==='in'?1:0,i=>setCt(i?'in':'out'));
 /* Menu pilihan Tampilan / Bahasa: menu kaca buatan sendiri. Popup <select> bawaan iOS menganimasikan snapshot elemen transparan sehingga berkedip hitam.
    <select> tetap dipakai sebagai penyimpan nilai (disembunyikan); memilih menyetel nilainya lalu memicu 'change'. */
-let pm=null;
+let pm=null,pmT=0;/* pmT: waktu terakhir menu dibuka/ditutup; ketukan susulan (spam, atau klik yang menembus scrim) diabaikan selama PM_GAP */
+const PM_GAP=380;
 function closeMenu(focus){
-  if(!pm)return;const{m,sc,row}=pm;pm=null;
+  if(!pm)return;const{m,sc,row}=pm;pm=null;pmT=performance.now();m.style.pointerEvents='none';
   document.removeEventListener('keydown',pmKey,true);window.removeEventListener('scroll',closeMenu,true);window.removeEventListener('resize',closeMenu);
   row.classList.remove('open');row.setAttribute('aria-expanded','false');sc.remove();
   if(rm())m.remove();else m.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.94)'}],{duration:160,easing:EI}).onfinish=()=>m.remove();
@@ -882,6 +883,8 @@ function pmKey(e){
   else if(e.key==='Tab'){e.preventDefault();closeMenu(true)}
 }
 function openMenu(row){
+  if(performance.now()-pmT<PM_GAP)return;
+  pmT=performance.now();
   if(pm){const same=pm.row===row;closeMenu(true);if(same)return}
   const sel=row.querySelector('select');if(!sel)return;
   const m=h('div',{class:'pmenu glass',role:'listbox','aria-label':sel.getAttribute('aria-label')||''}),sc=h('div',{class:'pscrim','aria-hidden':'true'});

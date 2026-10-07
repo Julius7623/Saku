@@ -807,3 +807,13 @@ body{padding-bottom:calc(94px + var(--dock-b))}
   dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:none}
 }
 @media(prefers-reduced-transparency:reduce){html::before,html:has(dialog.show)::before{-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* v83 · bilah Safari (atas/bawah) meredup serempak dengan dialog.
+   Safari iOS 26 mengabaikan meta theme-color dan mewarnai bilah dari elemen fixed yang menempel di tepi layar (atau latar html). Halaman tidak bisa mem-blur bilah itu, jadi dua strip tipis opak ini ikut berganti ke warna "latar yang diredupkan" (sama dengan lapisan blur: --bg dicampur hitam 32%), dengan durasi & kurva yang sama persis. Saat tidak ada dialog warnanya = --bg sehingga tak terlihat. */
+.edge{position:fixed;left:0;right:0;height:3px;z-index:1;pointer-events:none;background-color:var(--bg);transition:background-color var(--d-out) var(--ease-in)}
+.edge-t{top:0}.edge-b{bottom:0}
+html{transition:background-color var(--d-out) var(--ease-in)}
+@supports selector(:has(*)){
+  html:has(dialog.show){background-color:color-mix(in srgb,var(--bg) 68%,#000);transition:background-color var(--d3) var(--ease)}
+  html:has(dialog.show) .edge{background-color:color-mix(in srgb,var(--bg) 68%,#000);transition:background-color var(--d3) var(--ease)}
+}
