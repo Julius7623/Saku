@@ -739,10 +739,10 @@ function liquid(root,els,cur,pick,N=2){
   let x0=0,y0=0,x=0,t0=0,vx=0,b=0,pid=0,down=false,armed=false,drag=false,nc=false,ck=0,tk=0,tv=0,raf=0;
   const rub=k=>k<0?k*.08:k>N-1?N-1+(k-(N-1))*.08:k,sw=()=>(root.clientWidth-8)/N;
   const noClick=()=>{nc=true;setTimeout(()=>nc=false,350)};
-  const paint=()=>{root.style.setProperty('--k',Math.max(-.03,Math.min(N-1+.03,ck)).toFixed(4));if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
-  const done=()=>{root.classList.remove('drive');root.style.removeProperty('--k')};
+  const paint=()=>{root.style.setProperty('--k',Math.max(-.03,Math.min(N-1+.03,ck)).toFixed(4));root.style.setProperty('--st',armed&&!rm()?Math.min(.14,Math.abs(tv)*1.8).toFixed(3):'0');if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
+  const done=()=>{root.classList.remove('drive');root.style.removeProperty('--k');root.style.removeProperty('--st')};
   function step(){
-    if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.1)*.68;ck+=tv}
+    if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.115)*.72;ck+=tv}
     paint();
     if(Math.abs(tk-ck)>.002||Math.abs(tv)>.002)raf=requestAnimationFrame(step);
     else{raf=0;ck=tk;paint();if(!armed)done()}

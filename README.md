@@ -33,7 +33,7 @@ public/                folder yang dipublikasikan
 - Reset catatan keuangan (Ringkasan, paling bawah): dialog konfirmasi dengan tombol merah, fokus awal di Batal, bisa Simpan cadangan dulu. Menghapus semua catatan dan anggaran (tampilan tidak ikut). Setelah itu ada Kembalikan di snackbar selama beberapa detik.
 - Slider Tampilan memakai desain yang sama dengan tab bar Beranda (kapsul kaca 56px, pil translusen, ikon di atas label, lensa saat disentuh), tanpa kartu pembungkus.
 - Dialog Kategori: header (judul + Selesai) tetap, hanya isi yang bergulir dengan pudar halus di tepi; cincin fokus dialog dimatikan.
-- Slider/segmented: lintasan flat (`--fill`), thumb putih (terang) / abu (gelap); saat disentuh thumb berubah jadi lensa kaca bening yang membesar, lintasannya diam. Tanpa warna pelangi, tanpa rim yang dihitung dari latar.
+- Slider/segmented: lintasan flat (`--fill`), thumb putih (terang) / abu (gelap); saat disentuh thumb berubah jadi lensa kaca bening yang membesar, lintasannya diam. Tanpa pelangi; satu-satunya warna adalah fringe kromatik sangat tipis di rim lensa (`CHROMA` di `lg.js`, isi 0 untuk mematikan). Tanpa rim yang dihitung dari latar.
 - Sheet/picker/anggaran: tumbuh dari elemen yang membukanya (FAB, baris, judul bulan) dan menyusut kembali ke sana (`setOrigin`). Radius sheet 36 = padding 20 + radius isi 16 (konsentris).
 - Konten yang bergulir di bawah dock memakai scroll edge effect (blur progresif + pudar), bukan gradasi pekat.
 - Aksesibilitas: `prefers-reduced-transparency` (kaca jadi buram), `prefers-contrast: more` (teks, garis, dan rim lebih tegas), `prefers-reduced-motion` (tanpa gerak).
@@ -60,3 +60,12 @@ Dibuat oleh Joel G. Thompson.
 - v34: uang diformat lewat `Intl.NumberFormat` (style currency, locale per mata uang; euro tampil `7.000 €`). Simpan di sheet: abu jelas saat nonaktif, tanpa ikon centang (kunci Enter/centang keyboard sudah menyimpan), dan menempel di bawah sheet agar tidak terpotong keyboard. Ringkasan: tanpa total ganda, selalu ada breakdown per kategori. Tombol + disembunyikan di Pengaturan. Ringkas: catatan kecil mata uang dihapus; Batal di dialog reset dibuat tenang (tanpa isi/outline).
 - v35: tombol Pengaturan pindah ke pojok kiri atas (tab bar tinggal Beranda & Ringkasan). Judul bulan di tengah, tidak bisa diketuk; ganti bulan lewat panah kiri/kanan. Kategori di sheet Tambah catatan jadi satu baris yang digeser ke samping.
 - v36: urutan header meniru Files: panah bulan di kiri, tombol Pengaturan (ikon gerigi) bulat di kanan.
+
+## v44: lensa slider (analisis rekaman Apple Music iOS 26)
+- Lensa kini elemen `.lz` (dibuat `lg.js`, hanya di Chromium) yang duduk DI ATAS ikon dan label, jadi isi slider ikut dibiaskan. Sebelumnya lensa ada di bawah ikon dan hanya membiaskan latar.
+- Peta displacement punya dua suku: lengkung tepi (`bezel`) dan perbesaran inti (`MAG`, 1,18×). `mag`, `shift`, `bezel`, `chroma` diatur di `lens()` pada `lg.js`.
+- Diam = pil gelap (`::before`). Disentuh = pil memudar, lensa muncul (scale 1,06×1,26), meregang mengikuti kecepatan geser lewat `--st` (diisi `paint()` di `liquid()`), dan rim punya bayangan gelap tipis di tepi atas dalam.
+- Ikon di dalam lensa lebih tegas lewat `contrast(1,22)` pada filter lensa (aplikasi ini monokrom, jadi tanpa warna aksen).
+- Spring geser: `tv=(tv+(tk-ck)*.115)*.72` (overshoot ±14%, settle ~0,5 detik).
+- Safari/iOS: belum ada refraksi (batasan `backdrop-filter:url()`), tampilan tetap seperti v43.
+
