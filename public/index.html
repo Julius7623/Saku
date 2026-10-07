@@ -16,10 +16,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KasKu">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="assets/style.css?v=56">
+<link rel="stylesheet" href="assets/style.css?v=59">
 <script src="assets/theme.js"></script>
-<script src="assets/app.js?v=56" defer></script>
-<script src="assets/lg.js?v=56" defer></script>
+<script src="assets/app.js?v=59" defer></script>
+<script src="assets/lg.js?v=59" defer></script>
 </head>
 <body>
 <noscript><p class="mut foot">KasKu membutuhkan JavaScript. Aktifkan JavaScript di peramban, lalu muat ulang halaman.</p></noscript>
@@ -92,9 +92,9 @@
 <dialog id="sheet" aria-labelledby="st" tabindex="-1">
   <div class="sh">
     <div class="shh">
-      <button id="cl" type="button" class="txt">Batal</button>
+      <button id="cl" type="button" class="gi glass" aria-label="Batal"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <div class="seg glass" data-v="out" role="group" aria-label="Jenis catatan"><button type="button" data-type="out">Pengeluaran</button><button type="button" data-type="in">Pemasukan</button></div>
-      <button id="sh-del" type="button" class="txt" hidden>Hapus</button>
+      <button id="sh-del" type="button" class="gi glass gd" aria-label="Hapus" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></button>
       <h2 id="st" class="sr">Catatan baru</h2>
     </div>
     <div class="shb">
@@ -113,7 +113,7 @@
 <dialog id="pick" aria-labelledby="pt" tabindex="-1">
   <div class="sh">
     <div class="pkh">
-      <button id="pk-cl" type="button" class="txt">Batal</button>
+      <button id="pk-cl" type="button" class="gi glass" aria-label="Batal"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <h2 id="pt" class="sr">Pilih bulan dan tahun</h2>
       <button id="py" type="button" class="ybtn" aria-expanded="false" aria-label="Pilih tahun"><span id="pyt"></span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="yr glass">
@@ -129,9 +129,9 @@
 <dialog id="bud" aria-labelledby="bt" tabindex="-1">
   <div class="sh">
     <div class="pkh">
-      <button id="bd-cl" type="button" class="txt">Batal</button>
+      <button id="bd-cl" type="button" class="gi glass" aria-label="Batal"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <h2 id="bt" class="bt"></h2>
-      <button id="bd-del" type="button" class="txt" hidden>Hapus</button>
+      <button id="bd-del" type="button" class="gi glass gd" aria-label="Hapus" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg></button>
     </div>
     <div class="shb">
       <div class="group">
@@ -153,7 +153,7 @@
     <div class="pkh">
       <button id="cat-ed" type="button" class="edb" aria-pressed="false" aria-label="Edit"><span class="et">Edit</span><svg class="i ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
       <h2 id="ct" class="bt">Kategori</h2>
-      <button id="cat-ok" type="button" class="txt">Tutup</button>
+      <button id="cat-ok" type="button" class="gi glass" aria-label="Tutup"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <div class="cbody">
     <div class="ctog glass" role="group" aria-label="Jenis kategori"><button type="button" data-ct="out" aria-pressed="true">Pengeluaran</button><button type="button" data-ct="in" aria-pressed="false">Pemasukan</button></div>

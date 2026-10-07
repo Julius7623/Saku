@@ -629,3 +629,53 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 @media(max-width:359px){.shh .seg{width:min(232px,calc(100cqw - 92px))}.shh .seg button{font-size:11.5px}}
 .row.stk{flex-direction:column;gap:8px}
 .tx>span:first-child>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tx>span:last-child{flex:none}
+
+/* v57: Kategori langsung mode edit (minus merah solid selalu tampil, tanpa tombol Edit); dialog Reset punya hierarki tombol */
+#cat-ed{display:none!important}
+#catd .er .mn{width:30px;height:30px;min-width:30px;min-height:30px;background:var(--red);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--red) 38%,transparent)}
+#catd .er .mn .i{width:16px;height:16px;stroke-width:3.6}
+#catd .er .mn:active{transform:scale(.9)}
+#catd .er .mn:disabled{opacity:.35;box-shadow:none}
+#catd .er.arm .mn{background:var(--red);color:#fff}
+#rst .rsh{margin-bottom:6px}
+#rst{--rb:var(--ac)}
+#rst #rs-bk{min-height:52px;font-weight:700;background-color:var(--ac);background-image:linear-gradient(rgba(255,255,255,.2),transparent 55%);color:var(--on);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 20px color-mix(in srgb,var(--ac) 30%,transparent)}
+#rst #rs-bk:disabled{background-color:var(--fill);background-image:none;color:var(--t2);box-shadow:none}
+#rst #rs-cl{min-height:48px;background:transparent;box-shadow:none;color:var(--t2);font-weight:600}
+#rst #rs-cl:hover{background:var(--fill)}
+#rst #rs-ok{margin-top:10px;min-height:52px;font-weight:700;background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--red) 55%,transparent)}
+#rst #rs-ok.arm{background:var(--red);color:#fff;box-shadow:0 8px 22px color-mix(in srgb,var(--red) 40%,transparent)}
+:root[data-theme=dark] #rst #rs-ok.arm{color:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) #rst #rs-ok.arm{color:#fff}}
+
+/* v58: tombol pojok (Batal / Hapus / Tutup) jadi ikon liquid glass */
+.gi{width:40px;height:40px;min-width:40px;min-height:40px;padding:0;border-radius:50%;display:grid;place-items:center;color:var(--tx);font-weight:500;transition:transform var(--d3) var(--spring),opacity .2s}
+.gi[hidden]{display:none}
+.gi .i{width:18px;height:18px;stroke-width:2.5}
+.gi:active{transform:scale(.88)}
+.gi.glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 12px var(--g-glow),0 0 0 .5px var(--g-rim),0 6px 16px -8px var(--g-sh)}
+.gi.gd{color:var(--red)}
+.gi.gd .i{stroke-width:2.3}
+#cat-ok{grid-column:3;justify-self:end}
+#cl,#pk-cl,#bd-cl{color:var(--tx)}
+#bd-cl{grid-column:1;justify-self:start}
+#bd-del{grid-column:3;justify-self:end}
+.gi:hover{opacity:1}
+
+/* v59: balik dari Pengaturan: tombol + keluar seperti tetesan cairan dari tab bar (leher cairan menipis lalu putus) */
+.fab::before{content:'';position:absolute;z-index:-1;left:-22px;top:50%;width:30px;height:46px;margin-top:-23px;pointer-events:none;opacity:0;transform-origin:100% 50%;
+background-color:var(--g-bg);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);
+-webkit-mask:radial-gradient(circle 11px at 50% -5px,transparent 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 11px at 50% calc(100% + 5px),transparent 97%,#000) bottom/100% 51% no-repeat;
+mask:radial-gradient(circle 11px at 50% -5px,transparent 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 11px at 50% calc(100% + 5px),transparent 97%,#000) bottom/100% 51% no-repeat}
+@keyframes neck{
+0%{opacity:0;transform:scale(0,1.15)}
+22%{opacity:1;transform:scale(1,1.25)}
+55%{opacity:1;transform:scale(1.1,.62)}
+82%{opacity:.9;transform:scale(.5,.2)}
+100%{opacity:0;transform:scale(.1,.05)}}
+@keyframes pull{0%{transform:scale(1)}30%{transform:scale(1.035,.95)}65%{transform:scale(.99,1.02)}100%{transform:scale(1)}}
+@keyframes drop{0%{transform:translateX(-14px) scale(.4,.7)}45%{transform:translateX(2px) scale(1.16,.9)}72%{transform:scale(.96,1.05)}100%{transform:none}}
+body.pour .fab::before{animation:neck .8s cubic-bezier(.3,.7,.3,1) both}
+body.pour .tabs{transform-origin:100% 50%;animation:pull .7s cubic-bezier(.3,.7,.3,1)}
+body.pour .fab{animation:drop .7s cubic-bezier(.3,1.2,.4,1)}
+@media(prefers-reduced-motion:reduce){body.pour .fab::before,body.pour .tabs,body.pour .fab{animation:none}}
