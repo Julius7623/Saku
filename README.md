@@ -47,6 +47,7 @@ String baru ditulis dalam Indonesia, lalu tambahkan padanannya di kamus `EN` (`a
 | Versi | Perubahan |
 |---|---|
 | v78 | Ikon tombol ikut bergerak: gear berputar saat membuka/menutup Pengaturan, X berputar, ikon baris menyusut, panah cadangan turun/naik, chevron bergeser |
+| v79 | Header, toast, dan dock disesuaikan dengan outline desain: tombol tema/pengaturan 42px, pil bulan 157x42, inset 21px; tab bar dan tombol + 58px, toast 48px. Aturannya di blok v79 akhir `style.css`. |
 | v77 | Gerak seragam: kurva keluar sendiri, dialog tidak terpotong saat menutup, pindah tab memudar keluar (`tabOut()`), versi cache disamakan |
 | v73 | Hanya Rupiah, tanpa jaringan. Cara pakai dan Syarat & ketentuan (dialog `#inf`, isi di `INFO`). `sw.js` ditulis ulang |
 | v56 | Rapikan halaman: angka muat satu baris, nama kategori dipotong titik-titik, area sentuh 44, `theme-color` ikut tema |

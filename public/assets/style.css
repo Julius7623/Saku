@@ -782,3 +782,18 @@ dialog:not(.show)::backdrop{transition-duration:var(--d-out);transition-timing-f
 .set:not(.sel):active .chev,.fr.dt:active .chev{transform:translateX(3px)}
 #py-prev:active .i{transform:translateX(-3px)}
 #py-next:active .i{transform:translateX(3px)}
+
+/* v79: ukuran & posisi header, toast, dan dock disesuaikan dengan outline desain (lebar layar 440px)
+   header: tombol 42px, pil bulan 157x42, inset 21px dari tepi layar; tinggi total header tetap 72px
+   dock: inset 22px, tab bar & tombol + 58px; toast 48px, inset 21px, jarak 10px di atas dock */
+.top{grid-template-columns:42px minmax(0,1fr) 42px;gap:8px;margin:0 5px;padding:4px 0 26px}
+.cfgb,.thb{width:42px;min-width:42px;height:42px;min-height:42px}
+.cfgb{justify-self:end}
+.thb{justify-self:start}
+#mon{justify-self:center;min-width:157px;height:42px;min-height:42px;padding:0 16px}
+body{padding-bottom:calc(94px + var(--dock-b))}
+.dock{gap:8px;padding:0 22px calc(var(--dock-b) + 4px)}
+.tabs{height:58px}
+.fab{width:58px;height:58px}
+#toast{bottom:calc(var(--dock-b) + 72px);width:calc(100% - 42px);max-width:438px;min-height:48px;padding:2px 2px 2px 20px}
+#toast button{min-height:44px}
