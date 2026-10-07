@@ -596,7 +596,6 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 #pick .mo:not([aria-pressed=true]):not(:disabled),#pick .alt{background:color-mix(in srgb,var(--tx) 10%,var(--sf))}
 #pick .mo:disabled{background:color-mix(in srgb,var(--tx) 5%,var(--sf))}
 #pick .mo:hover:not([aria-pressed=true]):not(:disabled),#pick .alt:hover{background:color-mix(in srgb,var(--tx) 15%,var(--sf))}
-.pmenu.glass{background-color:color-mix(in srgb,var(--sf) 86%,transparent);background-image:none;-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6)}
 #pick,#rst{border-radius:var(--r-sheet)}
 
 /* v52 · Edit = teks biasa (tanpa kapsul); saat aktif berubah jadi centang sebagai konfirmasi */
@@ -611,3 +610,9 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 .dh .edc .ck{width:22px;height:22px;stroke-width:3;animation:ckin .45s cubic-bezier(.3,1.6,.45,1)}
 @keyframes ckin{from{opacity:0;filter:blur(4px);transform:scale(.4) rotate(-20deg)}to{opacity:1;filter:none;transform:none}}
 @media(prefers-reduced-motion:reduce){.dh .edc .ck{animation:none}}
+
+/* v54 · Edit: kunci tampilan teks polos di semua keadaan (hover/fokus/tekan/tema), centang rapi */
+#cat-ed.edb,#cat-ed.edb:hover,#cat-ed.edb:focus,#cat-ed.edb:focus-visible,#cat-ed.edb:active,#cat-ed.edb[aria-pressed=true],#cat-ed.edb.glass{background:none!important;background-image:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;outline:none;-webkit-tap-highlight-color:transparent}
+#cat-ed.edb::before,#cat-ed.edb::after{content:none!important;display:none!important}
+#cat-ed.edb{width:52px;min-width:52px;justify-items:start;align-items:center;padding:0 4px;color:var(--tx)}
+#cat-ed .ck{width:24px;height:24px;stroke-width:2.6;margin-left:0}
