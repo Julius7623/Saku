@@ -733,3 +733,8 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 /* v67 · header disamakan dengan bar atas Foto iOS 26 (diukur): lingkaran 40, pil judul 146×40 dengan dua baris teks */
 #mon{min-width:146px;min-height:40px;height:40px;padding:0 20px}
 #monT small{font-size:13px}
+
+/* v68 · kolom cari: isi tidak hilang saat fokus (sebelumnya .fr:focus-within menghapus latar, jadi pil jadi transparan dan sulit dibaca); placeholder lebih kontras; cincin tipis saat aktif */
+#sq:focus-within{background:var(--fill2);box-shadow:inset 0 1px 2px rgba(0,0,0,.2),0 0 0 2px color-mix(in srgb,var(--tx) 22%,transparent)}
+#q::placeholder{color:var(--t2);opacity:1}
+#q::-webkit-search-decoration{-webkit-appearance:none}
