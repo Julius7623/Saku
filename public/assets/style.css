@@ -809,8 +809,3 @@ dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-co
 /* v84 · lapisan peredup/blur sekarang elemen asli (#scrim), bukan pseudo-element html::before / dialog::backdrop. Safari iOS membaca warna bilah atas/bawah dari elemen fixed di tepi layar; pseudo-element tidak dihitung, jadi bilah dulu tetap terang. Strip v83 dibuang (menimbulkan garis saat ganti tema). */
 
 /* v85 · #scrim display:none saat diam (elemen fixed transparan di tepi dibaca Safari sebagai hitam); strip warna tepi dibuat oleh app.js. */
-
-/* v87 · scrim menutup seluruh layar (dynamic viewport + safe-area) agar bilah Safari ikut blur; gelap/terang ikut tema lewat color-scheme */
-#scrim{inset:-200px 0;background-color:rgba(0,0,0,0)}
-html.dim #scrim{background-color:rgba(0,0,0,.32)}
-html{background-color:var(--bg)}

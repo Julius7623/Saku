@@ -995,14 +995,44 @@ addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb
   const mo=new MutationObserver(all);T.forEach(e=>e&&mo.observe(e,{childList:true,characterData:true,subtree:true}));
   let fr=0;new ResizeObserver(()=>{cancelAnimationFrame(fr);fr=requestAnimationFrame(all)}).observe($('.hero'));all()}
 
-/* v87 · bilah atas/bawah Safari jernih (tanpa meta theme-color & tanpa strip warna), konten melebar penuh. Saat dialog terbuka, #scrim (fixed, menutup seluruh layar termasuk bawah bilah) meredup + blur serempak dengan dialog, mengikuti tema. */
+/* v86 · bilah atas/bawah Safari ikut isi halaman (jernih penuh) dan meredup + blur serempak dengan dialog.
+   Cara kerja (sama seperti MyTinyTools): Safari iOS 26 mengambil warna bilah dari elemen fixed di tepi layar.
+   - Saat diam: dua strip opak 6px (warna latar halaman) di tepi atas & bawah, z-index -1, sehingga bilah = warna halaman.
+   - #scrim TIDAK dipakai saat diam (display:none). Dulu #scrim transparan (rgba 0,0,0,0) di tepi terbaca Safari sebagai HITAM.
+   - Saat dialog: scrim tampil, strip naik ke atas scrim dan warnanya ikut meredup dengan kurva yang sama. */
 (()=>{
-  const R=document.documentElement,sc=$('#scrim');let on=false,hide=0;
-  document.querySelectorAll('meta[name=theme-color]').forEach(m=>m.remove());
-  const go=to=>{clearTimeout(hide);
-    if(to){if(sc){sc.style.display='block';void sc.offsetWidth}R.classList.add('dim')}
-    else{R.classList.remove('dim');hide=setTimeout(()=>{if(!R.classList.contains('dim')&&sc)sc.style.display=''},450)}};
-  const sync=()=>{const s=!!document.querySelector('dialog.show');if(s!==on){on=s;go(s)}};
+  const DIM=.32,bez=(x1,y1,x2,y2)=>{const cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx,cy=3*y1,by=3*(y2-y1)-cy,ay=1-cy-by,
+    sx=t=>((ax*t+bx)*t+cx)*t,sy=t=>((ay*t+by)*t+cy)*t;
+    return x=>{let t=x;for(let i=0;i<8;i++){const e=sx(t)-x,d=(3*ax*t+2*bx)*t+cx;if(Math.abs(e)<1e-5||!d)break;t-=e/d}return sy(Math.min(1,Math.max(0,t)))}},
+    inE=bez(.32,.72,0,1),outE=bez(.4,0,.6,1),R=document.documentElement,sc=$('#scrim');
+  let es=[],k=0,raf=0,on=false,hide=0,tt=[];
+  const base=()=>{const m=getComputedStyle(R).backgroundColor.match(/[\d.]+/g)||[250,250,250];return m.slice(0,3).map(Number)};
+  /* strip dibuat ulang tiap paint: Safari hanya membaca ulang warna bilah saat ada elemen baru */
+  const edges=c=>{const z=k>0||on?65:-1;
+    es.forEach(e=>e.remove());
+    es=['top','bottom'].map(s=>{const e=document.createElement('i');e.setAttribute('aria-hidden','true');
+      e.style.cssText='position:fixed;left:0;right:0;'+s+':0;height:6px;pointer-events:none;background:'+c+';z-index:'+z;document.body.append(e);return e})};
+  const paint=p=>{const b=base(),f=1-DIM*p,c='rgb('+b.map(v=>Math.round(v*f)).join(',')+')';
+    let m=document.querySelector('meta[name=theme-color]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}
+    m.content=c;edges(c)};
+  /* settle: cat ulang tiap frame selama 1 dtk (strip baru tiap frame = Safari membaca ulang warna bilah), jadi ganti tema tidak meninggalkan bilah dengan warna lama */
+  let sr=0;const settle=()=>{tt.forEach(clearTimeout);cancelAnimationFrame(sr);const t1=performance.now(),tk=()=>{paint(k);if(performance.now()-t1<1000)sr=requestAnimationFrame(tk)};tk();tt=[1200,2000].map(ms=>setTimeout(()=>paint(k),ms))};
+  const go=to=>{
+    cancelAnimationFrame(raf);clearTimeout(hide);const from=k,dur=to?D:CLOSE,ease=to?inE:outE;
+    if(to&&sc){sc.style.display='block';void sc.offsetWidth}
+    R.classList.toggle('dim',!!to);
+    const done=()=>{if(!to)hide=setTimeout(()=>{if(!R.classList.contains('dim')&&sc)sc.style.display=''},120);settle()};
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches){k=to;done();return}
+    const t0=performance.now(),step=now=>{const x=Math.min(1,(now-t0)/dur);k=from+(to-from)*ease(x);paint(k);
+      if(x<1)raf=requestAnimationFrame(step);else done()};
+    raf=requestAnimationFrame(step)};
+  const sync=()=>{const s=!!document.querySelector('dialog.show');if(s!==on){on=s;go(s?1:0)}};
   const mo=new MutationObserver(sync);
   document.querySelectorAll('dialog').forEach(d=>mo.observe(d,{attributes:true,attributeFilter:['class']}));
+  /* ganti tema: warna latar bergeser (transisi .28s), jadi strip dicat ulang beberapa kali sampai warna akhir */
+  new MutationObserver(()=>{if(!on)settle()}).observe(R,{attributes:true,attributeFilter:['data-theme']});
+  matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{if(!on)settle()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!on)settle()});
+  addEventListener('pageshow',()=>{if(!on)settle()});
+  settle();
 })();
