@@ -443,7 +443,7 @@ function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute
 $$('.ctog button').forEach(b=>b.onclick=()=>{if(ctNC())return;setCt(b.dataset.ct)});
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
-  catd._src=src;cArm=null;setEd(true);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
+  catd._src=src;cArm=null;setEd(false);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
   updAdd();paintCats();
   modal(catd);place();catd.focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>catd.classList.add('show')));
@@ -744,17 +744,17 @@ dragScroll($('#chips'));
 function liquid(root,els,cur,pick,N=2,off=()=>false){
   const SLOP=8;
   let x0=0,y0=0,x=0,t0=0,vx=0,b=0,pid=0,down=false,armed=false,drag=false,nc=false,ck=0,tk=0,kv=0,pr=0,pv=0,st=0,sv=0,tl=0,raf=0;
-  const rub=k=>k<0?k*.08:k>N-1?N-1+(k-(N-1))*.08:k,sw=()=>(root.clientWidth-8)/N;
+  const rub=k=>k<0?k*.04:k>N-1?N-1+(k-(N-1))*.04:k,sw=()=>(root.clientWidth-8)/N;
   const noClick=()=>{nc=true;setTimeout(()=>nc=false,350)};
   /* pegas berbasis waktu: posisi (ck), tekan (pr, overshoot = pop), regang searah geser (st, bergoyang saat berhenti) */
-  const paint=()=>{const z=root.style;z.setProperty('--k',Math.max(-.12,Math.min(N-1+.12,ck)).toFixed(4));z.setProperty('--pr',pr.toFixed(3));z.setProperty('--st',Math.abs(st).toFixed(3));z.setProperty('--sv',st.toFixed(3));if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
+  const paint=()=>{const z=root.style;z.setProperty('--k',Math.max(-.03,Math.min(N-1+.03,ck)).toFixed(4));z.setProperty('--pr',pr.toFixed(3));z.setProperty('--st',Math.abs(st).toFixed(3));z.setProperty('--sv',st.toFixed(3));if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
   const done=()=>{root.classList.remove('drive');['--k','--pr','--st','--sv'].forEach(v=>root.style.removeProperty(v))};
   function step(now){
     const dt=Math.min(.032,(now-(tl||now))/1e3)||.016,on=armed?1:0;tl=now;
     if(rm()){ck=tk;kv=0;pr=on;pv=0;st=sv=0}
     else{
-      kv+=((tk-ck)*(armed?520:300)-kv*(armed?34:20))*dt;ck+=kv*dt;
-      const ts=armed?Math.max(-.4,Math.min(.4,kv*sw()/1700)):0;
+      kv+=((tk-ck)*(armed?520:300)-kv*(armed?40:29))*dt;ck+=kv*dt;
+      const ts=armed?Math.max(-.12,Math.min(.12,kv*sw()/2400)):0;
       sv+=((ts-st)*240-sv*15)*dt;st+=sv*dt;
       pv+=((on-pr)*320-pv*17)*dt;pr+=pv*dt;
     }
@@ -863,14 +863,19 @@ const syncSel=()=>{['theme','lang','cur'].forEach(k=>{$('#'+k+'V').textContent=$
 let thT=0;
 /* Ubah tampilan (tema / bahasa) semulus mungkin: crossfade seluruh halaman lewat View Transition (satu kurva untuk semua elemen, termasuk gradien kartu).
    Cadangan: transisi warna CSS di semua elemen selama sebentar. Lewati saat render pertama dan saat Reduce Motion. */
+let vt=null;
 function morph(fn,first){
   const r=document.documentElement;
-  if(first||rm())fn();
-  else if(document.startViewTransition){try{document.startViewTransition(fn)}catch{fn()}}
-  else{r.classList.add('themeX');fn();clearTimeout(thT);thT=setTimeout(()=>r.classList.remove('themeX'),520)}
+  if(first||rm()){fn();return}
+  /* ketuk beruntun: hentikan transisi yang masih jalan dan terapkan langsung, jangan antre */
+  if(vt){try{vt.skipTransition()}catch{}vt=null;r.classList.add('themeX');fn();clearTimeout(thT);thT=setTimeout(()=>r.classList.remove('themeX'),300);return}
+  if(document.startViewTransition){
+    try{const t=document.startViewTransition(fn);vt=t;const end=()=>{if(vt===t)vt=null};t.finished.then(end,end)}catch{vt=null;fn()}
+  }else{r.classList.add('themeX');fn();clearTimeout(thT);thT=setTimeout(()=>r.classList.remove('themeX'),340)}
 }
 function applyTheme(t,save,first){
   const r=document.documentElement;
+  {const b=$('#thb');if(b)b.dataset.th=effTheme(t)}
   morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;$('#thb').dataset.th=effTheme(t);syncSel()},first);
   if(save)ls('catat.theme',t);
   const tc=effTheme(t)==='dark'?'#0E0E0E':'#FAFAFA';document.querySelectorAll('meta[name=theme-color]').forEach(m=>m.setAttribute('content',tc));

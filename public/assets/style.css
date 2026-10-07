@@ -144,7 +144,7 @@ background:linear-gradient(to bottom right,var(--rim-spec),transparent 34%,trans
 /* Slider kaca (tab bar & Pengeluaran/Pemasukan): pil gelap saat diam; saat disentuh jadi lensa bening yang lebih besar */
 .tabs[data-t=sum],.shh .seg[data-v=in],#catd[data-ct=in] .ctog{--k:1}
 .seg3[data-v="1"]{--k:1}.seg3[data-v="2"]{--k:2}
-.tabs::before,.seg::before,.seg3::before,.ctog::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 0 0 .5px var(--pill-rim),inset 0 1px 0 var(--pill-hi),inset 0 3px 6px -3px var(--pill-in,transparent);transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
+.tabs::before,.seg::before,.seg3::before,.ctog::before{content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;translate:calc(var(--k)*100%) 0;scale:var(--sx,1) var(--sy,1);background:var(--pill);box-shadow:inset 0 0 0 .5px var(--pill-rim),inset 0 1px 0 var(--pill-hi),inset 0 3px 6px -3px var(--pill-in,transparent);transition:translate calc(var(--d3) + .05s) var(--spring-t),scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.drive::before,.seg.drive::before,.seg3.drive::before,.ctog.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 .tabs.lens::before,.seg.lens::before,.seg3.lens::before,.ctog.lens::before{--sx:1.06;--sy:1.26;background:var(--lens-c);-webkit-backdrop-filter:saturate(1.6);backdrop-filter:saturate(1.6);box-shadow:0 0 0 .5px var(--lens-ring),inset 0 0 0 .5px var(--g-hi2),inset 0 1.5px 1px -.5px var(--g-hi),inset 0 -1.5px 1px -.5px var(--g-hi2),inset 0 0 14px var(--g-glow),0 8px 18px -10px var(--g-sh)}
 .tabs .tab,.tabs .tab:active,.seg button,.seg button:active,.seg3 button,.seg3 button:active,.ctog button,.ctog button:active{transform:scale(var(--s,1))}
@@ -318,8 +318,8 @@ dialog{background-color:var(--sf);-webkit-backdrop-filter:none;backdrop-filter:n
 dialog:focus,dialog:focus-visible{outline:none}
 
 /* Transisi tema */
-html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),fill .45s var(--ease),stroke .45s var(--ease),box-shadow .45s var(--ease)!important}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.45s;animation-timing-function:var(--ease);mix-blend-mode:normal}
+html.themeX,html.themeX *,html.themeX ::before,html.themeX ::after{transition:background-color .28s var(--ease),color .28s var(--ease),border-color .28s var(--ease),fill .28s var(--ease),stroke .28s var(--ease),box-shadow .28s var(--ease)!important}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.3s;animation-timing-function:var(--ease);mix-blend-mode:normal}
 ::view-transition-old(root){animation-name:vt-out}
 ::view-transition-new(root){animation-name:vt-in}
 @keyframes vt-out{to{opacity:0}}
@@ -487,7 +487,7 @@ body[data-tab=cfg] .fab{display:grid;width:0;min-width:0;margin-left:-8px;opacit
 /* ===== v43: transisi slider/+ saat buka-tutup Pengaturan, tombol Edit→centang, kaca cair ===== */
 /* Slider tetap di tab asalnya dan memudar/menyusut (tidak lagi lompat & meluber saat tab bar melebar); muncul lagi setelah bar selesai menyempit */
 .tabs[data-t=cfg][data-p=sum]{--k:1}
-.tabs::before{transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),opacity .42s cubic-bezier(.3,0,.2,1),background-color .3s,box-shadow .3s}
+.tabs::before{transition:translate calc(var(--d3) + .05s) var(--spring-t),scale var(--d3) var(--spring),opacity .42s cubic-bezier(.3,0,.2,1),background-color .3s,box-shadow .3s}
 .tabs[data-t=cfg]::before{opacity:0;scale:.9 .74;transition:translate .2s var(--ease),scale .32s var(--ease),opacity .16s var(--ease),background-color .3s,box-shadow .3s}
 /* Tombol +: keluar dari tepi tab bar seperti tetesan (melar lalu mengendap); saat Pengaturan dibuka, menyusut masuk ke bar */
 .fab{transform-origin:0 50%;transition:width .66s cubic-bezier(.3,1.65,.45,1),min-width .66s cubic-bezier(.3,1.65,.45,1),margin .5s var(--ease),opacity .22s,transform .66s cubic-bezier(.3,1.5,.45,1),visibility 0s}
@@ -510,7 +510,7 @@ html.lg .tabs.lens::before{-webkit-backdrop-filter:var(--lgt,saturate(1.6));back
 @media(prefers-reduced-motion:reduce){.fab,body[data-tab=cfg] .fab,#cat-ed.edb,#cat-ed .et,#cat-ed .ck,.tabs::before{transition-duration:.01s!important;transition-delay:0s!important}}
 /* v44 · lensa kaca di atas isi slider (Chromium; elemen .lz dibuat lg.js). Ikon & label ikut dibiaskan dan diperbesar.
    Diam: pil gelap (::before). Disentuh: pil memudar, lensa muncul dengan scale membesar, meregang mengikuti kecepatan geser (--st). */
-.lz{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/var(--n,2));z-index:3;border-radius:999px;pointer-events:none;translate:calc(var(--k,0)*100%) 0;--sx:1;--sy:1;scale:var(--sx) var(--sy);opacity:0;visibility:hidden;transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),opacity var(--d2),visibility 0s var(--d2)}
+.lz{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/var(--n,2));z-index:3;border-radius:999px;pointer-events:none;translate:calc(var(--k,0)*100%) 0;--sx:1;--sy:1;scale:var(--sx) var(--sy);opacity:0;visibility:hidden;transition:translate calc(var(--d3) + .05s) var(--spring-t),scale var(--d3) var(--spring),opacity var(--d2),visibility 0s var(--d2)}
 .drive>.lz{transition:scale var(--d3) var(--spring),opacity var(--d2),visibility 0s var(--d2)}
 .lens>.lz{--sx:calc(1.06 + var(--st,0));--sy:calc(1.26 - var(--st,0)*.6);opacity:1;visibility:visible;transition-delay:0s;background:var(--lens-c);box-shadow:0 0 0 .5px var(--lens-ring),inset 0 0 0 .5px var(--g-hi2),inset 0 1.5px 1px -.5px var(--g-hi),inset 0 -1.5px 1px -.5px var(--g-hi2),inset 0 3px 3px -2px var(--g-sh),inset 0 0 14px var(--g-glow),0 8px 18px -10px var(--g-sh)}
 html.lg .tabs.lens::before,html.lg .seg.lens::before,html.lg .seg3.lens::before,html.lg .ctog.lens::before{background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
@@ -531,7 +531,7 @@ html.lg .tabs.lens::before,html.lg .seg.lens::before,html.lg .seg3.lens::before,
 /* Transisi Pengaturan ⇄ Ringkasan: tanpa overshoot lebar (bar tidak bergoyang, + tidak menimpa bar); thumb hanya tumbuh vertikal sehingga tepinya selalu sejajar bar */
 .fab{transition:width .5s var(--ease),min-width .5s var(--ease),margin .5s var(--ease),opacity .3s,transform .5s var(--ease),visibility 0s}
 body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--ease),margin .42s var(--ease),opacity .2s .1s,transform .42s var(--ease),visibility 0s .42s}
-.tabs::before{transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
+.tabs::before{transition:translate calc(var(--d3) + .05s) var(--spring-t),scale var(--d3) var(--spring),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
 .tabs[data-t=cfg]::before{opacity:0;scale:1 .72;transition:translate .2s var(--ease),scale .3s var(--ease),opacity .16s var(--ease),background-color .3s,box-shadow .3s}
 /* Tombol tema (kiri atas): tiga ikon bertumpuk, yang aktif muncul dengan putaran lembut */
 .thb{justify-self:start}
@@ -547,7 +547,7 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 /* Thumb tab bar saat Pengaturan ⇄ Ringkasan: lebar bar ikut berubah selama transisi, jadi thumb TIDAK lagi dianimasikan lewat scale/transform
    (di WebKit transformnya memakai ukuran awal sehingga thumb tampil menyempit & tidak sejajar bar). Tinggi thumb dianimasikan lewat top/bottom
    (dihitung ulang tiap frame mengikuti layout) dan kemunculannya lewat opacity saja. */
-.tabs::before{top:4px;bottom:4px;transition:translate calc(var(--d3) + .05s) var(--spring),scale var(--d3) var(--spring),top .4s var(--ease),bottom .4s var(--ease),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
+.tabs::before{top:4px;bottom:4px;transition:translate calc(var(--d3) + .05s) var(--spring-t),scale var(--d3) var(--spring),top .4s var(--ease),bottom .4s var(--ease),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
 .tabs[data-t=cfg]::before{opacity:0;top:12px;bottom:12px;scale:var(--sx,1) var(--sy,1);transition:translate .2s var(--ease),scale .3s var(--ease),top .3s var(--ease),bottom .3s var(--ease),opacity .16s var(--ease),background-color .3s,box-shadow .3s}
 .tabs.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 /* Tombol tema: dua ikon saja (bulan = gelap, matahari = terang); ikon menunjukkan tema yang sedang tampil */
@@ -631,7 +631,6 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 .tx>span:first-child>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tx>span:last-child{flex:none}
 
 /* v57: Kategori langsung mode edit (minus merah solid selalu tampil, tanpa tombol Edit); dialog Reset punya hierarki tombol */
-#cat-ed{display:none!important}
 #catd .er .mn{width:30px;height:30px;min-width:30px;min-height:30px;background:var(--red);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--red) 38%,transparent)}
 #catd .er .mn .i{width:16px;height:16px;stroke-width:3.6}
 #catd .er .mn:active{transform:scale(.9)}
@@ -679,3 +678,39 @@ body.pour .fab::before{animation:neck .8s cubic-bezier(.3,.7,.3,1) both}
 body.pour .tabs{transform-origin:100% 50%;animation:pull .7s cubic-bezier(.3,.7,.3,1)}
 body.pour .fab{animation:drop .7s cubic-bezier(.3,1.2,.4,1)}
 @media(prefers-reduced-motion:reduce){body.pour .fab::before,body.pour .tabs,body.pour .fab{animation:none}}
+
+/* v60 · tap tema tidak diblokir transisi; pegas slider tidak melewati tepi; Kategori kembali dengan tombol Edit; picker bulan/tahun dirapikan */
+:root{--spring-t:cubic-bezier(.3,1.12,.5,1)}
+::view-transition{pointer-events:none}
+.lz,.lens>.lz{transform-origin:calc(50% - var(--sv,0)*60%) 50%}
+.thb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.thb:active{transform:scale(.9)}
+
+#catd #cat-ed{display:grid}
+#catd .er .mn{animation:mnin .28s cubic-bezier(.3,1.3,.5,1) both}
+@keyframes mnin{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#catd .er .mn{animation:none}}
+
+#pick{width:min(calc(100% - 24px),344px)}
+@media(prefers-reduced-transparency:no-preference){
+#pick{background-color:color-mix(in srgb,var(--sf) 74%,transparent);background-image:none;-webkit-backdrop-filter:blur(34px) saturate(1.8);backdrop-filter:blur(34px) saturate(1.8)}}
+#pick .pkh{margin:0 0 14px;min-height:44px}
+#pick .ybtn{min-height:44px;padding:0 12px;border-radius:999px;font-size:21px;transition:background-color var(--d2)}
+#pick .ybtn:hover{background:var(--fill)}
+#pick .yr{height:40px;gap:0}
+#pick .yr button{width:40px;height:40px;min-width:40px;min-height:40px}
+#pick .yr button:disabled{opacity:.3}
+#pick #pk-cl{width:40px;height:40px}
+#pick .mg{gap:10px}
+#pick .mo{min-height:48px;font-size:16px;font-variant-numeric:tabular-nums;border-radius:999px}
+#pick .mo:disabled{color:var(--t2);opacity:.55}
+#pick .mo:active:not(:disabled){transform:scale(.95)}
+#pick .alt{margin-top:12px;min-height:48px;border-radius:999px;font-size:15px}
+
+/* v61 · picker bulan/tahun: tombol punya kedalaman (rim, highlight, bayangan) seperti halaman lain, bukan flat */
+#pick .mo:not([aria-pressed=true]):not(:disabled),#pick .alt{background-color:color-mix(in srgb,var(--tx) 12%,var(--sf));background-image:linear-gradient(rgba(255,255,255,.16),transparent 60%);color:var(--tx);box-shadow:inset 0 1px 0 var(--g-hi),inset 0 0 0 .5px var(--g-rim),0 4px 10px -6px var(--g-sh)}
+#pick .mo:hover:not([aria-pressed=true]):not(:disabled),#pick .alt:hover{background-color:color-mix(in srgb,var(--tx) 17%,var(--sf))}
+#pick .mo[aria-pressed=true]{background-color:var(--ac);background-image:linear-gradient(rgba(255,255,255,.2),transparent 55%);color:var(--on);font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 20px color-mix(in srgb,var(--ac) 32%,transparent)}
+#pick .mo:disabled{background-color:color-mix(in srgb,var(--tx) 6%,var(--sf));background-image:none;box-shadow:none;color:var(--t2);opacity:.5}
+#pick .alt{font-weight:700;color:var(--tx)}
+#pick .alt:active{transform:scale(.97)}
