@@ -112,7 +112,7 @@ function setMon(txt,anim){
 /* Geser bulan ala halaman: hanya daftar (Beranda) atau rincian (Ringkasan) yang bergeser. Judul bulan bergeser sendiri; kartu saldo diam dan angkanya berhitung. */
 const pane=()=>tab==='home'?$('#list'):$('#cats');
 const blank=()=>tab==='home'?!!$('#list .empty'):!$('#cats .sumcard');
-const EZ='cubic-bezier(.32,.72,0,1)';
+const EZ='cubic-bezier(.32,.72,0,1)',EI='cubic-bezier(.4,0,.6,1)';/* EZ = masuk (--ease), EI = keluar (--ease-in) */
 function clearSlide(){$$('.ghost').forEach(g=>g.remove());pane().getAnimations().forEach(a=>a.cancel())}
 function slidePrep(){
   clearSlide();
@@ -126,15 +126,27 @@ function slidePrep(){
 }
 function slideRun(x,n){
   if(!x)return;const p=pane(),W=p.offsetWidth+32;
-  x.g.animate([{transform:'translate3d(0,0,0)',opacity:1,filter:'blur(0)'},{transform:`translate3d(${-n*W}px,0,0)`,opacity:0,filter:'blur(8px)'}],{duration:D*.8,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).onfinish=()=>x.g.remove();
+  x.g.animate([{transform:'translate3d(0,0,0)',opacity:1,filter:'blur(0)'},{transform:`translate3d(${-n*W}px,0,0)`,opacity:0,filter:'blur(8px)'}],{duration:D*.8,easing:EI,fill:'forwards'}).onfinish=()=>x.g.remove();
   p.animate([{transform:`translate3d(${n*W}px,0,0)`,opacity:0,filter:'blur(8px)'},{transform:'translate3d(0,0,0)',opacity:1,filter:'blur(0)'}],{duration:D,easing:EZ,fill:'backwards'});
   /* tinggi Ringkasan ikut berubah halus supaya blok di bawahnya tidak melompat */
   if(p.id==='cats'){const h=p.offsetHeight;if(Math.abs(h-x.h)>1)p.animate([{height:x.h+'px'},{height:h+'px'}],{duration:D,easing:EZ})}
 }
 
 /* Render */
+let shown=null;
+/* Pindah tab: bagian lama memudar keluar (salinan melayang) selagi bagian baru masuk, tanpa jeda kosong */
+function tabOut(){
+  const o=fx&&!rm()&&shown&&shown!==tab?$('#'+shown):null;if(!o||o.hidden)return;
+  const par=o.parentNode,pr=par.getBoundingClientRect(),r=o.getBoundingClientRect();
+  const g=o.cloneNode(true);g.removeAttribute('id');g.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+  g.classList.add('ghost');g.setAttribute('aria-hidden','true');g.inert=true;g.hidden=false;
+  Object.assign(g.style,{top:r.top-pr.top+'px',left:r.left-pr.left+'px',width:r.width+'px'});
+  par.append(g);
+  g.animate([{opacity:1,transform:'translate3d(0,0,0)'},{opacity:0,transform:'translate3d(0,-8px,0)'}],{duration:D2*.8,easing:EI,fill:'forwards'}).onfinish=()=>g.remove();
+}
 function render(){
   if(tab!=='sum'){bEdit=false;bArm=null}
+  tabOut();
   const mv=ym!==lastYm&&!!lastYm&&!rm();
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
@@ -142,7 +154,7 @@ function render(){
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():tab==='sum'?renderSum():renderCfg();
-  enter();fx=false;
+  enter();fx=false;shown=tab;
 }
 const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:e=>openSheet(t,e.currentTarget)},
   h('span',{},h('b',{},cn(t.cat)),t.note?h('small',{},t.note):null),
@@ -663,27 +675,7 @@ $('#mon').onclick=()=>{if(tab!=='cfg')openPick()};
 /* Tombol tema: hanya Terang ⇄ Gelap. Pengguna baru (belum memilih) mengikuti tema sistem; ketukan pertama membalik tema yang sedang tampil. */
 $('#thb').onclick=()=>applyTheme(effTheme()==='dark'?'light':'dark',true);
 const TABS=['home','sum','cfg'];
-/* Buka Pengaturan: efek genie ala macOS. Halaman keluar dari tombol gerigi; bagian dekat tombol menyempit seperti corong lalu melebar jadi persegi penuh. */
-function genie(el,src){
-  if(rm()||!el.animate)return;
-  const b=src.getBoundingClientRect(),r=el.getBoundingClientRect();
-  if(!r.width||!r.height)return;
-  const ox=b.left+b.width/2-r.left,oy=b.top+b.height/2-r.top,oxp=Math.max(0,Math.min(1,ox/r.width));
-  const sm=x=>x*x*(3-2*x),cl=x=>Math.max(0,Math.min(1,x)),lp=(a,c,t)=>a+(c-a)*t;
-  const N=26,M=14,kf=[];
-  for(let i=0;i<=N;i++){
-    const t=i/N,p=1-Math.pow(1-t,2.6),L=[],R=[];
-    for(let j=0;j<=M;j++){
-      const y=j/M,q=sm(cl((p-(1-y)*.5)/.5)),w=lp(.06,1,q),c=lp(oxp,.5,q);
-      L.push(((c-w/2)*100).toFixed(2)+'% '+(y*100).toFixed(2)+'%');
-      R.unshift(((c+w/2)*100).toFixed(2)+'% '+(y*100).toFixed(2)+'%');
-    }
-    kf.push({offset:t,opacity:cl(t*4),transform:`scale(${lp(.35,1,sm(cl(p*1.15))).toFixed(4)},${lp(.02,1,p).toFixed(4)})`,clipPath:`polygon(${L.concat(R).join(',')})`});
-  }
-  el.style.transformOrigin=ox+'px '+oy+'px';
-  el.animate(kf,{duration:640,easing:'linear'}).onfinish=()=>{el.style.transformOrigin=''};
-}
-const goTab=t=>{const op=t==='cfg'&&tab!=='cfg';dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=!(op&&!rm());tab=t;render();if(op)genie($('#cfg'),$('#cfgb'))};
+const goTab=t=>{dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=true;tab=t;render()};
 let backTab='home';
 $('#cfgb').onclick=()=>{if(tabNC())return;if(tab==='cfg')goTab(backTab);else{backTab=tab;goTab('cfg')}};
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;goTab(b.dataset.t)});
@@ -880,7 +872,7 @@ function closeMenu(focus){
   if(!pm)return;const{m,sc,row}=pm;pm=null;
   document.removeEventListener('keydown',pmKey,true);window.removeEventListener('scroll',closeMenu,true);window.removeEventListener('resize',closeMenu);
   row.classList.remove('open');row.setAttribute('aria-expanded','false');sc.remove();
-  if(rm())m.remove();else m.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.94)'}],{duration:130,easing:'ease-out'}).onfinish=()=>m.remove();
+  if(rm())m.remove();else m.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.94)'}],{duration:160,easing:EI}).onfinish=()=>m.remove();
   if(focus)row.focus({preventScroll:true});
 }
 function pmKey(e){

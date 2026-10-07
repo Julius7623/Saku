@@ -757,3 +757,13 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 .legal button{min-height:44px;min-width:0;padding:0 10px;border-radius:12px;font-size:14px;color:var(--t2);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .legal button:hover,.legal button:active:not(:disabled){color:var(--tx)}
 .legal button:focus-visible{outline-offset:-2px}
+
+/* v77 · gerak seragam. Masuk: --ease / --spring. Keluar: --ease-in dan lebih singkat (--d-out; CLOSE di app.js harus sama). */
+:root{--ease-in:cubic-bezier(.4,0,.6,1);--d-out:.26s}
+dialog:not(.show){transition:transform var(--d-out) var(--ease-in),opacity .2s var(--ease-in) .06s,top .3s var(--ease)}
+dialog:not(.show)::backdrop{transition-duration:var(--d-out);transition-timing-function:var(--ease-in)}
+#toast:not(.show){transition:opacity .2s var(--ease-in),transform var(--d-out) var(--ease-in),visibility 0s var(--d-out)}
+.leave{transition:opacity .2s var(--ease-in),transform .2s var(--ease-in)}
+#monT>.old{animation-timing-function:var(--ease-in)}
+.tx:active:not(:disabled),.set:active:not(:disabled){transition-duration:0s}
+.ghost{backface-visibility:hidden}

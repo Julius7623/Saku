@@ -1,98 +1,60 @@
 # KasKu
-Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data tersimpan di IndexedDB perangkat.
+Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data tersimpan di perangkat (IndexedDB + localStorage). Rupiah saja, Indonesia/English.
 
 ## Struktur
 ```
-render.yaml            Blueprint Render + header keamanan
-public/                folder yang dipublikasikan
+render.yaml       Blueprint Render + header keamanan
+public/           folder yang dipublikasikan
   index.html  sw.js  manifest.webmanifest  _headers
-  assets/  app.js  style.css  theme.js  lg.js  icon.svg  icon-*.png
+  assets/  app.js  style.css  theme.js  lg.js  icon.*
 ```
 
-## Deploy ke Render
-1. Dorong folder ini ke GitHub/GitLab.
-2. Render → New → Static Site → pilih repo.
-3. **Build Command:** kosong (atau `echo "no build"`)
-   **Publish Directory:** `public`
-4. Header keamanan: Render tidak membaca `_headers`. Pakai New → Blueprint (membaca `render.yaml`), atau salin header ke Dashboard → Headers. `_headers` dipakai Netlify/Cloudflare Pages. Isi kedua file harus selalu sama.
-5. Menambah atau mengubah file? Naikkan `V` di `sw.js` (file baru juga masuk daftar `A`).
+## Deploy (Render)
+1. Dorong repo ke GitHub/GitLab, lalu New → Static Site.
+2. Build Command kosong, Publish Directory `public`.
+3. Header keamanan: Render tidak membaca `_headers` (itu untuk Netlify/Cloudflare Pages). Pakai New → Blueprint (`render.yaml`) atau salin header ke Dashboard. Isi kedua file harus selalu sama.
+4. Setiap rilis: naikkan `V` di `sw.js` dan `?v=` di `index.html`. File baru juga masuk daftar `A` di `sw.js`.
+
+## Fitur
+- Catatan masuk/keluar, kategori buatan sendiri (seret untuk urut), anggaran per kategori, pencarian, ringkasan bulanan.
+- Pindah bulan: ketuk judul bulan (picker) atau geser daftar. Kartu saldo diam, angkanya berhitung.
+- Edit/hapus lewat tap baris, hapus bisa Urungkan. Reset, cadangan, dan pulihkan (impor menggabungkan dan menolak skema salah).
+- Tema Otomatis/Terang/Gelap dan bahasa ID/EN, dengan crossfade View Transition.
 
 ## Keputusan desain
-- Gaya iOS: judul bulan besar, daftar terkelompok dengan monogram kategori, font sistem (SF di perangkat Apple).
-- Kartu saldo bergradasi abu gelap di kedua tema (tema gelap sengaja diredupkan agar tidak jadi satu-satunya elemen terang) dengan kilau halus; hanya warna token. Kartu ini diam saat pindah bulan, hanya angkanya yang berhitung naik/turun.
-- Pindah bulan: judul bulan bergeser, daftar di bawah kartu ikut bergeser, kartu saldo tetap. Gerak memakai 3 durasi (`--d1/--d2/--d3`) dan 2 kurva (`--ease`, `--spring`); `D` di `app.js` harus sama dengan `--d3`.
-- Dock berupa kapsul kaca (blur) dengan penanda tab yang bergeser, plus tombol + terpisah di sisi jempol. Tombol + memakai kaca bening yang sama dengan tab bar (tanpa isi warna). Ukuran mengikuti Phone/Files iOS 26 (diukur dari screenshot, 402pt): tab bar tinggi 56 dengan thumb 48 (inset 4), tombol + 56 bulat, jarak 8, margin samping 16, sejajar dengan konten, jarak ke tepi bawah 19. Kapsul navigasi bulan 88×40 (area sentuh 44), kolom cari tinggi 40.
-- Nominal berupa kolom teks dengan keyboard angka bawaan (diformat Rp saat mengetik); font input minimal 16px dan `touch-action:manipulation` agar iOS tidak zoom.
-- Masuk = "+" tebal, keluar = "−" biasa. Edit/hapus lewat tap baris; hapus bisa Urungkan.
-- Kaca light mode mengikuti iOS (Phone/Files): isi hampir putih, cincin abu tipis + highlight putih di dalamnya, tepi dalam sedikit gelap, bayangan sangat halus, pil aktif abu lembut (~#EBEBEB). Token di blok :root pertama style.css.
-- Mengikuti panduan Apple "Adopting Liquid Glass": kaca hanya untuk lapisan fungsional di atas konten (dock, tombol +, navigasi bulan, snackbar, sheet). Kartu dan daftar flat. Jangan menumpuk kaca di atas kaca.
-- Slider (tab bar, Keluar/Masuk, Tampilan): tanpa perlu menahan. Geseran harus dimulai tepat di thumb; begitu disentuh thumb jadi lensa dan mengikuti jari/kursor (gulir halaman terkunci selama digeser). Geseran yang dimulai di luar thumb diabaikan; ketukan di luar thumb tetap memilih segmen.
-- Anggaran buatan pengguna, awalnya kosong: `{id, name, amount, cats[]}` di `localStorage` kunci `catat.bud2`. Nama bebas (maks 30), nominal per bulan, dan satu atau lebih kategori pengeluaran yang dihitung. Anggaran lama (satu per kategori, kunci `catat.bud`) dipindah sekali ke format baru. Cadangan menyimpan daftar anggaran; cadangan lama tetap bisa dipulihkan.
-- Kategori buatan pengguna (Ringkasan → Kelola kategori): daftar pengeluaran dan pemasukan terpisah, awalnya berisi kategori bawaan. Tambah lewat kolom input, hapus lewat − merah lalu Hapus (minimal satu kategori tersisa per jenis), urutkan dengan menyeret ≡ (papan ketik: fokus di ≡ lalu panah atas/bawah). Disimpan di `localStorage` kunci `catat.cats` dan ikut cadangan (impor menggabungkan). Menghapus kategori tidak mengubah catatan lama: nama kategorinya tetap tampil.
-- Anggaran bisa diatur: tombol Atur di judul Anggaran membuka mode atur (− untuk hapus dengan Kembalikan di snackbar, ≡ untuk mengurutkan). Urutan tersimpan di `catat.bud2`.
-- Reset catatan keuangan (Ringkasan, paling bawah): dialog konfirmasi dengan tombol merah, fokus awal di Batal, bisa Simpan cadangan dulu. Menghapus semua catatan dan anggaran (tampilan tidak ikut). Setelah itu ada Kembalikan di snackbar selama beberapa detik.
-- Slider Tampilan memakai desain yang sama dengan tab bar Beranda (kapsul kaca 56px, pil translusen, ikon di atas label, lensa saat disentuh), tanpa kartu pembungkus.
-- Dialog Kategori: header (judul + Selesai) tetap, hanya isi yang bergulir dengan pudar halus di tepi; cincin fokus dialog dimatikan.
-- Slider/segmented: lintasan flat (`--fill`), thumb putih (terang) / abu (gelap); saat disentuh thumb berubah jadi lensa kaca bening yang membesar, lintasannya diam. Fringe kromatik di rim lensa (`CHROMA` di `lg.js`, isi 0 untuk mematikan) dan kilau tepi yang dihitung dari latar: kanal B peta menyimpan topeng kilau (cahaya dari kiri-atas), dikalikan warna latar yang sudah dibiaskan lalu dicerahkan, jadi tepi lensa memantulkan isi di belakangnya.
-- Sheet/picker/anggaran: tumbuh dari elemen yang membukanya (FAB, baris, judul bulan) dan menyusut kembali ke sana (`setOrigin`). Radius sheet 36 = padding 20 + radius isi 16 (konsentris).
-- Konten yang bergulir di bawah dock memakai scroll edge effect (blur progresif + pudar), bukan gradasi pekat.
-- Aksesibilitas: `prefers-reduced-transparency` (kaca jadi buram), `prefers-contrast: more` (teks, garis, dan rim lebih tegas), `prefers-reduced-motion` (tanpa gerak).
-- Latar dikunci saat jendela terbuka (`html.lock`).
-- Impor menggabungkan data dan menolak skema salah. Tanpa innerHTML/inline script; animasi hanya transform/opacity, tanpa animasi yang berjalan terus-menerus, dan mati saat reduced-motion.
-- Skala UI mengikuti iOS: radius kapsul untuk kontrol, 24 untuk kartu, 28 untuk hero, 36 untuk sheet; body 17, tinggi sentuh minimal 44; dock duduk dekat home indicator. Keyboard tidak menutup saat berpindah Keluar/Masuk, kategori, atau tanggal.
-- Judul bulan adalah tombol (▾) yang membuka picker bulan/tahun: dialog kaca kecil dengan animasi sama seperti sheet; bulan setelah bulan ini nonaktif, titik menandai bulan yang punya catatan (dihitung dari data di memori). Memilih bulan memanggil `jump()` setelah dialog menutup, fokus kembali ke judul.
-- Geser horizontal di daftar (Beranda) dan rincian (Ringkasan) pindah bulan lewat `jump()`: butuh |dx| ≥ 48px dan |dx| > 1,5×|dy|, hanya sentuh/pena, mati saat sheet/picker terbuka. Di bulan terakhir, geser kiri hanya memberi efek tahan ringan. Kartu saldo tidak ikut.
-- Form catatan adalah jendela kaca melayang; posisinya dihitung dari visual viewport sehingga selalu di atas keyboard (plus ruang untuk bar bantu iOS).
-- Radius: kapsul untuk kontrol (termasuk kolom cari dan stepper tahun), 16 untuk elemen di dalam kartu/sheet (`--r-sm`), 24 untuk kartu (`--r-md`), 28 untuk hero (`--r-lg`), 36 untuk sheet (`--r-sheet`). Merah (`--red`) hanya untuk aksi hapus, pesan galat, dan anggaran terlampaui.
-- Teks terkecil 11px (label tab), teks sekunder minimal 14px. Istilah: "catatan" = satu transaksi, "keterangan" = isi kolom teks opsional.
-- v55 · slider terasa seperti iOS 26. `liquid()` di `app.js` memakai tiga pegas berbasis waktu (bukan per frame): posisi (memantul saat dilepas), tekan (`--pr`, overshoot = pop saat disentuh), dan regang searah geser (`--st` besar, `--sv` arah; tepi belakang lensa tetap, tepi depan memanjang, lalu bergoyang saat berhenti). Bezel lensa di `lg.js` mengikuti pembiasan Snell (n=1,5), jadi makin ke tepi makin membelok. Safari/iOS belum mendukung `url()` di `backdrop-filter`: di sana hanya fisika pegas dan rim CSS yang jalan, tanpa refraksi. Peta displacement memakai gambar `data:`, jadi CSP butuh `img-src 'self' data:` (`_headers` dan `render.yaml` harus sama).
-- v56 · rapikan semua halaman. Angka besar (saldo, pemasukan, pengeluaran) selalu satu baris: `app.js` mengecilkan font sampai muat, dan di layar sempit kotak pemasukan/pengeluaran ditumpuk bila masih tidak muat (batas nominal 10 digit tetap aman di 320px). Nama kategori di daftar dipotong titik-titik, tidak lagi menabrak nominal. Slider jenis di sheet muat di layar 320. Area sentuh Edit dan Tambah 44. Placeholder kolom cari memakai titik-titik. Ada `theme-color` yang mengikuti tema (juga saat tema diubah manual).
+- **Gaya:** iOS. Kaca (Liquid Glass) hanya untuk lapisan fungsional di atas konten: dock, tombol +, kapsul bulan, snackbar, sheet. Kartu dan daftar flat, jangan menumpuk kaca di atas kaca.
+- **Skala:** radius kapsul untuk kontrol, 16 elemen dalam kartu, 24 kartu, 28 hero, 36 sheet. Body 17px, sentuh minimal 44, teks terkecil 11px.
+- **Slider** (tab bar, Keluar/Masuk, Tampilan): thumb jadi lensa kaca saat disentuh, fisika tiga pegas di `liquid()` (`app.js`), refraksi di `lg.js` (hanya Chromium; Safari/iOS tanpa refraksi karena `backdrop-filter:url()` belum didukung).
+- **Sheet/picker/dialog:** tumbuh dari elemen pembukanya dan menyusut kembali (`setOrigin`). Form melayang di atas keyboard (posisi dari visual viewport).
+- **Warna:** monokrom. Merah hanya untuk hapus, galat, dan anggaran terlampaui.
+- **Angka besar** selalu satu baris (font dikecilkan sampai muat).
+- **Istilah:** "catatan" = satu transaksi, "keterangan" = teks opsional.
 
-## Bahasa (ID/EN)
-- Pemilih bahasa ada di Ringkasan → Bahasa. Disimpan di `localStorage` kunci `catat.lang`; bawaannya mengikuti bahasa perangkat.
-- Teks statis `index.html` diterjemahkan lewat kamus `EN` di `assets/app.js` (teks asli dikembalikan saat kembali ke Indonesia). Teks dinamis memakai `tr()`. Tambah string baru: tulis dalam bahasa Indonesia, lalu tambahkan padanannya di `EN`.
-- Kategori bawaan disimpan dengan nama Indonesia (kunci tetap) dan ditampilkan lewat `cn()`, jadi ganti bahasa tidak mengubah data. Kategori buatan pengguna tampil apa adanya.
-- Pergantian bahasa dan tema memakai crossfade View Transition.
+## Gerak
+- Durasi: `--d1 .15s` (tekan), `--d2 .25s` (pudar), `--d3 .5s` (pindah). `D`/`D2` di `app.js` harus sama dengan `--d3`/`--d2`.
+- Kurva: masuk `--ease` / `--spring`, keluar `--ease-in` dengan `--d-out` (.26s). `CLOSE` di `app.js` harus sama dengan `--d-out`.
+- Hanya `transform`/`opacity`, tanpa animasi yang berjalan terus-menerus. Mati total saat reduced-motion.
+
+## Aksesibilitas & keamanan
+- Mendukung `prefers-reduced-motion`, `prefers-reduced-transparency`, `prefers-contrast: more`. Cincin fokus hanya muncul saat memakai keyboard.
+- CSP ketat (`connect-src 'self'`, `img-src 'self' data:`), tanpa `innerHTML` dan inline script, tanpa permintaan jaringan dari aplikasi.
+
+## Bahasa
+String baru ditulis dalam Indonesia, lalu tambahkan padanannya di kamus `EN` (`app.js`). Teks dinamis memakai `tr()`. Kategori bawaan disimpan dengan nama Indonesia dan ditampilkan lewat `cn()`.
+
+## Riwayat versi
+| Versi | Perubahan |
+|---|---|
+| v77 | Gerak seragam: kurva keluar sendiri, dialog tidak terpotong saat menutup, pindah tab memudar keluar (`tabOut()`), versi cache disamakan |
+| v73 | Hanya Rupiah, tanpa jaringan. Cara pakai dan Syarat & ketentuan (dialog `#inf`, isi di `INFO`). `sw.js` ditulis ulang |
+| v56 | Rapikan halaman: angka muat satu baris, nama kategori dipotong titik-titik, area sentuh 44, `theme-color` ikut tema |
+| v55 | Slider terasa iOS 26: tiga pegas, regang searah geser, bezel lensa Snell (n=1,5) |
+| v47 | Fix thumb tab bar saat Pengaturan → Ringkasan. Tombol tema dua kondisi. Menu kaca buatan sendiri. Fokus hanya untuk keyboard |
+| v46 | Panah bulan diganti picker bulan/tahun. Tombol tema di kiri atas. Transisi Pengaturan ⇄ Ringkasan dirapikan |
+| v45 | Kapsul bulan dua baris. Header dan Simpan form tetap, hanya isi yang bergulir |
+| v44 | Lensa slider `.lz` di atas ikon dan label, dengan perbesaran inti dan chroma |
+| v36 | Header meniru Files: tombol Pengaturan bulat di kanan |
+| v35 | Pengaturan pindah ke pojok kiri atas, tab bar tinggal Beranda & Ringkasan. Kategori di sheet satu baris geser |
+| v34 | Format uang via `Intl.NumberFormat`. Tombol Simpan abu saat nonaktif dan menempel di bawah sheet |
 
 Dibuat oleh Joel G. Thompson.
-
-## Mata uang
-- Hanya Rupiah (IDR); nominal bilangan bulat. Pemilih mata uang sudah dihapus (v73).
-- v34: uang diformat lewat `Intl.NumberFormat` (style currency, locale per mata uang; euro tampil `7.000 €`). Simpan di sheet: abu jelas saat nonaktif, tanpa ikon centang (kunci Enter/centang keyboard sudah menyimpan), dan menempel di bawah sheet agar tidak terpotong keyboard. Ringkasan: tanpa total ganda, selalu ada breakdown per kategori. Tombol + disembunyikan di Pengaturan. Ringkas: catatan kecil mata uang dihapus; Batal di dialog reset dibuat tenang (tanpa isi/outline).
-- v35: tombol Pengaturan pindah ke pojok kiri atas (tab bar tinggal Beranda & Ringkasan). Judul bulan di tengah, tidak bisa diketuk; ganti bulan lewat panah kiri/kanan. Kategori di sheet Tambah catatan jadi satu baris yang digeser ke samping.
-- v36: urutan header meniru Files: panah bulan di kiri, tombol Pengaturan (ikon gerigi) bulat di kanan.
-
-## v44: lensa slider (analisis rekaman Apple Music iOS 26)
-- Lensa kini elemen `.lz` (dibuat `lg.js`, hanya di Chromium) yang duduk DI ATAS ikon dan label, jadi isi slider ikut dibiaskan. Sebelumnya lensa ada di bawah ikon dan hanya membiaskan latar.
-- Peta displacement punya dua suku: lengkung tepi (`bezel`) dan perbesaran inti (`MAG`, 1,18×). `mag`, `shift`, `bezel`, `chroma` diatur di `lens()` pada `lg.js`.
-- Diam = pil gelap (`::before`). Disentuh = pil memudar, lensa muncul (scale 1,06×1,26), meregang mengikuti kecepatan geser lewat `--st` (diisi `paint()` di `liquid()`), dan rim punya bayangan gelap tipis di tepi atas dalam.
-- Ikon di dalam lensa lebih tegas lewat `contrast(1,22)` pada filter lensa (aplikasi ini monokrom, jadi tanpa warna aksen).
-- Spring geser: `tv=(tv+(tk-ck)*.115)*.72` (overshoot ±14%, settle ~0,5 detik).
-- Safari/iOS: belum ada refraksi (batasan `backdrop-filter:url()`), tampilan tetap seperti v43.
-
-
-## v45
-- Bulan dan tahun (`#mon`) jadi kapsul kaca dua baris: bulan tebal di atas, tahun kecil di bawah (`monEl()` di `app.js`). Memakai kaca dan refraksi yang sama dengan tombol + (`lg.js`). Lebar minimum 136px agar tidak melompat saat pindah bulan.
-- Form catatan dan anggaran: header dan tombol Simpan tetap; hanya isi (`.shb`) yang bergulir. Sebelumnya Simpan `sticky` dan menimpa kartu tanggal saat keyboard terbuka.
-- Kembali dari Pengaturan: thumb tab bar tumbuh dari `scale .9×.74` sambil memudar bersamaan (tanpa jeda 0,2 detik dan fade cepat seperti sebelumnya).
-
-## v46
-- Panah bulan kiri/kanan dihapus. Ganti bulan/tahun: ketuk kapsul bulan (`#mon`, sekarang tombol) → kartu kaca mengambang tepat di bawahnya (picker `#pick`, dengan refraksi `lg.js`), atau geser daftar seperti sebelumnya.
-- Pojok kiri atas: tombol tema (`#thb`). (sejak v47 hanya Gelap ⇄ Terang, lihat di bawah). Sinkron dengan Pengaturan → Tampilan. Disembunyikan di halaman Pengaturan.
-- Transisi Pengaturan ⇄ Ringkasan: lebar tombol + tidak lagi overshoot (bar tidak bergoyang dan tidak saling menimpa); thumb hanya tumbuh vertikal sehingga tepinya selalu sejajar bar; peta refraksi tab bar dibulatkan (`q`) agar tidak dibuat ulang tiap frame.
-
-## v47
-- Bug slider tab bar saat Pengaturan → Ringkasan: thumb tampil menyempit dan tidak sejajar bar karena dianimasikan lewat `scale` selagi lebar bar berubah (bar menyempit mengikuti tombol +). Kini thumb hanya muncul lewat `opacity` dan tinggi lewat `top/bottom` (ikut layout tiap frame), tanpa transform. Blok v47 di akhir `style.css`.
-- Menyentuh separuh kanan tab bar saat di Pengaturan tidak lagi memunculkan lensa tak terlihat (`liquid(..., off)` di `app.js`).
-- Picker bulan/tahun: bulan terpilih berupa isi solid polos, tanpa bayangan dan tanpa cincin fokus ganda.
-- Tombol tema (`#thb`) hanya dua kondisi: Gelap ⇄ Terang. Pengguna baru (belum memilih) mengikuti tema sistem dan ikon menampilkan tema yang sedang aktif; ketukan pertama membalik tema itu lalu tersimpan di `catat.theme`. Pengaturan → Tampilan tetap punya opsi Otomatis untuk kembali mengikuti sistem.
-- Pengaturan → Tampilan/Bahasa/Mata uang memakai menu kaca buatan sendiri (`openMenu()` di `app.js`), bukan popup `<select>` bawaan iOS yang berkedip hitam saat dibuka. `<select>` tetap jadi penyimpan nilai (disembunyikan).
-- Cincin fokus (`:focus-visible`) hanya tampil setelah Tab/panah ditekan (`html.kb`, diatur `app.js`); fokus otomatis (mis. Batal di dialog reset) tidak lagi menampilkan outline hitam.
-
-## v73
-- Mata uang: pemilih dihapus, aplikasi fokus ke Rupiah. Tidak ada lagi permintaan jaringan dari aplikasi (CSP `connect-src 'self'`). Bahasa Indonesia/English tetap ada di Pengaturan → Bahasa. Kunci lama `catat.cur` di localStorage diabaikan.
-- Cara pakai dan Syarat & ketentuan: dua baris di Pengaturan (di atas Reset) dan tautan kecil bergaris bawah di bawah daftar Beranda (`.legal`). Keduanya membuka satu dialog kaca `#inf` bergaya dialog Kategori (header tetap, isi bergulir). Isi ada di objek `INFO` di `app.js`; tiap teks berupa `[Indonesia, English]`, dirender ulang dengan `paintInfo()` sesuai bahasa.
-- Isi dialog harus berupa blok biasa (`#infb{display:block}`): kartu ber-overflow:hidden di dalam grid/flex yang tingginya dibatasi akan diperas sehingga isi terpotong dan tidak bisa digulir.
-- Teks Syarat & ketentuan adalah templat umum yang mengikuti perilaku aplikasi (data lokal, tanpa analitik). Belum ada hukum yang berlaku, kontak, atau kebijakan privasi terpisah: tinjau dan lengkapi sebelum rilis, dan ubah tanggal "Terakhir diperbarui" bila isinya berubah.
-- `sw.js` ditulis ulang (berkas di zip v68 kosong): precache semua berkas, halaman jaringan-dulu, aset cache-dulu. Naikkan `V` setiap rilis.
-
