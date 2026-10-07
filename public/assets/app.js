@@ -165,7 +165,7 @@ function renderHome(){
   count($('#bal'),main,rp,fx);
   count($('#inc'),inc,v=>(v?'+':'')+rp(v),fx);
   count($('#out'),out,v=>(v?'−':'')+rp(v),fx);
-  $('#bal').classList.toggle('sm',Math.abs(main)>=1e8);$('#inc').classList.toggle('sm',inc>=1e8);$('#out').classList.toggle('sm',out>=1e8);
+  
   $('#nudge').hidden=!(new Date().getDate()>=25&&all.length&&ls('catat.bk')!==today().slice(0,7));
   const list=$('#list');list.replaceChildren();
   if(q&&!m.length){list.append(h('div',{class:'empty'},h('p',{},tr('Tidak ada hasil')),h('p',{class:'mut'},tr('Pencarian mencakup semua bulan.'))));return}
@@ -873,6 +873,7 @@ function applyTheme(t,save,first){
   const r=document.documentElement;
   morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;$('#thb').dataset.th=effTheme(t);syncSel()},first);
   if(save)ls('catat.theme',t);
+  const tc=effTheme(t)==='dark'?'#0E0E0E':'#FAFAFA';document.querySelectorAll('meta[name=theme-color]').forEach(m=>m.setAttribute('content',tc));
 }
 $('#theme').onchange=e=>applyTheme(e.target.value,true);
 matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{if(curTheme()==='auto')applyTheme('auto')});
@@ -936,3 +937,7 @@ addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb
   render();
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
+/* angka besar selalu satu baris: font dikecilkan sampai muat (hero + kotak pemasukan/pengeluaran), sehingga tidak pernah terpotong di tengah angka */
+{const T=['#bal','#inc','#out'].map(q=>$(q)),fit=(e,m)=>{e.style.fontSize='';let z=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+.5&&z>m)e.style.fontSize=(z-=.5)+'px'},rw=$('.hero .row'),all=()=>{rw.classList.remove('stk');T.forEach((e,i)=>e&&fit(e,i?11:22));if(T.slice(1).some(e=>e.scrollWidth>e.clientWidth+.5)){rw.classList.add('stk');T.slice(1).forEach(e=>fit(e,11))}};
+  const mo=new MutationObserver(all);T.forEach(e=>e&&mo.observe(e,{childList:true,characterData:true,subtree:true}));
+  let fr=0;new ResizeObserver(()=>{cancelAnimationFrame(fr);fr=requestAnimationFrame(all)}).observe($('.hero'));all()}

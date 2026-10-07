@@ -620,3 +620,12 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 /* v55 · slider kaca: pegas + regang searah geser. JS mengisi --pr (tekan, overshoot), --st (regang), --sv (arah); tepi belakang tetap, tepi depan memanjang */
 .lz,.lens>.lz{--sx:calc(1 + var(--pr,0)*.06 + var(--st,0));--sy:calc(1 + var(--pr,0)*.26 - var(--st,0)*.5);transform-origin:calc(50% - var(--sv,0)*80%) 50%}
 .drive>.lz{transition:opacity var(--d2),visibility 0s var(--d2)}
+
+/* v56 · angka tidak pernah pecah di tengah (ukuran diatur app.js), area sentuh Edit/Tambah 44, placeholder cari tidak terpotong kasar, slider sheet muat di layar 320 */
+.big,#inc,#out{white-space:nowrap;overflow-wrap:normal}
+.dh .edc{position:relative}.dh .edc::after{content:'';position:absolute;inset:-8px -6px}
+.fr .ad{position:relative}.fr .ad::after{content:'';position:absolute;inset:-4px -6px}
+#q{text-overflow:ellipsis}
+@media(max-width:359px){.shh .seg{width:min(232px,calc(100cqw - 92px))}.shh .seg button{font-size:11.5px}}
+.row.stk{flex-direction:column;gap:8px}
+.tx>span:first-child>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tx>span:last-child{flex:none}
