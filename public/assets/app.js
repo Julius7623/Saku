@@ -146,7 +146,7 @@ function render(){
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
   $('#tabs').dataset.t=tab;if(tab!=='cfg')$('#tabs').dataset.p=tab;
-  $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';{const was=document.body.dataset.tab;if(was==='cfg'&&tab!=='cfg'&&!rm()){const b=document.body;b.classList.remove('pour');void b.offsetWidth;b.classList.add('pour');clearTimeout(b._pt);b._pt=setTimeout(()=>b.classList.remove('pour'),900)}}document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
+  $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
   tab==='home'?renderHome():tab==='sum'?renderSum():renderCfg();
   enter();fx=false;

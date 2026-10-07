@@ -661,24 +661,6 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 #bd-del{grid-column:3;justify-self:end}
 .gi:hover{opacity:1}
 
-/* v59: balik dari Pengaturan: tombol + keluar seperti tetesan cairan dari tab bar (leher cairan menipis lalu putus) */
-.fab::before{content:'';position:absolute;z-index:-1;left:-22px;top:50%;width:30px;height:46px;margin-top:-23px;pointer-events:none;opacity:0;transform-origin:100% 50%;
-background-color:var(--g-bg);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);
--webkit-mask:radial-gradient(circle 11px at 50% -5px,transparent 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 11px at 50% calc(100% + 5px),transparent 97%,#000) bottom/100% 51% no-repeat;
-mask:radial-gradient(circle 11px at 50% -5px,transparent 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 11px at 50% calc(100% + 5px),transparent 97%,#000) bottom/100% 51% no-repeat}
-@keyframes neck{
-0%{opacity:0;transform:scale(0,1.15)}
-22%{opacity:1;transform:scale(1,1.25)}
-55%{opacity:1;transform:scale(1.1,.62)}
-82%{opacity:.9;transform:scale(.5,.2)}
-100%{opacity:0;transform:scale(.1,.05)}}
-@keyframes pull{0%{transform:scale(1)}30%{transform:scale(1.035,.95)}65%{transform:scale(.99,1.02)}100%{transform:scale(1)}}
-@keyframes drop{0%{transform:translateX(-14px) scale(.4,.7)}45%{transform:translateX(2px) scale(1.16,.9)}72%{transform:scale(.96,1.05)}100%{transform:none}}
-body.pour .fab::before{animation:neck .8s cubic-bezier(.3,.7,.3,1) both}
-body.pour .tabs{transform-origin:100% 50%;animation:pull .7s cubic-bezier(.3,.7,.3,1)}
-body.pour .fab{animation:drop .7s cubic-bezier(.3,1.2,.4,1)}
-@media(prefers-reduced-motion:reduce){body.pour .fab::before,body.pour .tabs,body.pour .fab{animation:none}}
-
 /* v60 · tap tema tidak diblokir transisi; pegas slider tidak melewati tepi; Kategori kembali dengan tombol Edit; picker bulan/tahun dirapikan */
 :root{--spring-t:cubic-bezier(.3,1.12,.5,1)}
 ::view-transition{pointer-events:none}
@@ -714,3 +696,13 @@ body.pour .fab{animation:drop .7s cubic-bezier(.3,1.2,.4,1)}
 #pick .mo:disabled{background-color:color-mix(in srgb,var(--tx) 6%,var(--sf));background-image:none;box-shadow:none;color:var(--t2);opacity:.5}
 #pick .alt{font-weight:700;color:var(--tx)}
 #pick .alt:active{transform:scale(.97)}
+
+/* v63 · centang "Selesai" di Kategori = tombol liquid glass bulat (sama dengan tombol ikon lain), bukan centang polos; "Edit" tetap teks biasa */
+#cat-ed.edb.glass[aria-pressed=true]{width:40px;min-width:40px;height:40px;min-height:40px;padding:0;justify-items:center;border-radius:50%;color:var(--tx);
+background-color:var(--g-bg)!important;background-image:radial-gradient(80% 140% at var(--mx,30%) var(--my,0%),var(--g-sp),transparent 60%)!important;
+-webkit-backdrop-filter:var(--g-blur)!important;backdrop-filter:var(--g-blur)!important;
+box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 12px var(--g-glow),0 0 0 .5px var(--g-rim),0 6px 16px -8px var(--g-sh)!important}
+#cat-ed.edb.glass[aria-pressed=true]::after{content:''!important;display:block!important}
+#cat-ed.edb.glass[aria-pressed=true] .ck{width:20px;height:20px;stroke-width:2.6}
+#cat-ed.edb.glass{transition:width .5s cubic-bezier(.3,1.55,.45,1),min-width .5s cubic-bezier(.3,1.55,.45,1),height .3s,color .25s,transform var(--d3) var(--spring)}
+#cat-ed.edb.glass[aria-pressed=true]:active{transform:scale(.88)}
