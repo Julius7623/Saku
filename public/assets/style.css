@@ -802,18 +802,10 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 
 /* v81 · bilah atas/bawah Safari transparan (meta theme-color dihapus, jadi bilah ikut isi halaman) dan blur latar dipindah dari dialog::backdrop ke satu lapisan tetap html::before yang melebar sampai di bawah kedua bilah. Lapisan ini memakai durasi & kurva yang sama dengan dialog (masuk --d3/--ease, keluar --d-out/--ease-in), jadi atas, bawah, dan halaman memudar/memblur serempak, dan jernih sepenuhnya saat tidak ada dialog. */
 @supports selector(:has(*)){
-  html::before{content:'';position:fixed;inset:-160px;z-index:60;pointer-events:none;background-color:rgba(0,0,0,0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:background-color var(--d-out) var(--ease-in),-webkit-backdrop-filter var(--d-out) var(--ease-in),backdrop-filter var(--d-out) var(--ease-in)}
-  html:has(dialog.show)::before{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color var(--d3) var(--ease),-webkit-backdrop-filter var(--d3) var(--ease),backdrop-filter var(--d3) var(--ease)}
+  #scrim{position:fixed;inset:0;z-index:60;pointer-events:none;background-color:rgba(0,0,0,0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:background-color var(--d-out) var(--ease-in),-webkit-backdrop-filter var(--d-out) var(--ease-in),backdrop-filter var(--d-out) var(--ease-in)}
+  html:has(dialog.show) #scrim{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color var(--d3) var(--ease),-webkit-backdrop-filter var(--d3) var(--ease),backdrop-filter var(--d3) var(--ease)}
   dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:none}
 }
-@media(prefers-reduced-transparency:reduce){html::before,html:has(dialog.show)::before{-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media(prefers-reduced-transparency:reduce){#scrim,html:has(dialog.show) #scrim{-webkit-backdrop-filter:none;backdrop-filter:none}}
 
-/* v83 · bilah Safari (atas/bawah) meredup serempak dengan dialog.
-   Safari iOS 26 mengabaikan meta theme-color dan mewarnai bilah dari elemen fixed yang menempel di tepi layar (atau latar html). Halaman tidak bisa mem-blur bilah itu, jadi dua strip tipis opak ini ikut berganti ke warna "latar yang diredupkan" (sama dengan lapisan blur: --bg dicampur hitam 32%), dengan durasi & kurva yang sama persis. Saat tidak ada dialog warnanya = --bg sehingga tak terlihat. */
-.edge{position:fixed;left:0;right:0;height:3px;z-index:1;pointer-events:none;background-color:var(--bg);transition:background-color var(--d-out) var(--ease-in)}
-.edge-t{top:0}.edge-b{bottom:0}
-html{transition:background-color var(--d-out) var(--ease-in)}
-@supports selector(:has(*)){
-  html:has(dialog.show){background-color:color-mix(in srgb,var(--bg) 68%,#000);transition:background-color var(--d3) var(--ease)}
-  html:has(dialog.show) .edge{background-color:color-mix(in srgb,var(--bg) 68%,#000);transition:background-color var(--d3) var(--ease)}
-}
+/* v84 · lapisan peredup/blur sekarang elemen asli (#scrim), bukan pseudo-element html::before / dialog::backdrop. Safari iOS membaca warna bilah atas/bawah dari elemen fixed di tepi layar; pseudo-element tidak dihitung, jadi bilah dulu tetap terang. Strip v83 dibuang (menimbulkan garis saat ganti tema). */
