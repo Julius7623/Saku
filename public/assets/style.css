@@ -738,3 +738,16 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 #sq:focus-within{background:var(--fill2);box-shadow:inset 0 1px 2px rgba(0,0,0,.2),0 0 0 2px color-mix(in srgb,var(--tx) 22%,transparent)}
 #q::placeholder{color:var(--t2);opacity:1}
 #q::-webkit-search-decoration{-webkit-appearance:none}
+
+/* v70 · dialog Cara pakai / Syarat & ketentuan: sama dengan dialog Kategori (header tetap, isi bergulir), isi berupa kartu daftar bernomor */
+#inf{overflow:hidden}
+#inf .sh{display:flex;flex-direction:column;gap:12px;max-height:inherit;padding-bottom:0}
+#inf .pkh{flex:none;min-height:44px}
+#inf-ok{grid-column:3;justify-self:end}
+.il{list-style:none;margin:0;padding:0}
+.ir{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:14px 16px}
+.ir+.ir::before{content:'';position:absolute;left:16px;right:0;top:0;height:1px;background:var(--bd)}
+.ir .in{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--fill);color:var(--tx);font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.ir b{display:block;font-size:17px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
+.ir p{margin:4px 0 0;font-size:15px;line-height:1.45;color:var(--t2);overflow-wrap:anywhere}
+.ifoot{margin:0 4px;font-size:14px;line-height:1.4;color:var(--t2);text-align:center}

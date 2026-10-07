@@ -1,7 +1,7 @@
 'use strict';
 /* Service worker KasKu: aplikasi bisa dibuka offline. Naikkan V setiap file berubah; file baru masuk daftar A.
    Hanya menangani file satu origin: permintaan kurs ke api.frankfurter.dev tidak lewat sini (kurs disimpan app di localStorage). */
-const V='kasku-v69',A=['./','index.html','manifest.webmanifest','assets/style.css','assets/app.js','assets/theme.js','assets/lg.js','assets/icon.svg','assets/icon-180.png','assets/icon-192.png','assets/icon-512.png'];
+const V='kasku-v70',A=['./','index.html','manifest.webmanifest','assets/style.css','assets/app.js','assets/theme.js','assets/lg.js','assets/icon.svg','assets/icon-180.png','assets/icon-192.png','assets/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(A)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{

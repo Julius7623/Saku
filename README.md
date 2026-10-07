@@ -98,3 +98,10 @@ Dibuat oleh Joel G. Thompson.
 - Cadangan menyimpan `cur`. Memulihkan cadangan dari mata uang lain mengonversi isinya ke mata uang sekarang (butuh kurs); cadangan lama tanpa `cur` diimpor apa adanya.
 - CSP: `connect-src 'self' https://api.frankfurter.dev` di `_headers` dan `render.yaml` (harus sama). Tidak ada permintaan jaringan lain.
 - `sw.js` ditulis ulang (berkas di zip v68 kosong): precache semua berkas, halaman jaringan-dulu, aset cache-dulu, hanya satu origin. Naikkan `V` setiap rilis.
+
+## v70 · Cara pakai dan Syarat & ketentuan
+- Pengaturan punya kartu baru (di atas Reset) dengan dua baris: **Cara pakai** dan **Syarat & ketentuan**. Keduanya membuka satu dialog kaca `#inf` yang sama gayanya dengan dialog Kategori (header + tombol tutup tetap, isi `.cbody` bergulir dengan pudar di tepi, tumbuh dari baris yang diketuk lewat `setOrigin`).
+- Isi ada di objek `INFO` di `app.js`; setiap teks berupa `[Indonesia, English]` dan dirender ulang dengan `paintInfo()` sesuai bahasa. Tambah atau ubah butir: edit array `i` (judul, isi). Bukan lewat kamus `EN`.
+- Tampilan: kartu daftar bernomor (`.il`/`.ir`, blok v70 di akhir `style.css`), hanya token yang sudah ada, teks sekunder minimal 14px.
+- Teks Syarat & ketentuan adalah templat umum yang mengikuti perilaku aplikasi (data lokal, satu permintaan jaringan ke `api.frankfurter.dev`, tanpa analitik). Belum ada klausul hukum yang berlaku, kontak, atau kebijakan privasi terpisah: tinjau dan lengkapi sebelum rilis, dan ubah tanggal "Terakhir diperbarui" bila isinya berubah.
+
