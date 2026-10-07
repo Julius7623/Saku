@@ -743,22 +743,30 @@ dragScroll($('#chips'));
    Saat lensa digeser, gulir halaman dikunci. */
 function liquid(root,els,cur,pick,N=2,off=()=>false){
   const SLOP=8;
-  let x0=0,y0=0,x=0,t0=0,vx=0,b=0,pid=0,down=false,armed=false,drag=false,nc=false,ck=0,tk=0,tv=0,raf=0;
+  let x0=0,y0=0,x=0,t0=0,vx=0,b=0,pid=0,down=false,armed=false,drag=false,nc=false,ck=0,tk=0,kv=0,pr=0,pv=0,st=0,sv=0,tl=0,raf=0;
   const rub=k=>k<0?k*.08:k>N-1?N-1+(k-(N-1))*.08:k,sw=()=>(root.clientWidth-8)/N;
   const noClick=()=>{nc=true;setTimeout(()=>nc=false,350)};
-  const paint=()=>{root.style.setProperty('--k',Math.max(-.03,Math.min(N-1+.03,ck)).toFixed(4));root.style.setProperty('--st',armed&&!rm()?Math.min(.14,Math.abs(tv)*1.8).toFixed(3):'0');if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
-  const done=()=>{root.classList.remove('drive');root.style.removeProperty('--k');root.style.removeProperty('--st')};
-  function step(){
-    if(rm()){ck=tk;tv=0}else{tv=(tv+(tk-ck)*.115)*.72;ck+=tv}
+  /* pegas berbasis waktu: posisi (ck), tekan (pr, overshoot = pop), regang searah geser (st, bergoyang saat berhenti) */
+  const paint=()=>{const z=root.style;z.setProperty('--k',Math.max(-.12,Math.min(N-1+.12,ck)).toFixed(4));z.setProperty('--pr',pr.toFixed(3));z.setProperty('--st',Math.abs(st).toFixed(3));z.setProperty('--sv',st.toFixed(3));if(armed)els.forEach((e,i)=>e.style.setProperty('--s',(1+.12*Math.max(0,1-Math.abs(ck-i)*1.1)).toFixed(3)))};
+  const done=()=>{root.classList.remove('drive');['--k','--pr','--st','--sv'].forEach(v=>root.style.removeProperty(v))};
+  function step(now){
+    const dt=Math.min(.032,(now-(tl||now))/1e3)||.016,on=armed?1:0;tl=now;
+    if(rm()){ck=tk;kv=0;pr=on;pv=0;st=sv=0}
+    else{
+      kv+=((tk-ck)*(armed?520:300)-kv*(armed?34:20))*dt;ck+=kv*dt;
+      const ts=armed?Math.max(-.4,Math.min(.4,kv*sw()/1700)):0;
+      sv+=((ts-st)*240-sv*15)*dt;st+=sv*dt;
+      pv+=((on-pr)*320-pv*17)*dt;pr+=pv*dt;
+    }
     paint();
-    if(Math.abs(tk-ck)>.002||Math.abs(tv)>.002)raf=requestAnimationFrame(step);
-    else{raf=0;ck=tk;paint();if(!armed)done()}
+    if(Math.abs(tk-ck)>.002||Math.abs(kv)>.01||Math.abs(pr-on)>.003||Math.abs(pv)>.02||Math.abs(st)>.003||Math.abs(sv)>.02)raf=requestAnimationFrame(step);
+    else{raf=0;tl=0;ck=tk;pr=on;st=0;paint();if(!armed)done()}
   }
   const run=()=>{raf||(raf=requestAnimationFrame(step))};
   function arm(){
     if(!down||armed)return;
-    armed=true;drag=false;x0=x;t0=performance.now();vx=0;b=ck=tk=cur();tv=0;
-    root.classList.add('lens','drive');paint();
+    armed=true;drag=false;x0=x;t0=performance.now();vx=0;b=ck=tk=cur();kv=0;
+    root.classList.add('lens','drive');paint();run();
     try{root.setPointerCapture(pid)}catch{}
   }
   root.addEventListener('pointerdown',e=>{
@@ -790,7 +798,7 @@ function liquid(root,els,cur,pick,N=2,off=()=>false){
     if(!armed)return;/* ketukan di luar thumb: biarkan klik memilih segmen */
     armed=false;
     root.classList.remove('lens');els.forEach(e=>e.style.removeProperty('--s'));
-    if(!drag){tk=ck=cur();done();return}
+    if(!drag){tk=cur();run();return}
     drag=false;noClick();
     const to=Math.max(0,Math.min(N-1,Math.round(tk+vx*120/sw())));
     tk=to;run();

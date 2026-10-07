@@ -616,3 +616,7 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 #cat-ed.edb::before,#cat-ed.edb::after{content:none!important;display:none!important}
 #cat-ed.edb{width:52px;min-width:52px;justify-items:start;align-items:center;padding:0 4px;color:var(--tx)}
 #cat-ed .ck{width:24px;height:24px;stroke-width:2.6;margin-left:0}
+
+/* v55 · slider kaca: pegas + regang searah geser. JS mengisi --pr (tekan, overshoot), --st (regang), --sv (arah); tepi belakang tetap, tepi depan memanjang */
+.lz,.lens>.lz{--sx:calc(1 + var(--pr,0)*.06 + var(--st,0));--sy:calc(1 + var(--pr,0)*.26 - var(--st,0)*.5);transform-origin:calc(50% - var(--sv,0)*80%) 50%}
+.drive>.lz{transition:opacity var(--d2),visibility 0s var(--d2)}

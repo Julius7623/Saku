@@ -6,7 +6,7 @@ Pencatat keuangan pribadi. Situs statis tanpa backend dan tanpa login. Data ters
 render.yaml            Blueprint Render + header keamanan
 public/                folder yang dipublikasikan
   index.html  sw.js  manifest.webmanifest  _headers
-  assets/  app.js  style.css  theme.js  icon.svg  icon-*.png
+  assets/  app.js  style.css  theme.js  lg.js  icon.svg  icon-*.png
 ```
 
 ## Deploy ke Render
@@ -33,7 +33,7 @@ public/                folder yang dipublikasikan
 - Reset catatan keuangan (Ringkasan, paling bawah): dialog konfirmasi dengan tombol merah, fokus awal di Batal, bisa Simpan cadangan dulu. Menghapus semua catatan dan anggaran (tampilan tidak ikut). Setelah itu ada Kembalikan di snackbar selama beberapa detik.
 - Slider Tampilan memakai desain yang sama dengan tab bar Beranda (kapsul kaca 56px, pil translusen, ikon di atas label, lensa saat disentuh), tanpa kartu pembungkus.
 - Dialog Kategori: header (judul + Selesai) tetap, hanya isi yang bergulir dengan pudar halus di tepi; cincin fokus dialog dimatikan.
-- Slider/segmented: lintasan flat (`--fill`), thumb putih (terang) / abu (gelap); saat disentuh thumb berubah jadi lensa kaca bening yang membesar, lintasannya diam. Tanpa pelangi; satu-satunya warna adalah fringe kromatik sangat tipis di rim lensa (`CHROMA` di `lg.js`, isi 0 untuk mematikan). Tanpa rim yang dihitung dari latar.
+- Slider/segmented: lintasan flat (`--fill`), thumb putih (terang) / abu (gelap); saat disentuh thumb berubah jadi lensa kaca bening yang membesar, lintasannya diam. Fringe kromatik di rim lensa (`CHROMA` di `lg.js`, isi 0 untuk mematikan) dan kilau tepi yang dihitung dari latar: kanal B peta menyimpan topeng kilau (cahaya dari kiri-atas), dikalikan warna latar yang sudah dibiaskan lalu dicerahkan, jadi tepi lensa memantulkan isi di belakangnya.
 - Sheet/picker/anggaran: tumbuh dari elemen yang membukanya (FAB, baris, judul bulan) dan menyusut kembali ke sana (`setOrigin`). Radius sheet 36 = padding 20 + radius isi 16 (konsentris).
 - Konten yang bergulir di bawah dock memakai scroll edge effect (blur progresif + pudar), bukan gradasi pekat.
 - Aksesibilitas: `prefers-reduced-transparency` (kaca jadi buram), `prefers-contrast: more` (teks, garis, dan rim lebih tegas), `prefers-reduced-motion` (tanpa gerak).
@@ -45,6 +45,7 @@ public/                folder yang dipublikasikan
 - Form catatan adalah jendela kaca melayang; posisinya dihitung dari visual viewport sehingga selalu di atas keyboard (plus ruang untuk bar bantu iOS).
 - Radius: kapsul untuk kontrol (termasuk kolom cari dan stepper tahun), 16 untuk elemen di dalam kartu/sheet (`--r-sm`), 24 untuk kartu (`--r-md`), 28 untuk hero (`--r-lg`), 36 untuk sheet (`--r-sheet`). Merah (`--red`) hanya untuk aksi hapus, pesan galat, dan anggaran terlampaui.
 - Teks terkecil 11px (label tab), teks sekunder minimal 14px. Istilah: "catatan" = satu transaksi, "keterangan" = isi kolom teks opsional.
+- v55 · slider terasa seperti iOS 26. `liquid()` di `app.js` memakai tiga pegas berbasis waktu (bukan per frame): posisi (memantul saat dilepas), tekan (`--pr`, overshoot = pop saat disentuh), dan regang searah geser (`--st` besar, `--sv` arah; tepi belakang lensa tetap, tepi depan memanjang, lalu bergoyang saat berhenti). Bezel lensa di `lg.js` mengikuti pembiasan Snell (n=1,5), jadi makin ke tepi makin membelok. Safari/iOS belum mendukung `url()` di `backdrop-filter`: di sana hanya fisika pegas dan rim CSS yang jalan, tanpa refraksi. Peta displacement memakai gambar `data:`, jadi CSP butuh `img-src 'self' data:` (`_headers` dan `render.yaml` harus sama).
 
 ## Bahasa (ID/EN)
 - Pemilih bahasa ada di Ringkasan → Bahasa. Disimpan di `localStorage` kunci `catat.lang`; bawaannya mengikuti bahasa perangkat.
