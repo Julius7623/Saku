@@ -739,23 +739,20 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 #q::placeholder{color:var(--t2);opacity:1}
 #q::-webkit-search-decoration{-webkit-appearance:none}
 
-/* v70 · dialog Cara pakai / Syarat & ketentuan: sama dengan dialog Kategori (header tetap, isi bergulir), isi berupa kartu daftar bernomor */
+/* v73 · dialog Cara pakai / Syarat & ketentuan: sama dengan dialog Kategori (header tetap, isi bergulir), isi berupa kartu daftar bernomor. Isi dibuat blok biasa: kartu ber-overflow:hidden di dalam grid yang tingginya dibatasi ikut diperas sehingga isi terpotong dan tidak bisa digulir. */
 #inf{overflow:hidden}
 #inf .sh{display:flex;flex-direction:column;gap:12px;max-height:inherit;padding-bottom:0}
 #inf .pkh{flex:none;min-height:44px}
 #inf-ok{grid-column:3;justify-self:end}
-.il{list-style:none;margin:0;padding:0}
+#infb{display:block}
+.il{list-style:none;margin:0;padding:0;overflow:visible}
 .ir{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:14px 16px}
 .ir+.ir::before{content:'';position:absolute;left:16px;right:0;top:0;height:1px;background:var(--bd)}
 .ir .in{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--fill);color:var(--tx);font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
 .ir b{display:block;font-size:17px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
 .ir p{margin:4px 0 0;font-size:15px;line-height:1.45;color:var(--t2);overflow-wrap:anywhere}
-.ifoot{margin:0 4px;font-size:14px;line-height:1.4;color:var(--t2);text-align:center}
-
-/* v72 · Cara pakai / Syarat: isi dialog bisa digulir. Kartu ber-overflow:hidden di dalam grid ikut diperas ke tinggi dialog (isi terpotong, tidak ada yang bisa digulir), jadi isi dibuat blok biasa. Tautan kecil bergaris bawah di bawah daftar Beranda. */
-#infb{display:block}
-#infb .il{overflow:visible}
-#infb .ifoot{margin:16px 4px 0}
+.ifoot{margin:16px 4px 0;font-size:14px;line-height:1.4;color:var(--t2);text-align:center}
+/* tautan kecil bergaris bawah di bawah daftar Beranda */
 .legal{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;margin:24px 0 8px;font-size:14px;color:var(--t2)}
 .legal button{min-height:44px;min-width:0;padding:0 10px;border-radius:12px;font-size:14px;color:var(--t2);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .legal button:hover,.legal button:active:not(:disabled){color:var(--tx)}

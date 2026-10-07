@@ -57,8 +57,7 @@ public/                folder yang dipublikasikan
 Dibuat oleh Joel G. Thompson.
 
 ## Mata uang
-- Ringkasan → Mata uang: IDR (bawaan), USD, EUR, SGD, MYR, JPY. Disimpan di `localStorage` kunci `catat.cur`.
-- Mengganti mata uang mengonversi semua catatan dan anggaran dengan kurs terbaru (lihat v69). Pemisah ribuan mengikuti mata uang, bukan bahasa.
+- Hanya Rupiah (IDR); nominal bilangan bulat. Pemilih mata uang sudah dihapus (v73).
 - v34: uang diformat lewat `Intl.NumberFormat` (style currency, locale per mata uang; euro tampil `7.000 €`). Simpan di sheet: abu jelas saat nonaktif, tanpa ikon centang (kunci Enter/centang keyboard sudah menyimpan), dan menempel di bawah sheet agar tidak terpotong keyboard. Ringkasan: tanpa total ganda, selalu ada breakdown per kategori. Tombol + disembunyikan di Pengaturan. Ringkas: catatan kecil mata uang dihapus; Batal di dialog reset dibuat tenang (tanpa isi/outline).
 - v35: tombol Pengaturan pindah ke pojok kiri atas (tab bar tinggal Beranda & Ringkasan). Judul bulan di tengah, tidak bisa diketuk; ganti bulan lewat panah kiri/kanan. Kategori di sheet Tambah catatan jadi satu baris yang digeser ke samping.
 - v36: urutan header meniru Files: panah bulan di kiri, tombol Pengaturan (ikon gerigi) bulat di kanan.
@@ -90,26 +89,10 @@ Dibuat oleh Joel G. Thompson.
 - Pengaturan → Tampilan/Bahasa/Mata uang memakai menu kaca buatan sendiri (`openMenu()` di `app.js`), bukan popup `<select>` bawaan iOS yang berkedip hitam saat dibuka. `<select>` tetap jadi penyimpan nilai (disembunyikan).
 - Cincin fokus (`:focus-visible`) hanya tampil setelah Tab/panah ditekan (`html.kb`, diatur `app.js`); fokus otomatis (mis. Batal di dialog reset) tidak lagi menampilkan outline hitam.
 
-## v69 · konversi kurs
-- Ganti mata uang (Ringkasan → Mata uang) otomatis mengonversi semua catatan dan anggaran. Kurs diambil dari Frankfurter (`api.frankfurter.dev`, kurs referensi ECB, tanpa kunci API, diperbarui tiap hari kerja sekitar 16.00 CET) setiap mata uang diganti, lalu disimpan di `localStorage` kunci `catat.fx` (`{t, d, r}`, basis USD). Tanpa internet atau saat permintaan gagal/timeout (7 detik), dipakai kurs tersimpan terakhir. Kalau belum pernah ada kurs tersimpan dan sedang offline, mata uang tidak diganti dan muncul pesan.
-- Kalau belum ada catatan atau anggaran, mata uang langsung diganti (kurs tetap diambil di latar supaya siap offline).
-- Hasil konversi dibulatkan ke satuan terkecil mata uang tujuan (IDR/JPY bulat, lainnya 2 desimal; minimal satu satuan terkecil). Lihat v71 untuk nilai asli. Snackbar Kembalikan memulihkan nilai persis seperti sebelum konversi (selama snackbar tampil).
-- Nominal kini boleh berdesimal untuk USD/EUR/SGD/MYR (`CURD` di `app.js`); `inputmode="decimal"`. Ketik titik atau koma sebagai pemisah desimal; tampilannya mengikuti locale mata uang. `parseIn()` mengubah teks ketikan jadi string kanonik, `fmtIn()` memformatnya kembali. Validasi nominal lewat `okAmt()` (maks 2 desimal). Data lama (bilangan bulat) tetap valid tanpa migrasi.
-- Cadangan menyimpan `cur`. Memulihkan cadangan dari mata uang lain mengonversi isinya ke mata uang sekarang (butuh kurs); cadangan lama tanpa `cur` diimpor apa adanya.
-- CSP: `connect-src 'self' https://api.frankfurter.dev` di `_headers` dan `render.yaml` (harus sama). Tidak ada permintaan jaringan lain.
-- `sw.js` ditulis ulang (berkas di zip v68 kosong): precache semua berkas, halaman jaringan-dulu, aset cache-dulu, hanya satu origin. Naikkan `V` setiap rilis.
-
-## v70 · Cara pakai dan Syarat & ketentuan
-- Pengaturan punya kartu baru (di atas Reset) dengan dua baris: **Cara pakai** dan **Syarat & ketentuan**. Keduanya membuka satu dialog kaca `#inf` yang sama gayanya dengan dialog Kategori (header + tombol tutup tetap, isi `.cbody` bergulir dengan pudar di tepi, tumbuh dari baris yang diketuk lewat `setOrigin`).
-- Isi ada di objek `INFO` di `app.js`; setiap teks berupa `[Indonesia, English]` dan dirender ulang dengan `paintInfo()` sesuai bahasa. Tambah atau ubah butir: edit array `i` (judul, isi). Bukan lewat kamus `EN`.
-- Tampilan: kartu daftar bernomor (`.il`/`.ir`, blok v70 di akhir `style.css`), hanya token yang sudah ada, teks sekunder minimal 14px.
-- Teks Syarat & ketentuan adalah templat umum yang mengikuti perilaku aplikasi (data lokal, satu permintaan jaringan ke `api.frankfurter.dev`, tanpa analitik). Belum ada klausul hukum yang berlaku, kontak, atau kebijakan privasi terpisah: tinjau dan lengkapi sebelum rilis, dan ubah tanggal "Terakhir diperbarui" bila isinya berubah.
-
-## v71 · konversi bolak-balik tidak menggeser angka
-- Bug v69/v70: konversi berantai lewat pembulatan sen (Rp1.000.000 → USD → IDR jadi Rp1.000.024). Sekarang tiap catatan dan anggaran menyimpan nilai asli `o:{c,a}` (mata uang + nominal saat terakhir diketik). `convTx()` selalu menghitung dari nilai asli: kembali ke mata uang asli memulihkan nominal persis; ke mata uang lain hanya satu kali pembulatan dari nilai asli (tanpa akumulasi).
-- `o` diisi saat menyimpan catatan/anggaran (dipertahankan bila nominal tidak diubah saat edit), ikut cadangan, dan dicek `cleanO()`. Data tanpa `o` dianggap asli di mata uang saat konversi pertama. Catatan yang sudah telanjur bergeser (mis. 1.000.024) tidak bisa dipulihkan otomatis: edit nominalnya sekali.
-
-## v72
-- Dialog Cara pakai / Syarat & ketentuan tidak bisa digulir: `.card` (overflow:hidden) di dalam `.cbody` yang berupa grid diperas ke tinggi dialog sehingga isi terpotong. `#infb` kini `display:block`. Hati-hati: jangan taruh kartu ber-overflow:hidden langsung di grid/flex yang tingginya dibatasi.
-- Tautan kecil bergaris bawah "Cara pakai · Syarat & ketentuan" di bawah daftar Beranda (`.legal`, `#hw2`/`#tc2`); baris di Pengaturan tetap ada. Keduanya memanggil `openInfo()`.
+## v73
+- Mata uang: pemilih dihapus, aplikasi fokus ke Rupiah. Tidak ada lagi permintaan jaringan dari aplikasi (CSP `connect-src 'self'`). Bahasa Indonesia/English tetap ada di Pengaturan → Bahasa. Kunci lama `catat.cur` di localStorage diabaikan.
+- Cara pakai dan Syarat & ketentuan: dua baris di Pengaturan (di atas Reset) dan tautan kecil bergaris bawah di bawah daftar Beranda (`.legal`). Keduanya membuka satu dialog kaca `#inf` bergaya dialog Kategori (header tetap, isi bergulir). Isi ada di objek `INFO` di `app.js`; tiap teks berupa `[Indonesia, English]`, dirender ulang dengan `paintInfo()` sesuai bahasa.
+- Isi dialog harus berupa blok biasa (`#infb{display:block}`): kartu ber-overflow:hidden di dalam grid/flex yang tingginya dibatasi akan diperas sehingga isi terpotong dan tidak bisa digulir.
+- Teks Syarat & ketentuan adalah templat umum yang mengikuti perilaku aplikasi (data lokal, tanpa analitik). Belum ada hukum yang berlaku, kontak, atau kebijakan privasi terpisah: tinjau dan lengkapi sebelum rilis, dan ubah tanggal "Terakhir diperbarui" bila isinya berubah.
+- `sw.js` ditulis ulang (berkas di zip v68 kosong): precache semua berkas, halaman jaringan-dulu, aset cache-dulu. Naikkan `V` setiap rilis.
 
