@@ -991,3 +991,26 @@ addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb
 {const T=['#bal','#inc','#out'].map(q=>$(q)),fit=(e,m)=>{e.style.fontSize='';let z=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+.5&&z>m)e.style.fontSize=(z-=.5)+'px'},rw=$('.hero .row'),all=()=>{rw.classList.remove('stk');T.forEach((e,i)=>e&&fit(e,i?11:22));if(T.slice(1).some(e=>e.scrollWidth>e.clientWidth+.5)){rw.classList.add('stk');T.slice(1).forEach(e=>fit(e,11))}};
   const mo=new MutationObserver(all);T.forEach(e=>e&&mo.observe(e,{childList:true,characterData:true,subtree:true}));
   let fr=0;new ResizeObserver(()=>{cancelAnimationFrame(fr);fr=requestAnimationFrame(all)}).observe($('.hero'));all()}
+
+/* v82 · warna bilah Safari (atas/bawah) ikut meredup serempak dengan dialog.
+   Bilah tidak bisa di-blur dari halaman, tapi warnanya bisa dianimasikan lewat theme-color dengan durasi & kurva yang sama persis
+   (masuk D/--ease, keluar CLOSE/--ease-in). Saat tidak ada dialog, meta dihapus sehingga bilah kembali transparan. */
+(()=>{
+  const DIM=.32,bez=(x1,y1,x2,y2)=>{const cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx,cy=3*y1,by=3*(y2-y1)-cy,ay=1-cy-by,
+    sx=t=>((ax*t+bx)*t+cx)*t,sy=t=>((ay*t+by)*t+cy)*t;
+    return x=>{let t=x;for(let i=0;i<8;i++){const e=sx(t)-x,d=(3*ax*t+2*bx)*t+cx;if(Math.abs(e)<1e-5||!d)break;t-=e/d}return sy(Math.min(1,Math.max(0,t)))}},
+    inE=bez(.32,.72,0,1),outE=bez(.4,0,.6,1);
+  let meta=null,k=0,raf=0,on=false;
+  const base=()=>{const m=getComputedStyle(document.documentElement).backgroundColor.match(/[\d.]+/g)||[250,250,250];return m.slice(0,3).map(Number)};
+  const paint=p=>{const b=base(),f=1-DIM*p;if(!meta){meta=document.createElement('meta');meta.name='theme-color';document.head.appendChild(meta)}
+    meta.content='rgb('+b.map(v=>Math.round(v*f)).join(',')+')'};
+  const go=to=>{
+    cancelAnimationFrame(raf);const from=k,dur=(to?D:CLOSE),ease=to?inE:outE,t0=performance.now();
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches){k=to;to?paint(1):(meta?.remove(),meta=null);return}
+    const step=now=>{const x=Math.min(1,(now-t0)/dur);k=from+(to-from)*ease(x);paint(k);
+      if(x<1)raf=requestAnimationFrame(step);else if(!to){meta?.remove();meta=null}};
+    raf=requestAnimationFrame(step)};
+  const sync=()=>{const s=!!document.querySelector('dialog.show');if(s!==on){on=s;go(s?1:0)}};
+  const mo=new MutationObserver(sync);
+  document.querySelectorAll('dialog').forEach(d=>mo.observe(d,{attributes:true,attributeFilter:['class']}));
+})();
