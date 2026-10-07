@@ -36,7 +36,8 @@ button:active:not(:disabled){transform:scale(.94);transition-duration:.1s}
 button:disabled{opacity:.35;cursor:default}
 input{min-width:0;border:0;background:none}
 input::placeholder{color:var(--t2)}
-:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+/* ring fokus hanya untuk pengguna keyboard (html.kb diatur app.js); fokus otomatis lewat skrip/sentuhan tidak menampilkan cincin */
+html.kb :focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .i{display:block;flex:none;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .plus{font-weight:700}.minus{font-weight:500}.mut{color:var(--t2);font-size:14px}.mt{margin-top:14px}
 .ic{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:rgba(128,128,128,.24)}
@@ -551,3 +552,19 @@ body[data-tab=cfg] .fab{transition:width .42s var(--ease),min-width .42s var(--e
 .tabs.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
 /* Tombol tema: dua ikon saja (bulan = gelap, matahari = terang); ikon menunjukkan tema yang sedang tampil */
 
+/* v47 · picker bulan/tahun: sederhana. Bulan terpilih = isi solid polos (tanpa bayangan/cincin ganda); bulan lain datar tanpa bayangan */
+.mo{box-shadow:none}
+.mo[aria-pressed=true]{box-shadow:none}
+.mo:focus-visible{outline:none}
+.mo[aria-pressed=false]:focus-visible{background:var(--fill2)}
+/* v47 · menu pilihan (Tampilan/Bahasa/Mata uang): kaca kecil di bawah baris; <select> asli hanya penyimpan nilai */
+.set.sel select{display:none}
+.set.sel.open{background:var(--fill)}
+.pscrim{position:fixed;inset:0;z-index:70;background:transparent;-webkit-tap-highlight-color:transparent}
+.pmenu.glass{position:fixed;z-index:71;display:grid;gap:2px;min-width:200px;padding:6px;border-radius:24px;transform-origin:top right}
+.pmenu button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 18px 0 12px;border-radius:18px;font-size:17px;font-weight:500;text-align:left;color:var(--tx);-webkit-tap-highlight-color:transparent}
+.pmenu button .i{flex:none;width:18px;height:18px;stroke-width:2.6;opacity:0}
+.pmenu button[aria-selected=true] .i{opacity:1}
+.pmenu button:focus-visible{outline:none;background:var(--fill)}
+.pmenu button:active{background:var(--fill2)}
+@media(hover:hover){.pmenu button:hover{background:var(--fill)}}

@@ -799,6 +799,48 @@ function liquid(root,els,cur,pick,N=2,off=()=>false){
 }
 const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>Math.min(1,TABS.indexOf(tab)),i=>goTab(TABS[i]),2,()=>tab==='cfg');
 const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>setType(i?'in':'out'));
+/* Menu pilihan Tampilan / Bahasa / Mata uang: menu kaca buatan sendiri. Popup <select> bawaan iOS menganimasikan snapshot elemen transparan sehingga berkedip hitam.
+   <select> tetap dipakai sebagai penyimpan nilai (disembunyikan); memilih menyetel nilainya lalu memicu 'change'. */
+let pm=null;
+function closeMenu(focus){
+  if(!pm)return;const{m,sc,row}=pm;pm=null;
+  document.removeEventListener('keydown',pmKey,true);window.removeEventListener('scroll',closeMenu,true);window.removeEventListener('resize',closeMenu);
+  row.classList.remove('open');row.setAttribute('aria-expanded','false');sc.remove();
+  if(rm())m.remove();else m.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.94)'}],{duration:130,easing:'ease-out'}).onfinish=()=>m.remove();
+  if(focus)row.focus({preventScroll:true});
+}
+function pmKey(e){
+  if(!pm)return;const bs=[...pm.m.querySelectorAll('button')],i=bs.indexOf(document.activeElement);
+  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu(true)}
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();bs[(i+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length].focus()}
+  else if(e.key==='Tab'){e.preventDefault();closeMenu(true)}
+}
+function openMenu(row){
+  if(pm){const same=pm.row===row;closeMenu(true);if(same)return}
+  const sel=row.querySelector('select');if(!sel)return;
+  const m=h('div',{class:'pmenu glass',role:'listbox','aria-label':sel.getAttribute('aria-label')||''}),sc=h('div',{class:'pscrim','aria-hidden':'true'});
+  [...sel.options].forEach(o=>{
+    const on=o.value===sel.value;
+    m.append(h('button',{type:'button',role:'option','aria-selected':String(on),onclick:()=>{closeMenu(true);if(o.value!==sel.value){sel.value=o.value;sel.dispatchEvent(new Event('change'))}}},ico('M5 12.5l4.5 4.5L19 7.5'),h('span',{},o.textContent)));
+  });
+  sc.addEventListener('pointerdown',e=>{e.preventDefault();closeMenu(false)});
+  document.body.append(sc,m);
+  const r=row.getBoundingClientRect(),mw=m.offsetWidth,mh=m.offsetHeight,vw=innerWidth,vh=innerHeight;
+  const left=Math.max(12,Math.min(vw-mw-12,r.right-mw-12));
+  let top=r.bottom-6,org='top right';if(top+mh>vh-12){top=Math.max(12,r.top-mh+6);org='bottom right'}
+  Object.assign(m.style,{left:left+'px',top:top+'px',transformOrigin:org});
+  row.classList.add('open');row.setAttribute('aria-expanded','true');
+  pm={m,sc,row};
+  document.addEventListener('keydown',pmKey,true);window.addEventListener('scroll',closeMenu,true);window.addEventListener('resize',closeMenu);
+  if(!rm())m.animate([{opacity:0,transform:'scale(.92)'},{opacity:1,transform:'scale(1)'}],{duration:D2,easing:EZ});
+  (m.querySelector('[aria-selected=true]')||m.querySelector('button')).focus({preventScroll:true});
+}
+$$('.set.sel').forEach(r=>{
+  r.setAttribute('role','button');r.tabIndex=0;r.setAttribute('aria-haspopup','listbox');r.setAttribute('aria-expanded','false');
+  r.addEventListener('click',e=>{e.preventDefault();openMenu(r)});
+  r.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openMenu(r)}});
+  r.querySelector('select').tabIndex=-1;
+});
 /* Tampilan: Otomatis / Terang / Gelap. Disimpan di perangkat; theme.js menerapkannya sebelum render pertama. */
 const THEMES=['auto','light','dark'];
 const curTheme=()=>{const t=ls('catat.theme');return t==='light'||t==='dark'?t:'auto'};
@@ -871,6 +913,10 @@ let lq=null;
 const litFlush=()=>{const q=lq;lq=null;if(!q)return;const r=q.g.getBoundingClientRect();q.g.style.setProperty('--mx',(q.x-r.left)/r.width*100+'%');q.g.style.setProperty('--my',(q.y-r.top)/r.height*100+'%')};
 const lit=e=>{const g=e.target.closest?.('.glass');if(!g)return;if(!lq)requestAnimationFrame(litFlush);lq={g,x:e.clientX,y:e.clientY}};
 document.addEventListener('pointerdown',lit,{passive:true});document.addEventListener('pointermove',lit,{passive:true});
+
+/* Ring fokus hanya setelah Tab/panah ditekan; sentuhan atau klik mematikannya lagi */
+addEventListener('keydown',e=>{if(e.key==='Tab'||e.key.startsWith('Arrow'))document.documentElement.classList.add('kb')},true);
+addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb'),true);
 
 /* Mulai */
 (async()=>{

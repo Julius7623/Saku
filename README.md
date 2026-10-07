@@ -83,4 +83,7 @@ Dibuat oleh Joel G. Thompson.
 ## v47
 - Bug slider tab bar saat Pengaturan → Ringkasan: thumb tampil menyempit dan tidak sejajar bar karena dianimasikan lewat `scale` selagi lebar bar berubah (bar menyempit mengikuti tombol +). Kini thumb hanya muncul lewat `opacity` dan tinggi lewat `top/bottom` (ikut layout tiap frame), tanpa transform. Blok v47 di akhir `style.css`.
 - Menyentuh separuh kanan tab bar saat di Pengaturan tidak lagi memunculkan lensa tak terlihat (`liquid(..., off)` di `app.js`).
+- Picker bulan/tahun: bulan terpilih berupa isi solid polos, tanpa bayangan dan tanpa cincin fokus ganda.
 - Tombol tema (`#thb`) hanya dua kondisi: Gelap ⇄ Terang. Pengguna baru (belum memilih) mengikuti tema sistem dan ikon menampilkan tema yang sedang aktif; ketukan pertama membalik tema itu lalu tersimpan di `catat.theme`. Pengaturan → Tampilan tetap punya opsi Otomatis untuk kembali mengikuti sistem.
+- Pengaturan → Tampilan/Bahasa/Mata uang memakai menu kaca buatan sendiri (`openMenu()` di `app.js`), bukan popup `<select>` bawaan iOS yang berkedip hitam saat dibuka. `<select>` tetap jadi penyimpan nilai (disembunyikan).
+- Cincin fokus (`:focus-visible`) hanya tampil setelah Tab/panah ditekan (`html.kb`, diatur `app.js`); fokus otomatis (mis. Batal di dialog reset) tidak lagi menampilkan outline hitam.
