@@ -77,5 +77,10 @@ Dibuat oleh Joel G. Thompson.
 
 ## v46
 - Panah bulan kiri/kanan dihapus. Ganti bulan/tahun: ketuk kapsul bulan (`#mon`, sekarang tombol) → kartu kaca mengambang tepat di bawahnya (picker `#pick`, dengan refraksi `lg.js`), atau geser daftar seperti sebelumnya.
-- Pojok kiri atas: tombol tema (`#thb`). Setiap ketukan berganti Gelap → Terang → Otomatis, ikon bulan/matahari/setengah lingkaran. Sinkron dengan Pengaturan → Tampilan. Disembunyikan di halaman Pengaturan.
+- Pojok kiri atas: tombol tema (`#thb`). (sejak v47 hanya Gelap ⇄ Terang, lihat di bawah). Sinkron dengan Pengaturan → Tampilan. Disembunyikan di halaman Pengaturan.
 - Transisi Pengaturan ⇄ Ringkasan: lebar tombol + tidak lagi overshoot (bar tidak bergoyang dan tidak saling menimpa); thumb hanya tumbuh vertikal sehingga tepinya selalu sejajar bar; peta refraksi tab bar dibulatkan (`q`) agar tidak dibuat ulang tiap frame.
+
+## v47
+- Bug slider tab bar saat Pengaturan → Ringkasan: thumb tampil menyempit dan tidak sejajar bar karena dianimasikan lewat `scale` selagi lebar bar berubah (bar menyempit mengikuti tombol +). Kini thumb hanya muncul lewat `opacity` dan tinggi lewat `top/bottom` (ikut layout tiap frame), tanpa transform. Blok v47 di akhir `style.css`.
+- Menyentuh separuh kanan tab bar saat di Pengaturan tidak lagi memunculkan lensa tak terlihat (`liquid(..., off)` di `app.js`).
+- Tombol tema (`#thb`) hanya dua kondisi: Gelap ⇄ Terang. Pengguna baru (belum memilih) mengikuti tema sistem dan ikon menampilkan tema yang sedang aktif; ketukan pertama membalik tema itu lalu tersimpan di `catat.theme`. Pengaturan → Tampilan tetap punya opsi Otomatis untuk kembali mengikuti sistem.

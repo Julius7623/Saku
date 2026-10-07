@@ -616,7 +616,8 @@ async function importJSON(file){
 /* Event */
 $('#mon').onclick=()=>{if(tab!=='cfg')openPick()};
 /* tombol tema: ketuk = Gelap → Terang → Otomatis, ikon berganti */
-$('#thb').onclick=()=>{const o=['dark','light','auto'];applyTheme(o[(o.indexOf(curTheme())+1)%3],true)};
+/* Tombol tema: hanya Terang ⇄ Gelap. Pengguna baru (belum memilih) mengikuti tema sistem; ketukan pertama membalik tema yang sedang tampil. */
+$('#thb').onclick=()=>applyTheme(effTheme()==='dark'?'light':'dark',true);
 const TABS=['home','sum','cfg'];
 const goTab=t=>{dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=true;tab=t;render()};
 let backTab='home';
@@ -738,7 +739,7 @@ dragScroll($('#chips'));
 /* Slider kaca (tab bar & Keluar/Masuk & Tampilan): geseran harus dimulai tepat di thumb dan langsung aktif (tanpa menahan): thumb jadi lensa dan mengikuti jari/kursor.
    Sentuhan di luar thumb hanya ketukan (memilih segmen); geseran yang dimulai di luar thumb diabaikan (tidak menggeser slider, tidak memilih segmen, tidak bocor ke elemen lain).
    Saat lensa digeser, gulir halaman dikunci. */
-function liquid(root,els,cur,pick,N=2){
+function liquid(root,els,cur,pick,N=2,off=()=>false){
   const SLOP=8;
   let x0=0,y0=0,x=0,t0=0,vx=0,b=0,pid=0,down=false,armed=false,drag=false,nc=false,ck=0,tk=0,tv=0,raf=0;
   const rub=k=>k<0?k*.08:k>N-1?N-1+(k-(N-1))*.08:k,sw=()=>(root.clientWidth-8)/N;
@@ -761,6 +762,7 @@ function liquid(root,els,cur,pick,N=2){
   root.addEventListener('pointerdown',e=>{
     if(e.pointerType==='mouse'&&e.button!==0)return;
     down=true;armed=false;drag=false;pid=e.pointerId;x0=x=e.clientX;y0=e.clientY;
+    if(off())return;/* thumb tidak terlihat (mis. di Pengaturan): hanya ketukan, jangan munculkan lensa */
     const c=cur(),r=root.getBoundingClientRect(),s=sw(),l=r.left+4+c*s;
     if(e.clientX<l-2||e.clientX>l+s+2)return;/* di luar thumb: hanya ketukan */
     arm();/* tepat di thumb: langsung bisa digeser */
@@ -795,13 +797,16 @@ function liquid(root,els,cur,pick,N=2){
   ['pointerup','pointercancel'].forEach(t=>root.addEventListener(t,end));
   return()=>nc;
 }
-const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>Math.min(1,TABS.indexOf(tab)),i=>goTab(TABS[i]));
+const tabNC=liquid($('#tabs'),[...$$('.tab')],()=>Math.min(1,TABS.indexOf(tab)),i=>goTab(TABS[i]),2,()=>tab==='cfg');
 const segNC=liquid($('.seg'),[...$$('.seg button')],()=>f.type==='in'?1:0,i=>setType(i?'in':'out'));
 /* Tampilan: Otomatis / Terang / Gelap. Disimpan di perangkat; theme.js menerapkannya sebelum render pertama. */
 const THEMES=['auto','light','dark'];
 const curTheme=()=>{const t=ls('catat.theme');return t==='light'||t==='dark'?t:'auto'};
+const sysDark=()=>matchMedia('(prefers-color-scheme:dark)').matches;
+/* tema yang benar-benar tampil: pilihan tersimpan, atau tema sistem bila masih Otomatis */
+const effTheme=t=>{t=t||curTheme();return t==='auto'?(sysDark()?'dark':'light'):t};
 /* teks nilai di baris pengaturan mengikuti pilihan select (dan bahasanya) */
-const syncSel=()=>{['theme','lang','cur'].forEach(k=>{$('#'+k+'V').textContent=$('#'+k).selectedOptions[0]?.textContent||''});const b=$('#thb');if(b)b.setAttribute('aria-label',tr('Tampilan')+': '+($('#theme').selectedOptions[0]?.textContent||''))};
+const syncSel=()=>{['theme','lang','cur'].forEach(k=>{$('#'+k+'V').textContent=$('#'+k).selectedOptions[0]?.textContent||''});const b=$('#thb');if(b)b.setAttribute('aria-label',tr('Tampilan')+': '+tr(b.dataset.th==='dark'?'Gelap':'Terang'))};
 let thT=0;
 /* Ubah tampilan (tema / bahasa) semulus mungkin: crossfade seluruh halaman lewat View Transition (satu kurva untuk semua elemen, termasuk gradien kartu).
    Cadangan: transisi warna CSS di semua elemen selama sebentar. Lewati saat render pertama dan saat Reduce Motion. */
@@ -813,7 +818,7 @@ function morph(fn,first){
 }
 function applyTheme(t,save,first){
   const r=document.documentElement;
-  morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;$('#thb').dataset.th=t;syncSel()},first);
+  morph(()=>{t==='auto'?delete r.dataset.theme:r.dataset.theme=t;$('#theme').value=t;$('#thb').dataset.th=effTheme(t);syncSel()},first);
   if(save)ls('catat.theme',t);
 }
 $('#theme').onchange=e=>applyTheme(e.target.value,true);
