@@ -706,3 +706,30 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 #cat-ed.edb.glass[aria-pressed=true] .ck{width:20px;height:20px;stroke-width:2.6}
 #cat-ed.edb.glass{transition:width .5s cubic-bezier(.3,1.55,.45,1),min-width .5s cubic-bezier(.3,1.55,.45,1),height .3s,color .25s,transform var(--d3) var(--spring)}
 #cat-ed.edb.glass[aria-pressed=true]:active{transform:scale(.88)}
+
+/* v64 · dialog reset diseragamkan dengan sheet lain: tiga pil setinggi sama, jarak rapat; Simpan cadangan = tombol utama seperti "Simpan", Batal = pil kaca netral seperti picker, Hapus semua = pil kaca merah (dua ketukan: solid merah) */
+#rst .sh{gap:10px}
+#rst .rsh{margin-bottom:10px}
+#rst #rs-bk,#rst #rs-cl,#rst #rs-ok{width:100%;min-height:52px;font-size:17px;font-weight:700;border-radius:999px;transition:transform var(--d3) var(--spring),background-color .2s,color .2s,opacity var(--d2)}
+#rst #rs-bk{background-color:var(--ac);background-image:linear-gradient(rgba(255,255,255,.2),transparent 55%);color:var(--on);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 10px 20px -10px rgba(0,0,0,.7)}
+#rst #rs-bk:disabled{background-color:color-mix(in srgb,var(--t2) 26%,var(--sf));background-image:none;color:var(--t2);box-shadow:none}
+#rst #rs-cl{background-color:color-mix(in srgb,var(--tx) 12%,var(--sf));background-image:linear-gradient(rgba(255,255,255,.16),transparent 60%);color:var(--tx);box-shadow:inset 0 1px 0 var(--g-hi),inset 0 0 0 .5px var(--g-rim),0 4px 10px -6px var(--g-sh)}
+#rst #rs-cl:hover{background-color:color-mix(in srgb,var(--tx) 17%,var(--sf))}
+#rst #rs-ok{margin-top:8px;background-color:color-mix(in srgb,var(--red) 16%,var(--sf));background-image:linear-gradient(rgba(255,255,255,.14),transparent 60%);color:var(--red);box-shadow:inset 0 1px 0 var(--g-hi),inset 0 0 0 .5px color-mix(in srgb,var(--red) 50%,transparent),0 4px 10px -6px var(--g-sh)}
+#rst #rs-ok.arm{background-color:var(--red);background-image:linear-gradient(rgba(255,255,255,.2),transparent 55%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 20px -10px color-mix(in srgb,var(--red) 75%,#000)}
+#rst #rs-bk:active,#rst #rs-cl:active,#rst #rs-ok:active{transform:scale(.97)}
+
+/* v65 · ukuran disamakan dengan Files iOS 26 (diukur dari screenshot): bulatan = lingkaran 40, pil panah = 88×40 dengan chevron ±9.5×16.6, slider = tebal 56 dengan thumb 48 (inset 4) */
+.cfgb,.thb{width:40px;min-width:40px;height:40px;min-height:40px;border-radius:50%}
+.gi{width:40px;min-width:40px;height:40px;min-height:40px}
+#pick .yr{width:88px;height:40px}
+#pick .yr button{width:44px;min-width:44px;height:40px;min-height:40px}
+#pick .yr .i,.nav2 .i{width:28px;height:28px;stroke-width:2.4}
+.shh .seg{height:56px}
+.seg button{min-height:48px}
+.ctog{height:56px}
+.ctog button{min-height:48px}
+
+/* v67 · header disamakan dengan bar atas Foto iOS 26 (diukur): lingkaran 40, pil judul 146×40 dengan dua baris teks */
+#mon{min-width:146px;min-height:40px;height:40px;padding:0 20px}
+#monT small{font-size:13px}
