@@ -46,6 +46,7 @@ String baru ditulis dalam Indonesia, lalu tambahkan padanannya di kamus `EN` (`a
 ## Riwayat versi
 | Versi | Perubahan |
 |---|---|
+| v87 | Bilah atas/bawah Safari tanpa strip solid: strip JS dibuang, tepi atas/bawah dilembutkan blur + pudar lewat `html::before/::after`, `#scrim` mulai dari warna latar (bukan hitam) dan memudar masuk/keluar lewat CSS, `theme-color` ikut tema. |
 | v78 | Ikon tombol ikut bergerak: gear berputar saat membuka/menutup Pengaturan, X berputar, ikon baris menyusut, panah cadangan turun/naik, chevron bergeser |
 | v79 | Header, toast, dan dock disesuaikan dengan outline desain: tombol tema/pengaturan 42px, pil bulan 157x42, inset 21px; tab bar dan tombol + 58px, toast 48px. Aturannya di blok v79 akhir `style.css`. |
 | v77 | Gerak seragam: kurva keluar sendiri, dialog tidak terpotong saat menutup, pindah tab memudar keluar (`tabOut()`), versi cache disamakan |
