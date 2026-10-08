@@ -448,7 +448,7 @@ function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute
 $$('.ctog button').forEach(b=>b.onclick=()=>{if(ctNC())return;setCt(b.dataset.ct)});
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
-  catd._src=src;cArm=null;setEd(true);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
+  catd._src=src;cArm=null;setEd(false);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
   updAdd();paintCats();
   modal(catd);place();catd.focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>catd.classList.add('show')));
