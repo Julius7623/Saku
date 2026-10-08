@@ -788,7 +788,7 @@ function dragScroll(el){
   el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
   el.addEventListener('click',e=>{if(performance.now()<nc){e.preventDefault();e.stopPropagation()}},true);
 }
-dragScroll($('#chips'));
+dragScroll($('#chips'));dragScroll($('#bcats'));
 /* Slider kaca (tab bar & Keluar/Masuk & Tampilan): geseran harus dimulai tepat di thumb dan langsung aktif (tanpa menahan): thumb jadi lensa dan mengikuti jari/kursor.
    Sentuhan di luar thumb hanya ketukan (memilih segmen); geseran yang dimulai di luar thumb diabaikan (tidak menggeser slider, tidak memilih segmen, tidak bocor ke elemen lain).
    Saat lensa digeser, gulir halaman dikunci. */

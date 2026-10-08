@@ -742,7 +742,7 @@ box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi
 #inf{overflow:hidden}
 #inf .sh{display:flex;flex-direction:column;gap:12px;max-height:inherit;padding-bottom:0}
 #inf .pkh{flex:none;min-height:44px}
-#inf-ok{grid-column:3;justify-self:end}
+#inf-ok{grid-column:1;justify-self:start}
 #infb{display:block}
 .il{list-style:none;margin:0;padding:0;overflow:visible}
 .ir{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:14px 16px}
