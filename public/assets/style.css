@@ -827,3 +827,19 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 .pkh>.ybtn,.pkh>h2,.shh>.seg{align-self:center}
 #sheet .shh>.gi,#bud .pkh>.gi,#catd .pkh>.gi,#inf .pkh>.gi{translate:0 2px}
 #pick .pkh>.gi,#pick .pkh>.yr{translate:0 -2px}
+
+/* v84 · (1) Pil tab saat Pengaturan → Ringkasan/Beranda tidak lagi melenceng keluar bar.
+   Penyebab: pil digeser lewat `translate` berpersen (100% lebar pil). Saat bar menyempit karena tombol + muncul lagi, WebKit/iOS memakai lebar awal
+   (bar masih lebar) selama transisi, sehingga pil terlempar ke kanan dan menonjol dari bar (kelihatan seperti pantulan/regangan yang meleset).
+   Sekarang posisinya lewat `left` (properti layout, dihitung ulang tiap frame mengikuti lebar bar), jadi selalu sejajar dengan bar.
+   Durasi dan kurva tiap keadaan sama dengan sebelumnya; hanya translate → left. */
+.tabs::before{translate:none;left:calc(4px + var(--k)*(50% - 4px));transition:left calc(var(--d3) + .05s) var(--spring-t),scale var(--d3) var(--spring),top .4s var(--ease),bottom .4s var(--ease),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
+.tabs[data-t=cfg]::before{transition:left .2s var(--ease),scale .3s var(--ease),top .3s var(--ease),bottom .3s var(--ease),opacity .16s var(--ease),background-color .3s,box-shadow .3s}
+.tabs.drive::before{transition:scale var(--d3) var(--spring),background-color .3s,box-shadow .3s}
+.tabs.nb:not(.drive)::before{transition:left .5s var(--ease),scale .4s var(--ease),top .4s var(--ease),bottom .4s var(--ease),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
+
+/* v84 · (2) Centang "Selesai" di Kategori disamakan dengan tombol bulat mengambang lain (.gi): 44×44, ikon 20 (garis 2.5), turun 2px seperti X di sebelahnya.
+   Sebelumnya 40×40 dan tanpa offset 2px, jadi lebih kecil dan 2px lebih tinggi. Teks "Edit" ikut diturunkan 2px supaya tidak melompat saat berganti. */
+#cat-ed.edb.glass[aria-pressed=true]{width:44px;min-width:44px;height:44px;min-height:44px}
+#cat-ed.edb.glass[aria-pressed=true] .ck{width:20px;height:20px;stroke-width:2.5}
+#catd .pkh>#cat-ed{align-self:start;translate:0 2px}
