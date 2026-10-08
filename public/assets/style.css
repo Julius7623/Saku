@@ -843,3 +843,27 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 #cat-ed.edb.glass[aria-pressed=true]{width:44px;min-width:44px;height:44px;min-height:44px}
 #cat-ed.edb.glass[aria-pressed=true] .ck{width:20px;height:20px;stroke-width:2.5}
 #catd .pkh>#cat-ed{align-self:start;translate:0 2px}
+
+/* v86 · tombol isi (Simpan, picker bulan/tahun, dialog Reset) satu gaya flat: tanpa gradien kilap, highlight tepi, rim, atau bayangan.
+   Hierarki hanya dari warna isi: utama = --ac solid, netral = campuran --tx 12% di atas --sf (hover 17%), nonaktif = --t2 26% di atas --sf,
+   hapus = merah tipis 16% (seperti ikon .set.rd), ditekan sekali lagi = merah solid dengan teks sama seperti .sv.dng (putih terang, #1C0000 gelap). */
+.sv,#pick .mo[aria-pressed=true],#pick .mo:not([aria-pressed=true]):not(:disabled),#pick .alt,#rst #rs-bk,#rst #rs-cl,#rst #rs-ok,#rst #rs-ok.arm{background-image:none;box-shadow:none}
+.sv,#pick .mo[aria-pressed=true],#rst #rs-bk{background-color:var(--ac);color:var(--on)}
+.sv:disabled,#rst #rs-bk:disabled{background-color:color-mix(in srgb,var(--t2) 26%,var(--sf));color:var(--t2)}
+#pick .mo:not([aria-pressed=true]):not(:disabled),#pick .alt,#rst #rs-cl{background-color:color-mix(in srgb,var(--tx) 12%,var(--sf));color:var(--tx)}
+#pick .mo:hover:not([aria-pressed=true]):not(:disabled),#pick .alt:hover,#rst #rs-cl:hover{background-color:color-mix(in srgb,var(--tx) 17%,var(--sf))}
+.sv.dng,#rst #rs-ok.arm{background-color:var(--red);color:#fff}
+:root[data-theme=dark] .sv.dng,:root[data-theme=dark] #rst #rs-ok.arm{color:#1C0000}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .sv.dng,:root:not([data-theme=light]) #rst #rs-ok.arm{color:#1C0000}}
+#rst #rs-ok{background-color:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
+
+/* v87 · kontras dan keterbacaan status tombol.
+   (1) Teks "Hapus semua" di tema terang: merah dicampur 15% hitam, kontras 4.0 → 5.2 (AA). Tema gelap tetap --red (5.1).
+   (2) Tombol nonaktif tidak lagi mirip tombol netral: isi lebih tipis dan seluruh tombol dipudarkan, sehingga jelas tidak bisa diketuk. */
+#rst #rs-ok{color:color-mix(in srgb,var(--red) 85%,#000)}
+:root[data-theme=dark] #rst #rs-ok{color:var(--red)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) #rst #rs-ok{color:var(--red)}}
+#rst #rs-ok.arm{color:#fff}
+:root[data-theme=dark] #rst #rs-ok.arm{color:#1C0000}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) #rst #rs-ok.arm{color:#1C0000}}
+.sv:disabled,#rst #rs-bk:disabled{background-color:color-mix(in srgb,var(--tx) 6%,var(--sf));color:var(--t2);opacity:.55;cursor:default}
