@@ -879,3 +879,40 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 /* Slider/toggle di halaman mengambang: tinggi 44px, sama dengan tombol Tutup, Batal, dan panah bulan */
 .shh .seg,.ctog{height:44px}
 .shh .seg button,.ctog button{min-height:36px}
+
+/* ===== v92 ===== */
+/* Header: tombol tema dihapus. Judul bulan rata kiri, ikon pengaturan tetap di kanan (42px). */
+.top{grid-template-columns:minmax(0,1fr) 42px}
+.top h1{justify-items:start}
+#mon{justify-self:start}
+.cfgT{padding-left:0}
+
+/* Reset catatan keuangan di Pengaturan: saat nonaktif (belum ada data) merahnya tetap tegas, tanpa isian */
+.set.rd{font-weight:600}
+.set.rd:disabled{opacity:1}
+:root[data-theme=light] .set.rd,:root:not([data-theme]) .set.rd{color:color-mix(in srgb,var(--red) 88%,#000)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .set.rd{color:var(--red)}}
+:root[data-theme=dark] .set.rd{color:var(--red)}
+@media(hover:hover) and (pointer:fine){.set.rd:disabled:hover{background:none}}
+
+/* Form anggaran: label "Dihitung dari kategori" tetap terlihat saat keyboard terbuka */
+#bud.kbo .lbl{display:block;margin:0 4px 6px}
+
+/* Beranda & Ringkasan kosong: hanya ikon + satu kalimat (tombol ada di dock) */
+#list .empty .mut{margin-bottom:0}
+#cats .empty{padding:32px 16px 8px}
+.eico .i{width:28px;height:28px}
+
+/* Tombol +: isi solid sama dengan tombol utama (.sv): hitam di tema terang, terang di tema gelap; ikon mengikuti --on */
+.fab.glass.glass{background-color:var(--ac)!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:var(--on);box-shadow:0 10px 22px -10px rgba(0,0,0,.6)!important}
+.fab.glass::after{display:none}
+
+/* Pill Tutup di pemilih bulan: material sama dengan pill panah tahun (.yr) */
+@media(prefers-reduced-transparency:no-preference){#pick .yr.glass.glass,#pick #pk-cl.glass.glass{background-color:var(--g-bg);background-image:radial-gradient(80% 140% at var(--mx,30%) var(--my,0%),var(--g-sp),transparent 60%);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}}
+#pick .yr.glass.glass,#pick #pk-cl.glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 18px var(--g-glow),0 0 0 .5px var(--g-rim),0 14px 30px -14px var(--g-sh)}
+html.lg #pick .yr.glass.glass,html.lg #pick #pk-cl.glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),0 0 0 .5px var(--g-rim),0 14px 30px -14px var(--g-sh)}
+html:not(.lg) #pick .yr.glass.glass,html:not(.lg) #pick #pk-cl.glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 0 4px rgba(255,255,255,.045),inset 0 0 0 4.5px rgba(0,0,0,.08),inset 0 5px 8px -5px var(--g-hi),inset 0 -6px 9px -6px var(--g-hi2),inset 0 0 18px var(--g-glow),0 0 0 .5px var(--g-rim),0 14px 30px -14px var(--g-sh)}
+
+/* Baris Bahasa: "Bahasa Indonesia" muat di layar 320px */
+.set.sel .val{white-space:nowrap}
+@media(max-width:360px){.set.sel{gap:8px}.set.sel .val{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:14px}.set.sel .chev{margin-left:4px}}
