@@ -150,6 +150,7 @@ function render(){
   const mv=ym!==lastYm&&!!lastYm&&!rm();
   if(mv)dx=ym>lastYm?1:-1;
   setMon(parse(ym+'-01').toLocaleDateString(LOC(),{month:'long',year:'numeric'}),mv);lastYm=ym;
+  {const tb=$('#tabs');if(shown==='cfg'&&tab!=='cfg'&&!rm()){tb.classList.add('nb');clearTimeout(tb._nb);tb._nb=setTimeout(()=>tb.classList.remove('nb'),800)}}
   $('#tabs').dataset.t=tab;if(tab!=='cfg')$('#tabs').dataset.p=tab;
   $('#home').hidden=tab!=='home';$('#sum').hidden=tab!=='sum';$('#cfg').hidden=tab!=='cfg';document.body.dataset.tab=tab;$('#cfgb').setAttribute('aria-pressed',String(tab==='cfg'));
   $$('.tab').forEach(b=>b.setAttribute('aria-current',String(b.dataset.t===tab)));
@@ -869,10 +870,11 @@ const ctNC=liquid($('.ctog'),[...$$('.ctog button')],()=>catd.dataset.ct==='in'?
    <select> tetap dipakai sebagai penyimpan nilai (disembunyikan); memilih menyetel nilainya lalu memicu 'change'. */
 let pm=null;
 function closeMenu(focus){
-  if(!pm)return;const{m,sc,row}=pm;pm=null;
+  if(!pm)return;const{m,sc,row}=pm;pm=null;m.style.pointerEvents='none';
   document.removeEventListener('keydown',pmKey,true);window.removeEventListener('scroll',closeMenu,true);window.removeEventListener('resize',closeMenu);
   row.classList.remove('open');row.setAttribute('aria-expanded','false');sc.remove();
-  if(rm())m.remove();else m.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.94)'}],{duration:160,easing:EI}).onfinish=()=>m.remove();
+  /* keluar lewat transisi CSS (bisa diinterupsi); kalau dibuka lagi di tengah jalan, elemen baru dibuat dan yang lama selesai memudar sendiri */
+  m.classList.remove('in');setTimeout(()=>m.remove(),rm()?0:220);
   if(focus)row.focus({preventScroll:true});
 }
 function pmKey(e){
@@ -889,7 +891,10 @@ function openMenu(row){
     const on=o.value===sel.value;
     m.append(h('button',{type:'button',role:'option','aria-selected':String(on),onclick:()=>{closeMenu(true);if(o.value!==sel.value){sel.value=o.value;sel.dispatchEvent(new Event('change'))}}},ico('M5 12.5l4.5 4.5L19 7.5'),h('span',{},o.textContent)));
   });
-  sc.addEventListener('pointerdown',e=>{e.preventDefault();closeMenu(false)});
+  /* ketuk di luar menu (termasuk baris pembuka) = tutup, sekali ketuk. Klik susulan dari ketukan yang sama ditelan agar tidak membuka lagi. */
+  sc.addEventListener('pointerdown',e=>{e.preventDefault();closeMenu(false);
+    const eat=ev=>{ev.stopPropagation();ev.preventDefault()};
+    document.addEventListener('click',eat,{capture:true,once:true});setTimeout(()=>document.removeEventListener('click',eat,true),450)});
   document.body.append(sc,m);
   const r=row.getBoundingClientRect(),mw=m.offsetWidth,mh=m.offsetHeight,vw=innerWidth,vh=innerHeight;
   const left=Math.max(12,Math.min(vw-mw-12,r.right-mw-12));
@@ -898,7 +903,7 @@ function openMenu(row){
   row.classList.add('open');row.setAttribute('aria-expanded','true');
   pm={m,sc,row};
   document.addEventListener('keydown',pmKey,true);window.addEventListener('scroll',closeMenu,true);window.addEventListener('resize',closeMenu);
-  if(!rm())m.animate([{opacity:0,transform:'scale(.92)'},{opacity:1,transform:'scale(1)'}],{duration:D2,easing:EZ});
+  void m.offsetWidth;m.classList.add('in');
   (m.querySelector('[aria-selected=true]')||m.querySelector('button')).focus({preventScroll:true});
 }
 $$('.set.sel').forEach(r=>{

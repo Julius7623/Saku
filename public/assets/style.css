@@ -807,3 +807,11 @@ body{padding-bottom:calc(94px + var(--dock-b))}
   dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:none}
 }
 @media(prefers-reduced-transparency:reduce){html::before,html:has(dialog.show)::before{-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* v82 · menu Tampilan/Bahasa: masuk/keluar lewat transisi (bisa diinterupsi, aman diketuk beruntun).
+   Pill tab: setelah Pengaturan → tab, geser tanpa pantulan (spring melewati 100% dan pill keluar dari tab bar saat tab bar menyempit). */
+.pmenu.glass{opacity:0;transform:scale(.92);transition:opacity .16s var(--ease-in),transform .2s var(--ease-in)}
+.pmenu.glass.in{opacity:1;transform:scale(1);transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease)}
+@media(prefers-reduced-motion:reduce){.pmenu.glass,.pmenu.glass.in{transition-duration:.01s}}
+.tabs.nb:not(.drive)::before{transition:translate .5s var(--ease),scale .4s var(--ease),top .4s var(--ease),bottom .4s var(--ease),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
+.tabs.nb:not(.drive)>.lz{transition:translate .5s var(--ease),scale .4s var(--ease),opacity var(--d2),visibility 0s var(--d2)}
