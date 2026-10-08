@@ -738,7 +738,7 @@ function setOrigin(d){
 let pr=0;
 function place(){
   const sheet=[catd,bud,inf,$('#sheet')].find(d=>d.open);if(!sheet)return;
-  const v=window.visualViewport||{height:innerHeight,offsetTop:0},kb=Math.max(0,innerHeight-v.height-v.offsetTop),open=kb>80,acc=open&&IOS?56:0;
+  const v=window.visualViewport||{height:innerHeight,offsetTop:0},kb=Math.max(0,innerHeight-v.height-v.offsetTop),open=kb>80,acc=open&&IOS?44:0;
   const gap=open?10:(parseFloat(getComputedStyle(sab).paddingBottom)||0)+12;
   sheet.classList.toggle('kbo',open);
   sheet.style.bottom='auto';

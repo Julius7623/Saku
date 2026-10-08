@@ -950,3 +950,17 @@ html:not(.lg) #rst #rs-ok.glass.glass{box-shadow:inset 0 0 0 1px color-mix(in sr
 /* ===== v99 ===== */
 /* Header: beri ruang napas di atas (sebelumnya hanya 1px sehingga mepet tepi layar) */
 .top{padding-top:22px;padding-bottom:24px}
+
+/* Form anggaran: kolom grid dikunci selebar dialog. Sebelumnya lebar kolom ikut baris kategori yang bisa digeser,
+   sehingga kartu nama/nominal melebar keluar dialog dan terpotong di kanan. */
+.shb{grid-template-columns:minmax(0,1fr)}
+.shb>*{min-width:0}
+
+/* Form catatan & anggaran saat keyboard terbuka: tata letak dirapatkan supaya semua baris (keterangan, tanggal) dan tombol Simpan muat tanpa terpotong */
+#sheet.kbo .sh,#bud.kbo .sh{gap:12px}
+#sheet.kbo .shb{gap:12px}
+#sheet.kbo .amtbox{font-size:40px;padding:2px 0}
+#sheet.kbo .chip{min-height:36px;padding:0 16px;font-size:14px}
+#sheet.kbo .fr{min-height:46px}
+#sheet.kbo .fr input{height:44px}
+#sheet.kbo .sv{min-height:46px}
