@@ -801,7 +801,7 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 /* v80: tombol header (bulan, pil bulan, pengaturan) dinaikkan 3px agar pas dengan outline desain; tinggi total header tetap 72px, dock dan toast tidak diubah */
 
 /* v81 · bilah atas/bawah Safari transparan (meta theme-color dihapus, jadi bilah ikut isi halaman) dan blur latar dipindah dari dialog::backdrop ke satu lapisan tetap html::before yang melebar sampai di bawah kedua bilah. Lapisan ini memakai durasi & kurva yang sama dengan dialog (masuk --d3/--ease, keluar --d-out/--ease-in), jadi atas, bawah, dan halaman memudar/memblur serempak, dan jernih sepenuhnya saat tidak ada dialog. */
-#scrim{display:none;position:fixed;inset:-120px 0;z-index:60;pointer-events:none;background-color:rgba(0,0,0,0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:background-color var(--d-out) var(--ease-in),-webkit-backdrop-filter var(--d-out) var(--ease-in),backdrop-filter var(--d-out) var(--ease-in)}
+#scrim{display:none;position:fixed;inset:-120px 0;z-index:60;pointer-events:none;background-color:rgba(0,0,0,0);background-color:rgb(from var(--bg) r g b/0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);transition:background-color var(--d-out) var(--ease-in),-webkit-backdrop-filter var(--d-out) var(--ease-in),backdrop-filter var(--d-out) var(--ease-in)}
 html.dim #scrim{background-color:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color var(--d3) var(--ease),-webkit-backdrop-filter var(--d3) var(--ease),backdrop-filter var(--d3) var(--ease)}
 dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;transition:none}
 @media(prefers-reduced-transparency:reduce){#scrim,html.dim #scrim{-webkit-backdrop-filter:none;backdrop-filter:none}}
@@ -810,5 +810,16 @@ dialog::backdrop,dialog.show::backdrop,dialog:not(.show)::backdrop{background-co
 
 /* v85 · #scrim display:none saat diam (elemen fixed transparan di tepi dibaca Safari sebagai hitam); strip warna tepi dibuat oleh app.js. */
 
-/* v89 · gradien/blur di tepi bawah (.dock::before) dibuang: Safari membacanya sebagai warna bar bawah sehingga muncul pita beda warna */
-.dock::before{display:none!important}
+/* v87 · bilah atas/bawah: tidak ada lagi bagian solid.
+   Tepi atas & bawah halaman diberi lapisan blur yang memudar (pseudo-element, tidak dibaca Safari sebagai elemen tepi), berwarna var(--bg) sehingga ikut crossfade tema.
+   Saat dialog terbuka lapisan ini ikut memudar keluar dan #scrim yang memburamkan seluruh layar (termasuk di bawah bilah) masuk dengan kurva yang sama. */
+html::before,html::after{content:'';position:fixed;left:0;right:0;z-index:5;pointer-events:none;opacity:1;transition:opacity var(--d3) var(--ease);
+-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+html::before{top:0;height:calc(env(safe-area-inset-top,0px) + 6px);background:linear-gradient(var(--bg),color-mix(in srgb,var(--bg) 55%,transparent) 55%,transparent);
+-webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent)}
+html::after{bottom:0;height:calc(var(--dock-b) + 24px);background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 55%,transparent) 45%,var(--bg));
+-webkit-mask-image:linear-gradient(transparent,#000 55%);mask-image:linear-gradient(transparent,#000 55%)}
+html.dim::before,html.dim::after{opacity:0;transition-duration:var(--d3)}
+html:not(.dim)::before,html:not(.dim)::after{transition-duration:var(--d-out);transition-timing-function:var(--ease-in)}
+@media(prefers-reduced-transparency:reduce){html::before,html::after{-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media(prefers-reduced-motion:reduce){html::before,html::after{transition-duration:.01s}}
