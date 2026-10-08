@@ -142,7 +142,7 @@ function tabOut(){
   g.classList.add('ghost');g.setAttribute('aria-hidden','true');g.inert=true;g.hidden=false;
   Object.assign(g.style,{top:r.top-pr.top+'px',left:r.left-pr.left+'px',width:r.width+'px'});
   par.append(g);
-  g.animate([{opacity:1,transform:'translate3d(0,0,0)'},{opacity:0,transform:'translate3d(0,-8px,0)'}],{duration:D2*.8,easing:EI,fill:'forwards'}).onfinish=()=>g.remove();
+  g.animate([{opacity:1,transform:'translate3d(0,0,0)',filter:'blur(0)'},{opacity:0,transform:`translate3d(${-dx*20}px,-6px,0) scale(.985)`,filter:'blur(6px)'}],{duration:D2*.9,easing:EI,fill:'forwards'}).onfinish=()=>g.remove();
 }
 function render(){
   if(tab!=='sum'){bEdit=false;bArm=null}
@@ -671,7 +671,8 @@ $('#mon').onclick=()=>{if(tab!=='cfg')openPick()};
 /* tombol tema: ketuk = Gelap → Terang → Otomatis, ikon berganti */
 /* Tombol tema: hanya Terang ⇄ Gelap. Pengguna baru (belum memilih) mengikuti tema sistem; ketukan pertama membalik tema yang sedang tampil. */
 const TABS=['home','sum','cfg'];
-const goTab=t=>{dx=TABS.indexOf(t)>TABS.indexOf(tab)?1:-1;fx=true;tab=t;render()};
+const ORD={home:0,sum:1,cfg:2};/* urutan halaman: Pengaturan ada di kanan, jadi masuk dari kanan dan kembali ke kiri */
+const goTab=t=>{dx=ORD[t]>ORD[tab]?1:-1;fx=true;tab=t;render()};
 let backTab='home';
 $('#cfgb').onclick=()=>{if(tabNC())return;if(tab==='cfg')goTab(backTab);else{backTab=tab;goTab('cfg')}};
 $$('.tab').forEach(b=>b.onclick=()=>{if(tabNC()||tab===b.dataset.t)return;goTab(b.dataset.t)});
