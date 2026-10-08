@@ -46,6 +46,7 @@ String baru ditulis dalam Indonesia, lalu tambahkan padanannya di kamus `EN` (`a
 ## Riwayat versi
 | Versi | Perubahan |
 |---|---|
+| v82 | Menu Tampilan/Bahasa: satu ketukan buka, satu ketukan tutup, transisi CSS yang bisa diinterupsi, klik susulan ditelan. Pill tab tidak keluar dari tab bar saat Pengaturan → Ringkasan (kelas `.nb`, tanpa pantulan). |
 | v78 | Ikon tombol ikut bergerak: gear berputar saat membuka/menutup Pengaturan, X berputar, ikon baris menyusut, panah cadangan turun/naik, chevron bergeser |
 | v79 | Header, toast, dan dock disesuaikan dengan outline desain: tombol tema/pengaturan 42px, pil bulan 157x42, inset 21px; tab bar dan tombol + 58px, toast 48px. Aturannya di blok v79 akhir `style.css`. |
 | v77 | Gerak seragam: kurva keluar sendiri, dialog tidak terpotong saat menutup, pindah tab memudar keluar (`tabOut()`), versi cache disamakan |
