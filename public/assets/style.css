@@ -889,10 +889,12 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 
 /* Reset catatan keuangan di Pengaturan: saat nonaktif (belum ada data) merahnya tetap tegas, tanpa isian */
 .set.rd{font-weight:600}
-.set.rd:disabled{opacity:1}
-:root[data-theme=light] .set.rd,:root:not([data-theme]) .set.rd{color:color-mix(in srgb,var(--red) 88%,#000)}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .set.rd{color:var(--red)}}
-:root[data-theme=dark] .set.rd{color:var(--red)}
+.set.rd:not(:disabled){color:color-mix(in srgb,var(--red) 88%,#000)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .set.rd:not(:disabled){color:var(--red)}}
+:root[data-theme=dark] .set.rd:not(:disabled){color:var(--red)}
+/* belum ada catatan: abu-abu dan pudar, jelas tidak bisa diketuk */
+.set.rd:disabled{opacity:.45;color:var(--t2)}
+.set.rd:disabled .ic{color:var(--t2)}
 @media(hover:hover) and (pointer:fine){.set.rd:disabled:hover{background:none}}
 
 /* Form anggaran: label "Dihitung dari kategori" tetap terlihat saat keyboard terbuka */
@@ -916,3 +918,23 @@ html:not(.lg) #pick .yr.glass.glass,html:not(.lg) #pick #pk-cl.glass.glass{box-s
 /* Baris Bahasa: "Bahasa Indonesia" muat di layar 320px */
 .set.sel .val{white-space:nowrap}
 @media(max-width:360px){.set.sel{gap:8px}.set.sel .val{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:14px}.set.sel .chev{margin-left:4px}}
+
+/* ===== v93: dialog Reset = tombol liquid glass, terbaca di tema terang dan gelap =====
+   Utama (Simpan cadangan dulu) = kaca gelap pekat; Batal = kaca bening; Hapus semua = kaca bening bertepi merah, teks merah tua (terang) / merah muda (gelap); ketuk kedua = merah solid. */
+#rst #rs-bk.glass.glass,#rst #rs-cl.glass.glass,#rst #rs-ok.glass.glass{background-image:none;box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 12px var(--g-glow),0 0 0 .5px var(--g-rim),0 6px 16px -8px var(--g-sh)}
+html:not(.lg) #rst #rs-bk.glass.glass,html:not(.lg) #rst #rs-cl.glass.glass,html:not(.lg) #rst #rs-ok.glass.glass{box-shadow:inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 0 0 4px rgba(255,255,255,.045),inset 0 0 0 4.5px rgba(0,0,0,.08),inset 0 5px 8px -5px var(--g-hi),inset 0 -6px 9px -6px var(--g-hi2),inset 0 0 18px var(--g-glow),0 0 0 .5px var(--g-rim),0 6px 16px -8px var(--g-sh)}
+#rst #rs-bk.glass.glass{background-color:var(--ac);color:var(--on)}
+#rst #rs-cl.glass.glass{background-color:color-mix(in srgb,var(--tx) 10%,var(--sf));color:var(--tx)}
+#rst #rs-ok.glass.glass{background-color:color-mix(in srgb,var(--red) 8%,var(--sf));color:color-mix(in srgb,var(--red) 72%,#000)}
+:root[data-theme=dark] #rst #rs-ok.glass.glass{color:color-mix(in srgb,var(--red) 70%,#fff)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) #rst #rs-ok.glass.glass{color:color-mix(in srgb,var(--red) 70%,#fff)}}
+@media(prefers-reduced-transparency:no-preference){
+#rst #rs-bk.glass.glass{background-color:color-mix(in srgb,var(--ac) 93%,transparent);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}
+#rst #rs-cl.glass.glass{background-color:var(--g-bg);background-image:radial-gradient(80% 140% at var(--mx,30%) var(--my,0%),var(--g-sp),transparent 60%);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}
+#rst #rs-ok.glass.glass{background-color:color-mix(in srgb,var(--red) 8%,var(--g-bg));background-image:radial-gradient(80% 140% at var(--mx,30%) var(--my,0%),var(--g-sp),transparent 60%);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}}
+#rst #rs-ok.glass.glass{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--red) 38%,transparent),inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),0 0 0 .5px var(--g-rim),0 6px 16px -8px var(--g-sh)}
+html:not(.lg) #rst #rs-ok.glass.glass{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--red) 38%,transparent),inset 0 1.5px 2px -1px var(--g-hi),inset 0 -1.5px 2px -1px var(--g-hi2),inset 0 5px 8px -5px var(--g-hi),inset 0 -6px 9px -6px var(--g-hi2),0 0 0 .5px var(--g-rim),0 6px 16px -8px var(--g-sh)}
+#rst #rs-ok.arm.glass.glass{background-color:var(--red);background-image:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:#fff}
+:root[data-theme=dark] #rst #rs-ok.arm.glass.glass{color:#1C0000}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) #rst #rs-ok.arm.glass.glass{color:#1C0000}}
+#rst #rs-bk.glass.glass:disabled{background-color:color-mix(in srgb,var(--tx) 8%,var(--sf));-webkit-backdrop-filter:none;backdrop-filter:none;color:var(--t2);opacity:.6}

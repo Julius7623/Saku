@@ -47,6 +47,7 @@ String baru ditulis dalam Indonesia, lalu tambahkan padanannya di kamus `EN` (`a
 ## Riwayat versi
 | Versi | Perubahan |
 |---|---|
+| v93 | Dialog Reset: tiga tombol jadi kaca (utama gelap pekat, Batal bening, Hapus semua bening bertepi merah, teks terbaca di terang/gelap). Tombol Reset di Pengaturan abu-abu dan pudar saat belum ada catatan, merah tegas saat ada. |
 | v92 | Lebih sederhana: tombol tema di header dihapus (ada di Pengaturan), judul bulan rata kiri; tautan Cara pakai/Syarat di Beranda dihapus; tombol "Bulan ini" disembunyikan bila bulan ini terpilih; empty state Beranda/Ringkasan hanya ikon + satu kalimat; Cara pakai jadi 5 poin; tombol + solid (`--ac`/`--on`); pill Tutup picker sama dengan pill panah tahun; Reset di Pengaturan tetap merah tegas saat nonaktif; label anggaran tetap tampil saat keyboard terbuka; "it/them" di dialog Reset; opsi "Bahasa Indonesia". Override di blok v92 akhir `style.css`. |
 | v83 | Tombol page mengambang disamakan dengan Files iOS 26 / tombol X Claude: bulatan 44, pil panah bulan 96x44, inset 20 kiri/kanan dan 18 atas di semua dialog. |
 | v82 | Menu Tampilan/Bahasa: satu ketukan buka, satu ketukan tutup, transisi CSS yang bisa diinterupsi, klik susulan ditelan. Pill tab tidak keluar dari tab bar saat Pengaturan → Ringkasan (kelas `.nb`, tanpa pantulan). |
