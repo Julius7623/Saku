@@ -946,3 +946,7 @@ html:not(.lg) #rst #rs-ok.glass.glass{box-shadow:inset 0 0 0 1px color-mix(in sr
 #infb{padding-bottom:28px;-webkit-mask-image:linear-gradient(#000 calc(100% - 28px),transparent);mask-image:linear-gradient(#000 calc(100% - 28px),transparent)}
 
 #cat-ed.edb.glass::after{content:''!important;display:block!important}
+
+/* ===== v99 ===== */
+/* Header: beri ruang napas di atas (sebelumnya hanya 1px sehingga mepet tepi layar) */
+.top{padding-top:22px;padding-bottom:24px}
