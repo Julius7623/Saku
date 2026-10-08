@@ -158,7 +158,7 @@ function render(){
   enter();fx=false;shown=tab;
 }
 const row=t=>h('button',{class:'tx'+(t.id===enterId?' enter':''),'data-id':t.id,onclick:e=>openSheet(t,e.currentTarget)},
-  h('span',{},h('b',{},cn(t.cat)),t.note?h('small',{},t.note):null),
+  h('span',{class:'mono','aria-hidden':'true'},[...cn(t.cat)][0]?.toUpperCase()||'•'),h('span',{},h('b',{},cn(t.cat)),t.note?h('small',{},t.note):null),
   h('span',{class:t.type==='in'?'plus':'minus'},(t.type==='in'?'+':'−')+rp(t.amount)));
 const qv=()=>$('#q').value.trim().toLowerCase();
 const hit=(t,q)=>t.cat.toLowerCase().includes(q)||cn(t.cat).toLowerCase().includes(q)||t.note.toLowerCase().includes(q)||String(t.amount).includes(q.replace(/\D/g,'')||'\0');
@@ -201,11 +201,11 @@ function renderSum(){
     const tot=sum(m,type),by={};
     m.forEach(t=>{if(t.type===type)by[t.cat]=(by[t.cat]||0)+t.amount});
     const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
-    const head=[h('small',{class:'mut'},title)];
+    const head=[h('div',{class:'sumh'},h('small',{class:'mut'},title),h('b',{class:'mut'},rp(tot)))];
     if(!rows.length)continue;
     box.append(h('div',{class:'card p16 mt sumcard'},...head,...rows.map(([c,v])=>{
-      const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,p]);
-      return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},rp(v))),h('div',{class:'track'},fill));
+      const p=Math.round(v/tot*100),fill=h('div',{class:'fill'});bars.push([fill,Math.round(v/rows[0][1]*100)]);
+      return h('div',{class:'br'},h('div',{},h('span',{},`${cn(c)} · ${p}%`),h('b',{},rp(v))),rows.length>1?h('div',{class:'track'},fill):null);
     })));
   }
   if(!box.children.length)box.append(h('div',{class:'empty'},h('div',{class:'eico','aria-hidden':'true'},ico('M5 20V10M12 20V4M19 20v-8')),h('p',{},tr('Belum ada data bulan ini'))));
@@ -448,7 +448,7 @@ function setCt(t){catd.dataset.ct=t;$$('.ctog button').forEach(b=>b.setAttribute
 $$('.ctog button').forEach(b=>b.onclick=()=>{if(ctNC())return;setCt(b.dataset.ct)});
 function openCat(src){
   if(catd.open||sheet.open||bud.open||pkd.open||rst.open)return;
-  catd._src=src;cArm=null;setEd(false);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
+  catd._src=src;cArm=null;setEd(true);setCt('out');$('#cerr').textContent='';$('#ca-out').value='';$('#ca-in').value='';
   updAdd();paintCats();
   modal(catd);place();catd.focus({preventScroll:true});settle();
   requestAnimationFrame(()=>requestAnimationFrame(()=>catd.classList.add('show')));
@@ -990,3 +990,8 @@ addEventListener('pointerdown',()=>document.documentElement.classList.remove('kb
 {const T=['#bal','#inc','#out'].map(q=>$(q)),fit=(e,m)=>{e.style.fontSize='';let z=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+.5&&z>m)e.style.fontSize=(z-=.5)+'px'},rw=$('.hero .row'),all=()=>{rw.classList.remove('stk');T.forEach((e,i)=>e&&fit(e,i?11:22));if(T.slice(1).some(e=>e.scrollWidth>e.clientWidth+.5)){rw.classList.add('stk');T.slice(1).forEach(e=>fit(e,11))}};
   const mo=new MutationObserver(all);T.forEach(e=>e&&mo.observe(e,{childList:true,characterData:true,subtree:true}));
   let fr=0;new ResizeObserver(()=>{cancelAnimationFrame(fr);fr=requestAnimationFrame(all)}).observe($('.hero'));all()}
+
+(()=>{const ds=[...document.querySelectorAll('dialog')],m=document.createElement('meta');m.name='theme-color';document.head.append(m);
+const upd=()=>{const c=(getComputedStyle(document.documentElement).backgroundColor.match(/\d+/g)||[250,250,250]).slice(0,3).map(Number),k=ds.some(d=>d.classList.contains('show'))?.68:1;m.content='rgb('+c.map(v=>Math.round(v*k)).join(',')+')'};
+const mo=new MutationObserver(upd);ds.forEach(d=>mo.observe(d,{attributes:true,attributeFilter:['class','open']}));
+mo.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});matchMedia('(prefers-color-scheme:dark)').addEventListener('change',upd);upd()})();
