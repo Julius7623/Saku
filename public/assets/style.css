@@ -815,3 +815,15 @@ body{padding-bottom:calc(94px + var(--dock-b))}
 @media(prefers-reduced-motion:reduce){.pmenu.glass,.pmenu.glass.in{transition-duration:.01s}}
 .tabs.nb:not(.drive)::before{transition:translate .5s var(--ease),scale .4s var(--ease),top .4s var(--ease),bottom .4s var(--ease),opacity .4s var(--ease) .06s,background-color .3s,box-shadow .3s}
 .tabs.nb:not(.drive)>.lz{transition:translate .5s var(--ease),scale .4s var(--ease),opacity var(--d2),visibility 0s var(--d2)}
+
+/* v83 · tombol di page mengambang disamakan dengan Files iOS 26 dan tombol X Claude (diukur dari screenshot, 3x):
+   bulatan 44, pil panah bulan/tahun 96x44. Posisi: inset 20 dari kiri/kanan, 18 dari atas dialog, di semua dialog. */
+.gi{width:44px;min-width:44px;height:44px;min-height:44px}
+.gi .i{width:20px;height:20px}
+#pick .yr{width:96px;height:44px}
+#pick .yr button{width:48px;min-width:48px;height:44px;min-height:44px}
+.pkh,.shh{align-items:start}
+.pkh>.gi,.pkh>.yr,.shh>.gi{align-self:start}
+.pkh>.ybtn,.pkh>h2,.shh>.seg{align-self:center}
+#sheet .shh>.gi,#bud .pkh>.gi,#catd .pkh>.gi,#inf .pkh>.gi{translate:0 2px}
+#pick .pkh>.gi,#pick .pkh>.yr{translate:0 -2px}
